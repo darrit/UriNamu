@@ -176,7 +176,7 @@ Output: `*-setup.exe` in `src-tauri/target/release/bundle/nsis/`.
 
 Alternatively, run `.\Build-Windows.cmd` from the activated terminal. It additionally runs `npm ci` and frontend/Rust tests. It does not install system tools or activate `.setup` automatically, so double-clicking it from an unconfigured environment may fail.
 
-The app installer uses `webviewInstallMode: skip`. The end user's computer must already have a suitable WebView2 runtime. Developer setup and the generated app installer serve different purposes.
+The app installer uses `webviewInstallMode: embedBootstrapper` with a silent install. It embeds Microsoft's bootstrapper and installs the WebView2 runtime when the end user's computer does not already have one. That download needs an internet connection. An existing runtime is left in place. Developer setup still installs a dated runtime for building; that is separate from the generated app installer.
 
 ### Linux: DEB and AppImage
 
@@ -205,7 +205,7 @@ npm run desktop:build -- --target universal-apple-darwin --bundles app,dmg -- --
 
 Universal output: `src-tauri/target/universal-apple-darwin/release/bundle/macos/UriNamu.app`, with the image in the adjacent `dmg` directory. Test both architectures. Normal distribution requires Apple code signing and notarization using your own credentials.
 
-End users receive the built package and do not need Node/npm, Rust or developer tools. Windows needs WebView2, Linux needs the declared system libraries, and macOS supplies WebKit.
+End users receive the built package and do not need Node/npm, Rust or developer tools. The Windows installer adds WebView2 when it is missing. On Debian and Ubuntu, installing the `.deb` with apt also installs the declared system libraries, including WebKitGTK 4.1. macOS supplies WebKit. The AppImage may still need FUSE, or it can be started with `--appimage-extract-and-run`.
 
 ## 8. Troubleshooting
 
@@ -257,7 +257,7 @@ Keep `tests/fixtures` unchanged: they verify older exports and independently pro
 
 ### Pinned CI tools
 
-`.github/workflows/desktop.yml` builds the Windows installer, Linux DEB and AppImage, and the universal macOS disk image. Pushing a tag named `v` plus the committed application version, such as `v0.4.46`, starts that build and publishes the installers on the GitHub release for the tag. The tag must match `package.json`, and the changelog section for that version becomes the release text. A manual run still uploads build artifacts only and does not publish a release. One failed platform build skips the release. The macOS image is not signed or notarized. Actions are pinned by commit SHA. `scripts/install-ci-rust.py` checks the archived rustup bootstrapper and installs the configured Rust toolchain into an isolated CI directory. Node/npm are explicitly selected too. This CI environment is separate from local `.setup`; Windows/macOS CI execution has not been verified here.
+`.github/workflows/desktop.yml` builds the Windows installer, Linux DEB and AppImage, and the universal macOS disk image. Pushing a tag named `v` plus the committed application version, such as `v0.4.47`, starts that build and publishes the installers on the GitHub release for the tag. The tag must match `package.json`, and the changelog section for that version becomes the release text. A manual run still uploads build artifacts only and does not publish a release. One failed platform build skips the release. The macOS image is not signed or notarized. The Windows installer installs WebView2 when it is missing. Actions are pinned by commit SHA. `scripts/install-ci-rust.py` checks the archived rustup bootstrapper and installs the configured Rust toolchain into an isolated CI directory. Node/npm are explicitly selected too. This CI environment is separate from local `.setup`; Windows/macOS CI execution has not been verified here.
 
 ### Persistent tree positions
 

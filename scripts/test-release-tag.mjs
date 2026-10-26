@@ -22,6 +22,8 @@ test("release notes use only the matching changelog section", () => {
   assert.match(releaseNotes(notes, "0.4.46"), /Current fix/);
   assert.doesNotMatch(releaseNotes(notes, "0.4.46"), /Older fix/);
   assert.match(releaseNotes(notes, "0.4.46"), /not signed or notarized/);
+  assert.match(releaseNotes(notes, "0.4.46"), /installs the WebView2 runtime when it is missing/);
+  assert.doesNotMatch(releaseNotes(notes, "0.4.46"), /already installed/);
   assert.throws(() => changelogEntry(notes, "0.4.44"), /no entry/);
 });
 
