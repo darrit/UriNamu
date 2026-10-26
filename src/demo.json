@@ -1,0 +1,168 @@
+{
+  "version": 2,
+  "name": "Familie Morgenstern",
+  "members": [
+    {
+      "died": "2015-11-03",
+      "place": "Hamburg",
+      "bio": "Ein leidenschaftlicher Gärtner. Sein Apfelbaum steht noch heute im Familiengarten.",
+      "id": "1",
+      "name": "Wilhelm Morgenstern",
+      "born": "1932-04-12",
+      "parents": [],
+      "gender": "male",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Lübeck",
+      "bio": "Das Herz unserer Familie. Ihre Geschichten machen jeden Sonntag besonders.",
+      "id": "2",
+      "name": "Elisabeth Morgenstern",
+      "born": "1936-08-21",
+      "parents": [],
+      "gender": "female",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Hamburg",
+      "bio": "Architekt, Bergliebhaber und immer für ein Abenteuer zu haben.",
+      "id": "3",
+      "name": "Thomas Morgenstern",
+      "born": "1960-06-18",
+      "parents": ["1", "2"],
+      "gender": "male",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Bremen",
+      "bio": "Hat für jeden ein offenes Ohr und das beste Rezept für Apfelkuchen.",
+      "id": "4",
+      "name": "Clara Morgenstern",
+      "born": "1963-02-09",
+      "parents": [],
+      "gender": "female",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Hamburg",
+      "bio": "Lehrerin mit großer Neugier auf die Welt.",
+      "id": "5",
+      "name": "Johanna Weber",
+      "born": "1965-10-24",
+      "parents": ["1", "2"],
+      "gender": "female",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Kiel",
+      "bio": "Musik begleitet ihn seit seiner Kindheit.",
+      "id": "6",
+      "name": "Michael Weber",
+      "born": "1964-03-15",
+      "parents": [],
+      "gender": "male",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Berlin",
+      "bio": "Sammelt Familiengeschichten, alte Fotografien und neue Reiseerinnerungen.",
+      "id": "7",
+      "name": "Lena Morgenstern",
+      "born": "1990-05-14",
+      "parents": ["3", "4"],
+      "gender": "female",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Potsdam",
+      "bio": "Fotograf und begeisterter Koch.",
+      "id": "8",
+      "name": "Jonas Berg",
+      "born": "1989-12-02",
+      "parents": [],
+      "gender": "male",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Hamburg",
+      "bio": "Am liebsten draußen unterwegs, mit dem Fahrrad oder zu Fuß.",
+      "id": "9",
+      "name": "Felix Morgenstern",
+      "born": "1994-07-08",
+      "parents": ["3", "4"],
+      "gender": "male",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Kiel",
+      "bio": "Liebt das Meer und schreibt ihre eigenen Geschichten.",
+      "id": "10",
+      "name": "Emma Weber",
+      "born": "1996-09-30",
+      "parents": ["5", "6"],
+      "gender": "female",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Berlin",
+      "bio": "Die jüngsten Wurzeln unseres Stammbaums. Liebt Sterne und große Fragen.",
+      "id": "11",
+      "name": "Mila Berg",
+      "born": "2018-04-06",
+      "parents": ["7", "8"],
+      "gender": "female",
+      "appearance": "normal",
+      "photo": ""
+    }
+  ],
+  "unions": [
+    {
+      "id": "1|2",
+      "a": "1",
+      "b": "2",
+      "status": "active",
+      "ended": false
+    },
+    {
+      "id": "3|4",
+      "a": "3",
+      "b": "4",
+      "status": "active",
+      "ended": false
+    },
+    {
+      "id": "5|6",
+      "a": "5",
+      "b": "6",
+      "status": "active",
+      "ended": false
+    },
+    {
+      "id": "7|8",
+      "a": "7",
+      "b": "8",
+      "status": "active",
+      "ended": false
+    }
+  ]
+}

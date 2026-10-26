@@ -1,0 +1,9 @@
+node_modules/
+dist/
+src-tauri/target/
+*.log
+*.tsbuildinfo
+docs/browser-failure.png
+__pycache__/
+.setup/
+.DS_Store
