@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.47 — 2026-10-27
+
+- The Windows installer installs the WebView2 runtime when it is missing. An existing runtime stays in place, and the download needs an internet connection.
+
 ## 0.4.46 — 2026-10-26
 
 - People who do not belong to a dynasty are pushed beside its area. The area stays clear of them, like a wall.

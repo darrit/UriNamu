@@ -59,7 +59,7 @@ npm.cmd run desktop:build -- --bundles nsis -- --locked
 
 Output: `*-setup.exe` in `src-tauri/target/release/bundle/nsis/`.
 
-Alternatively, run `.\Build-Windows.cmd` from the activated terminal to include npm installation and frontend/Rust tests before building. The end user's computer needs WebView2; the generated app installer does not install it automatically.
+Alternatively, run `.\Build-Windows.cmd` from the activated terminal to include npm installation and frontend/Rust tests before building. The generated installer embeds Microsoft's WebView2 bootstrapper and installs that runtime when it is missing. The download during setup needs an internet connection. An existing runtime is left in place.
 
 ### Linux: DEB and AppImage
 
@@ -81,7 +81,7 @@ Output: `UriNamu.app` in `src-tauri/target/release/bundle/macos/` and `.dmg` in 
 
 A successful setup verifies the developer environment. Native app builds, installer installation and graphical acceptance still require separate checks. See the [verification report](docs/PRUEFSTATUS.md).
 
-Pushing a tag named `v` plus the committed application version, for example `v0.4.46`, runs the same build and publishes the installers on that GitHub release. The tag has to match `package.json`. Starting `.github/workflows/desktop.yml` manually still uploads build artifacts only. The macOS image from this workflow is not signed or notarized.
+Pushing a tag named `v` plus the committed application version, for example `v0.4.47`, runs the same build and publishes the installers on that GitHub release. The tag has to match `package.json`. Starting `.github/workflows/desktop.yml` manually still uploads build artifacts only. The macOS image from this workflow is not signed or notarized. The Windows installer from that release installs WebView2 when it is missing.
 
 ## Features
 

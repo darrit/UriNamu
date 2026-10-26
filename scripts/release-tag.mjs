@@ -32,7 +32,7 @@ export function changelogEntry(markdown, version) {
 export function releaseNotes(markdown, version) {
   return (
     changelogEntry(markdown, version) +
-    "\nThe macOS disk image from this workflow is not signed or notarized. Windows needs the WebView2 runtime already installed.\n"
+    "\nThe macOS disk image from this workflow is not signed or notarized. The Windows installer installs the WebView2 runtime when it is missing; that download needs an internet connection.\n"
   );
 }
 

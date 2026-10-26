@@ -1,7 +1,7 @@
 {
   "name": "urinamu",
   "private": true,
-  "version": "0.4.46",
+  "version": "0.4.47",
   "license": "PolyForm-Noncommercial-1.0.0",
   "type": "module",
   "scripts": {

@@ -4474,7 +4474,7 @@ dependencies = [
 
 [[package]]
 name = "urinamu"
-version = "0.4.46"
+version = "0.4.47"
 dependencies = [
  "aes-gcm",
  "argon2",
