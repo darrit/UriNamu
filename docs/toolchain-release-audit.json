@@ -1,0 +1,202 @@
+{
+  "evaluatedAt": "2026-10-25T04:52:05Z",
+  "cutoff": "2026-10-18T04:52:05Z",
+  "nodeTrack": "Latest eligible LTS used for reproducible desktop development.",
+  "tools": [
+    {
+      "name": "Node.js",
+      "version": "24.22.0",
+      "published": "2026-10-14",
+      "source": "https://nodejs.org/dist/index.json"
+    },
+    {
+      "name": "npm",
+      "version": "12.2.1",
+      "published": "2026-10-15T17:40:08.077Z",
+      "source": "https://registry.npmjs.org/npm"
+    },
+    {
+      "name": "Rust",
+      "version": "1.99.1",
+      "published": "2026-10-15",
+      "source": "https://static.rust-lang.org/dist/channel-rust-1.99.1.toml"
+    },
+    {
+      "name": "rustup",
+      "version": "1.29.1",
+      "published": "2026-09-01T12:27:37Z",
+      "source": "https://github.com/rust-lang/rustup/tree/1.29.1",
+      "evidence": "Official annotated Git tag"
+    }
+  ],
+  "directDependencies": [
+    {
+      "name": "@tauri-apps/api",
+      "version": "2.12.4",
+      "published": "2026-10-14T18:47:44.921Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "@tauri-apps/plugin-dialog",
+      "version": "2.8.3",
+      "published": "2026-10-14T19:17:55.842Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "d3-shape",
+      "version": "3.2.0",
+      "published": "2022-12-20T23:39:17.478Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "lucide-react",
+      "version": "1.59.0",
+      "published": "2026-10-17T06:15:48.758Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "react",
+      "version": "19.3.1",
+      "published": "2026-10-14T16:47:15.290Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "react-dom",
+      "version": "19.3.1",
+      "published": "2026-10-14T16:49:10.081Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "@tauri-apps/cli",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:50:25.524Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "@types/d3-shape",
+      "version": "3.2.0",
+      "published": "2026-08-21T21:39:11.144Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "@types/react",
+      "version": "19.3.0",
+      "published": "2026-09-09T18:08:49.750Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "@types/react-dom",
+      "version": "19.3.0",
+      "published": "2026-09-09T18:07:51.886Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "@vitejs/plugin-react",
+      "version": "6.1.2",
+      "published": "2026-10-05T10:08:27.143Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "prettier",
+      "version": "3.9.10",
+      "published": "2026-10-10T08:35:28.472Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "typescript",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:55:18.431Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "vite",
+      "version": "8.3.4",
+      "published": "2026-10-08T12:07:04.441Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "vitest",
+      "version": "5.0.5",
+      "published": "2026-10-15T14:29:01.396Z",
+      "ecosystem": "npm"
+    },
+    {
+      "name": "tauri",
+      "version": "2.12.4",
+      "published": "2026-10-14T18:52:10.735395Z",
+      "ecosystem": "cargo"
+    },
+    {
+      "name": "tauri-plugin-dialog",
+      "version": "2.8.3",
+      "published": "2026-10-14T19:16:07.400157Z",
+      "ecosystem": "cargo"
+    },
+    {
+      "name": "serde",
+      "version": "1.0.229",
+      "published": "2026-07-18T23:05:13.266456Z",
+      "ecosystem": "cargo"
+    },
+    {
+      "name": "serde_json",
+      "version": "1.0.154",
+      "published": "2026-10-11T15:31:46.076577Z",
+      "ecosystem": "cargo"
+    },
+    {
+      "name": "rusqlite",
+      "version": "0.40.2",
+      "published": "2026-08-08T14:21:52.570893Z",
+      "ecosystem": "cargo"
+    },
+    {
+      "name": "aes-gcm",
+      "version": "0.11.1",
+      "published": "2026-08-21T20:55:46.824964Z",
+      "ecosystem": "cargo"
+    },
+    {
+      "name": "argon2",
+      "version": "0.6.0",
+      "published": "2026-08-27T16:54:18.571817Z",
+      "ecosystem": "cargo"
+    },
+    {
+      "name": "pbkdf2",
+      "version": "0.13.0",
+      "published": "2026-04-21T13:26:45.248211Z",
+      "ecosystem": "cargo"
+    },
+    {
+      "name": "sha2",
+      "version": "0.11.1",
+      "published": "2026-10-12T18:58:22.836567Z",
+      "ecosystem": "cargo"
+    },
+    {
+      "name": "base64",
+      "version": "0.23.1",
+      "published": "2026-08-04T12:34:31.976297Z",
+      "ecosystem": "cargo"
+    },
+    {
+      "name": "zeroize",
+      "version": "1.9.1",
+      "published": "2026-10-06T17:49:21.148259Z",
+      "ecosystem": "cargo"
+    },
+    {
+      "name": "tauri-build",
+      "version": "2.7.3",
+      "published": "2026-10-14T18:51:08.630528Z",
+      "ecosystem": "cargo"
+    },
+    {
+      "name": "getrandom",
+      "version": "0.4.3",
+      "published": "2026-06-17T18:01:59.979552Z",
+      "ecosystem": "cargo"
+    }
+  ]
+}

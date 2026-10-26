@@ -1,0 +1,54 @@
+{
+  "name": "urinamu",
+  "private": true,
+  "version": "0.4.46",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "vitest run && node --test scripts/test-version.mjs scripts/test-release-tag.mjs",
+    "desktop": "tauri dev",
+    "desktop:build": "tauri build",
+    "check": "tsc -b",
+    "preinstall": "node scripts/check-toolchain.mjs",
+    "versions:check": "node scripts/check-toolchain.mjs && node scripts/version.mjs --check",
+    "prebuild": "node scripts/check-toolchain.mjs && node scripts/version.mjs --auto && node scripts/version.mjs --check",
+    "pretest": "node scripts/check-toolchain.mjs && node scripts/version.mjs --check",
+    "predev": "node scripts/version.mjs --auto",
+    "predesktop": "node scripts/check-toolchain.mjs && node scripts/version.mjs --auto && node scripts/version.mjs --check",
+    "predesktop:build": "node scripts/check-toolchain.mjs && node scripts/version.mjs --auto && node scripts/version.mjs --check",
+    "setup": "node scripts/setup.mjs",
+    "setup:plan": "node scripts/setup.mjs --plan",
+    "setup:test": "node --test scripts/test-setup.mjs",
+    "version:bump": "node scripts/version.mjs",
+    "version:check": "node scripts/version.mjs --check",
+    "version:sync": "node scripts/version.mjs --sync",
+    "version:test": "node --test scripts/test-version.mjs"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.12.4",
+    "@tauri-apps/plugin-dialog": "2.8.3",
+    "d3-shape": "3.2.0",
+    "lucide-react": "1.59.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.12.3",
+    "@types/d3-shape": "3.2.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "prettier": "3.9.10",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
+  },
+  "engines": {
+    "node": ">=24.22.0",
+    "npm": ">=12.2.1"
+  },
+  "packageManager": "npm@12.2.1"
+}

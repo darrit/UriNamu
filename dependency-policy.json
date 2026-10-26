@@ -1,0 +1,11 @@
+{
+  "minimumAgeDays": 7,
+  "evaluatedAt": "2026-10-25T04:52:05Z",
+  "cutoff": "2026-10-18T04:52:05Z",
+  "stableOnly": true,
+  "nodeTrack": "latest eligible LTS",
+  "node": "24.22.0",
+  "npm": "12.2.1",
+  "rust": "1.99.1",
+  "rustup": "1.29.1"
+}

@@ -1,0 +1,173 @@
+{
+  "cutoff": "2026-10-18T04:52:05Z",
+  "excluded": [
+    {
+      "name": "cc",
+      "excludedVersion": "1.10.0",
+      "published": "2026-10-23T08:35:43Z",
+      "selected": "1.8.0"
+    },
+    {
+      "name": "crc32fast",
+      "excludedVersion": "1.5.3",
+      "published": "2026-10-20T13:35:21Z",
+      "selected": "1.5.2"
+    },
+    {
+      "name": "ctutils",
+      "excludedVersion": "0.4.5",
+      "published": "2026-10-23T04:02:07Z",
+      "selected": "0.4.3"
+    },
+    {
+      "name": "erased-serde",
+      "excludedVersion": "0.4.11",
+      "published": "2026-10-25T04:15:33Z",
+      "selected": "0.4.10"
+    },
+    {
+      "name": "find-msvc-tools",
+      "excludedVersion": "0.1.15",
+      "published": "2026-10-19T07:39:37Z",
+      "selected": "0.1.14"
+    },
+    {
+      "name": "icu_collections",
+      "excludedVersion": "2.4.0",
+      "published": "2026-10-22T08:56:10Z",
+      "selected": "2.3.0"
+    },
+    {
+      "name": "icu_locale_core",
+      "excludedVersion": "2.4.0",
+      "published": "2026-10-22T08:51:54Z",
+      "selected": "2.3.0"
+    },
+    {
+      "name": "icu_normalizer",
+      "excludedVersion": "2.4.0",
+      "published": "2026-10-22T08:56:44Z",
+      "selected": "2.3.0"
+    },
+    {
+      "name": "icu_normalizer_data",
+      "excludedVersion": "2.4.0",
+      "published": "2026-10-22T08:56:37Z",
+      "selected": "2.3.0"
+    },
+    {
+      "name": "icu_properties",
+      "excludedVersion": "2.4.0",
+      "published": "2026-10-22T08:56:21Z",
+      "selected": "2.3.0"
+    },
+    {
+      "name": "icu_properties_data",
+      "excludedVersion": "2.4.0",
+      "published": "2026-10-22T08:56:15Z",
+      "selected": "2.3.0"
+    },
+    {
+      "name": "icu_provider",
+      "excludedVersion": "2.4.0",
+      "published": "2026-10-22T08:52:08Z",
+      "selected": "2.3.1"
+    },
+    {
+      "name": "inout",
+      "excludedVersion": "0.2.5",
+      "published": "2026-10-19T13:23:21Z",
+      "selected": "0.2.4"
+    },
+    {
+      "name": "plist",
+      "excludedVersion": "1.10.3",
+      "published": "2026-10-21T12:36:20Z",
+      "selected": "1.10.1"
+    },
+    {
+      "name": "rfd",
+      "excludedVersion": "0.16.1",
+      "published": "2026-10-22T21:30:59Z",
+      "selected": "0.16.0"
+    },
+    {
+      "name": "smallvec",
+      "excludedVersion": "1.16.4",
+      "published": "2026-10-23T17:08:24Z",
+      "selected": "1.16.3"
+    },
+    {
+      "name": "tao",
+      "excludedVersion": "0.37.2",
+      "published": "2026-10-23T11:19:35Z",
+      "selected": "0.37.1"
+    },
+    {
+      "name": "tauri-codegen",
+      "excludedVersion": "2.7.4",
+      "published": "2026-10-21T11:52:50Z",
+      "selected": "2.7.3"
+    },
+    {
+      "name": "tauri-macros",
+      "excludedVersion": "2.7.4",
+      "published": "2026-10-21T11:53:22Z",
+      "selected": "2.7.3"
+    },
+    {
+      "name": "tauri-runtime-wry",
+      "excludedVersion": "2.12.3",
+      "published": "2026-10-21T11:52:22Z",
+      "selected": "2.12.2"
+    },
+    {
+      "name": "tauri-winres",
+      "excludedVersion": "0.3.7",
+      "published": "2026-10-19T13:54:44Z",
+      "selected": "0.3.6"
+    },
+    {
+      "name": "tinystr",
+      "excludedVersion": "0.8.5",
+      "published": "2026-10-22T08:51:49Z",
+      "selected": "0.8.4"
+    },
+    {
+      "name": "tokio",
+      "excludedVersion": "1.54.1",
+      "published": "2026-10-21T21:05:43Z",
+      "selected": "1.53.3"
+    },
+    {
+      "name": "uuid",
+      "excludedVersion": "1.29.0",
+      "published": "2026-10-23T09:59:10Z",
+      "selected": "1.28.0"
+    },
+    {
+      "name": "wry",
+      "excludedVersion": "0.57.1",
+      "published": "2026-10-23T11:20:42Z",
+      "selected": "0.57.0"
+    },
+    {
+      "name": "yoke",
+      "excludedVersion": "0.8.4",
+      "published": "2026-10-22T08:51:34Z",
+      "selected": "0.8.3"
+    },
+    {
+      "name": "zerovec",
+      "excludedVersion": "0.11.9",
+      "published": "2026-10-22T08:51:43Z",
+      "selected": "0.11.8"
+    },
+    {
+      "name": "zerovec-derive",
+      "excludedVersion": "0.11.7",
+      "published": "2026-10-22T08:51:38Z",
+      "selected": "0.11.6"
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "version": 2,
+  "name": "Familie Testfamiliea",
+  "members": [
+    {
+      "died": "2015-01-01",
+      "place": "Testort",
+      "bio": "Anonyme Beispielnotiz 1.",
+      "id": "1",
+      "name": "Testcg Testfamiliea",
+      "born": "1932-01-01",
+      "parents": [],
+      "gender": "male",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Testort",
+      "bio": "Anonyme Beispielnotiz 2.",
+      "id": "2",
+      "name": "Testaq Testfamiliea",
+      "born": "1936-01-01",
+      "parents": [],
+      "gender": "female",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Testort",
+      "bio": "Anonyme Beispielnotiz 3.",
+      "id": "3",
+      "name": "Testce Testfamiliea",
+      "born": "1960-01-01",
+      "parents": [
+        "1",
+        "2"
+      ],
+      "gender": "male",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Testort",
+      "bio": "Anonyme Beispielnotiz 4.",
+      "id": "4",
+      "name": "Testam Testfamiliea",
+      "born": "1963-01-01",
+      "parents": [],
+      "gender": "female",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Testort",
+      "bio": "Anonyme Beispielnotiz 5.",
+      "id": "5",
+      "name": "Testbg Testfamilieb",
+      "born": "1965-01-01",
+      "parents": [
+        "1",
+        "2"
+      ],
+      "gender": "female",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Testort",
+      "bio": "Anonyme Beispielnotiz 6.",
+      "id": "6",
+      "name": "Testbw Testfamilieb",
+      "born": "1964-01-01",
+      "parents": [],
+      "gender": "male",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Testort",
+      "bio": "Anonyme Beispielnotiz 7.",
+      "id": "7",
+      "name": "Testbr Testfamiliea",
+      "born": "1990-01-01",
+      "parents": [
+        "3",
+        "4"
+      ],
+      "gender": "female",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Testort",
+      "bio": "Anonyme Beispielnotiz 8.",
+      "id": "8",
+      "name": "Testbh Testfamiliec",
+      "born": "1989-01-01",
+      "parents": [],
+      "gender": "male",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Testort",
+      "bio": "Anonyme Beispielnotiz 9.",
+      "id": "9",
+      "name": "Testav Testfamiliea",
+      "born": "1994-01-01",
+      "parents": [
+        "3",
+        "4"
+      ],
+      "gender": "male",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Testort",
+      "bio": "Anonyme Beispielnotiz 10.",
+      "id": "10",
+      "name": "Testas Testfamilieb",
+      "born": "1996-01-01",
+      "parents": [
+        "5",
+        "6"
+      ],
+      "gender": "female",
+      "appearance": "normal",
+      "photo": ""
+    },
+    {
+      "died": "",
+      "place": "Testort",
+      "bio": "Anonyme Beispielnotiz 11.",
+      "id": "11",
+      "name": "Testbx Testfamiliec",
+      "born": "2018-01-01",
+      "parents": [
+        "7",
+        "8"
+      ],
+      "gender": "female",
+      "appearance": "normal",
+      "photo": ""
+    }
+  ],
+  "unions": [
+    {
+      "id": "1|2",
+      "a": "1",
+      "b": "2",
+      "status": "active",
+      "ended": false
+    },
+    {
+      "id": "3|4",
+      "a": "3",
+      "b": "4",
+      "status": "active",
+      "ended": false
+    },
+    {
+      "id": "5|6",
+      "a": "5",
+      "b": "6",
+      "status": "active",
+      "ended": false
+    },
+    {
+      "id": "7|8",
+      "a": "7",
+      "b": "8",
+      "status": "active",
+      "ended": false
+    }
+  ]
+}

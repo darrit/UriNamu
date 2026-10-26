@@ -1,0 +1,654 @@
+{
+  "cutoff": "2026-10-18T04:52:05Z",
+  "evaluatedAt": "2026-10-25T04:52:05Z",
+  "packages": [
+    {
+      "ecosystem": "npm",
+      "name": "@jridgewell/resolve-uri",
+      "version": "3.1.2",
+      "published": "2024-02-14T19:32:38.143Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@jridgewell/sourcemap-codec",
+      "version": "1.6.0",
+      "published": "2026-08-28T01:14:47.331Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@jridgewell/trace-mapping",
+      "version": "0.3.31",
+      "published": "2025-09-10T20:12:49.468Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@oxc-project/types",
+      "version": "0.154.0",
+      "published": "2026-10-13T09:15:00.630Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-android-arm-eabi",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:41:51.271Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-android-arm64",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:40:13.184Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-darwin-arm64",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:41:05.609Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-darwin-x64",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:40:01.688Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-freebsd-x64",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:40:49.070Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-linux-arm-gnueabihf",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:39:59.632Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-linux-arm64-gnu",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:41:27.874Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-linux-arm64-musl",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:39:05.105Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-linux-ppc64-gnu",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:39:38.676Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-linux-s390x-gnu",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:41:20.827Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-linux-x64-gnu",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:42:58.495Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-linux-x64-musl",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:39:13.167Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-openharmony-arm64",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:38:44.327Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-win32-arm64-msvc",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:37:47.538Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-win32-x64-msvc",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:41:40.652Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/pluginutils",
+      "version": "1.0.1",
+      "published": "2026-05-13T03:52:29.927Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/api",
+      "version": "2.12.4",
+      "published": "2026-10-14T18:47:44.921Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:50:25.524Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-darwin-arm64",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:48:47.559Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-darwin-x64",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:48:37.093Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-arm-gnueabihf",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:50:17.139Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-arm64-gnu",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:48:56.725Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-arm64-musl",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:49:18.628Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-riscv64-gnu",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:52:53.494Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-x64-gnu",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:48:35.745Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-x64-musl",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:49:54.871Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-win32-arm64-msvc",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:50:38.393Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-win32-ia32-msvc",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:50:42.527Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-win32-x64-msvc",
+      "version": "2.12.3",
+      "published": "2026-10-14T19:48:05.198Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/plugin-dialog",
+      "version": "2.8.3",
+      "published": "2026-10-14T19:17:55.842Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/chai",
+      "version": "5.2.3",
+      "published": "2025-10-20T23:32:43.277Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/d3-path",
+      "version": "3.1.1",
+      "published": "2025-02-04T22:02:38.070Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/d3-shape",
+      "version": "3.2.0",
+      "published": "2026-08-21T21:39:11.144Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/deep-eql",
+      "version": "4.0.2",
+      "published": "2023-11-07T01:34:12.026Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/estree",
+      "version": "1.0.9",
+      "published": "2026-05-06T21:01:00.975Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/react",
+      "version": "19.3.0",
+      "published": "2026-09-09T18:08:49.750Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/react-dom",
+      "version": "19.3.0",
+      "published": "2026-09-09T18:07:51.886Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-aix-ppc64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:49:32.839Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-darwin-arm64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:49:36.897Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-darwin-x64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:49:40.886Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-freebsd-arm64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:49:45.020Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-freebsd-x64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:49:49.189Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-linux-arm",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:49:53.075Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-linux-arm64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:49:57.270Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-linux-loong64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:01.501Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-linux-mips64el",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:05.178Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-linux-ppc64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:09.539Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-linux-riscv64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:13.357Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-linux-s390x",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:17.275Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-linux-x64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:21.639Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-netbsd-arm64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:25.229Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-netbsd-x64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:29.798Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-openbsd-arm64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:33.600Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-openbsd-x64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:37.789Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-sunos-x64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:41.700Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-win32-arm64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:45.825Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript/typescript-win32-x64",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:50:50.403Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@vitejs/plugin-react",
+      "version": "6.1.2",
+      "published": "2026-10-05T10:08:27.143Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@vitest/mocker",
+      "version": "5.0.5",
+      "published": "2026-10-15T14:27:01.877Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@vitest/spy",
+      "version": "5.0.5",
+      "published": "2026-10-15T14:28:29.575Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "assertion-error",
+      "version": "2.0.1",
+      "published": "2023-10-18T18:04:13.507Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "chai",
+      "version": "6.3.0",
+      "published": "2026-09-30T19:18:04.368Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "csstype",
+      "version": "3.2.3",
+      "published": "2025-11-17T11:42:27.045Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "d3-path",
+      "version": "3.1.0",
+      "published": "2022-12-19T21:50:21.362Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "d3-shape",
+      "version": "3.2.0",
+      "published": "2022-12-20T23:39:17.478Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "detect-libc",
+      "version": "2.1.2",
+      "published": "2025-10-05T12:46:33.077Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "es-module-lexer",
+      "version": "2.3.2",
+      "published": "2026-08-17T01:57:36.160Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "estree-walker",
+      "version": "3.0.3",
+      "published": "2023-01-20T02:27:12.467Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "expect-type",
+      "version": "1.4.0",
+      "published": "2026-06-25T13:41:23.573Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fdir",
+      "version": "6.5.0",
+      "published": "2025-08-14T16:56:03.948Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fsevents",
+      "version": "2.3.3",
+      "published": "2023-08-21T16:24:22.854Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss",
+      "version": "1.33.0",
+      "published": "2026-07-20T05:11:09.509Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss-android-arm64",
+      "version": "1.33.0",
+      "published": "2026-07-20T05:10:36.404Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss-darwin-arm64",
+      "version": "1.33.0",
+      "published": "2026-07-20T05:10:38.380Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss-darwin-x64",
+      "version": "1.33.0",
+      "published": "2026-07-20T05:10:40.758Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss-freebsd-x64",
+      "version": "1.33.0",
+      "published": "2026-07-20T05:10:43.067Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss-linux-arm-gnueabihf",
+      "version": "1.33.0",
+      "published": "2026-07-20T05:10:45.198Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss-linux-arm64-gnu",
+      "version": "1.33.0",
+      "published": "2026-07-20T05:10:47.355Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss-linux-arm64-musl",
+      "version": "1.33.0",
+      "published": "2026-07-20T05:10:49.830Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss-linux-x64-gnu",
+      "version": "1.33.0",
+      "published": "2026-07-20T05:10:52.507Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss-linux-x64-musl",
+      "version": "1.33.0",
+      "published": "2026-07-20T05:10:54.935Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss-win32-arm64-msvc",
+      "version": "1.33.0",
+      "published": "2026-07-20T05:10:57.219Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss-win32-x64-msvc",
+      "version": "1.33.0",
+      "published": "2026-07-20T05:10:59.727Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lucide-react",
+      "version": "1.59.0",
+      "published": "2026-10-17T06:15:48.758Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "magic-string",
+      "version": "1.4.3",
+      "published": "2026-10-05T04:52:23.519Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "nanoid",
+      "version": "3.3.20",
+      "published": "2026-10-05T09:44:40.679Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "obug",
+      "version": "3.0.0",
+      "published": "2026-09-09T06:13:50.788Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "picocolors",
+      "version": "1.1.1",
+      "published": "2024-10-16T18:20:03.921Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "picomatch",
+      "version": "4.0.7",
+      "published": "2026-08-24T14:36:23.690Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "postcss",
+      "version": "8.5.30",
+      "published": "2026-10-12T20:38:43.212Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "prettier",
+      "version": "3.9.10",
+      "published": "2026-10-10T08:35:28.472Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "react",
+      "version": "19.3.1",
+      "published": "2026-10-14T16:47:15.290Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "react-dom",
+      "version": "19.3.1",
+      "published": "2026-10-14T16:49:10.081Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "rolldown",
+      "version": "1.2.14",
+      "published": "2026-10-14T10:47:22.477Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "scheduler",
+      "version": "0.28.0",
+      "published": "2026-09-09T17:17:30.281Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "source-map-js",
+      "version": "1.2.2",
+      "published": "2026-09-30T14:08:09.382Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "std-env",
+      "version": "4.3.0",
+      "published": "2026-09-29T12:40:32.756Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "tinybench",
+      "version": "6.2.2",
+      "published": "2026-10-10T19:50:11.229Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "tinyexec",
+      "version": "1.3.1",
+      "published": "2026-09-03T08:50:07.324Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "tinyglobby",
+      "version": "0.2.17",
+      "published": "2026-05-30T19:57:21.717Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "typescript",
+      "version": "7.0.2",
+      "published": "2026-07-08T15:55:18.431Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "vite",
+      "version": "8.3.4",
+      "published": "2026-10-08T12:07:04.441Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "vitest",
+      "version": "5.0.5",
+      "published": "2026-10-15T14:29:01.396Z"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "why-is-node-running",
+      "version": "3.2.1",
+      "published": "2024-10-29T17:08:48.344Z"
+    }
+  ]
+}

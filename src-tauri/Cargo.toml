@@ -1,0 +1,63 @@
+[package]
+name = "urinamu"
+version = "0.4.46"
+license = "PolyForm-Noncommercial-1.0.0"
+edition = "2021"
+rust-version = "1.99"
+
+[lib]
+name = "urinamu_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[features]
+default = ["desktop"]
+desktop = ["dep:tauri", "dep:tauri-plugin-dialog", "dep:tauri-build"]
+
+[build-dependencies]
+tauri-build = { version = "=2.7.3", optional = true , features = [] }
+
+[dependencies]
+tauri = { version = "=2.12.4", optional = true , features = [] }
+tauri-plugin-dialog = { version = "=2.8.3", optional = true }
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.154"
+rusqlite = { version = "=0.40.2", features = ["bundled"] }
+aes-gcm = "=0.11.1"
+argon2 = "=0.6.0"
+pbkdf2 = "=0.13.0"
+sha2 = "=0.11.1"
+base64 = "=0.23.1"
+getrandom = "=0.4.3"
+zeroize = "=1.9.1"
+
+# BEGIN GENERATED RELEASE-AGE CONSTRAINTS
+# Latest mature versions required by the locked dependency graph; no runtime dependencies.
+[target.'cfg(any())'.dependencies]
+age_cc_1_0 = { package = "cc", version = "=1.8.0" }
+age_crc32fast_1_0 = { package = "crc32fast", version = "=1.5.2" }
+age_ctutils_0_4 = { package = "ctutils", version = "=0.4.3" }
+age_erased_serde_0_4 = { package = "erased-serde", version = "=0.4.10" }
+age_find_msvc_tools_0_1 = { package = "find-msvc-tools", version = "=0.1.14" }
+age_icu_collections_2_0 = { package = "icu_collections", version = "=2.3.0" }
+age_icu_locale_core_2_0 = { package = "icu_locale_core", version = "=2.3.0" }
+age_icu_normalizer_2_0 = { package = "icu_normalizer", version = "=2.3.0" }
+age_icu_normalizer_data_2_0 = { package = "icu_normalizer_data", version = "=2.3.0" }
+age_icu_properties_2_0 = { package = "icu_properties", version = "=2.3.0" }
+age_icu_properties_data_2_0 = { package = "icu_properties_data", version = "=2.3.0" }
+age_icu_provider_2_0 = { package = "icu_provider", version = "=2.3.1" }
+age_inout_0_2 = { package = "inout", version = "=0.2.4" }
+age_plist_1_0 = { package = "plist", version = "=1.10.1" }
+age_rfd_0_16 = { package = "rfd", version = "=0.16.0" }
+age_smallvec_1_0 = { package = "smallvec", version = "=1.16.3" }
+age_tao_0_37 = { package = "tao", version = "=0.37.1" }
+age_tauri_codegen_2_0 = { package = "tauri-codegen", version = "=2.7.3" }
+age_tauri_macros_2_0 = { package = "tauri-macros", version = "=2.7.3" }
+age_tauri_runtime_wry_2_0 = { package = "tauri-runtime-wry", version = "=2.12.2" }
+age_tauri_winres_0_3 = { package = "tauri-winres", version = "=0.3.6" }
+age_tinystr_0_8 = { package = "tinystr", version = "=0.8.4" }
+age_tokio_1_0 = { package = "tokio", version = "=1.53.3" }
+age_uuid_1_0 = { package = "uuid", version = "=1.28.0" }
+age_wry_0_57 = { package = "wry", version = "=0.57.0" }
+age_yoke_0_8 = { package = "yoke", version = "=0.8.3" }
+age_zerovec_0_11 = { package = "zerovec", version = "=0.11.8" }
+age_zerovec_derive_0_11 = { package = "zerovec-derive", version = "=0.11.6" }

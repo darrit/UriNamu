@@ -1,0 +1,12 @@
+{
+  "format": "urinamu",
+  "version": 2,
+  "cipher": "AES-256-GCM",
+  "kdf": "Argon2id",
+  "memory": 19456,
+  "iterations": 2,
+  "parallelism": 1,
+  "salt": "AAECAwQFBgcICQoLDA0ODw==",
+  "iv": "AAECAwQFBgcICQoL",
+  "data": "RreXv3wYb9f14k5C9daeI+3Sf4pJYhtX1fQrOkaMv9UNDZlC4OIg4fkQgNIvIs1VML6EBG5rjU+wsHRyKJKexnj/CJKppwYFB7lcXewWwCBhC3J+ls162c/UPqQeRH/1R0GkaXwjhQ7Hf/tgppnCffiEv1gwg5L1WvcA2rcqXUPwTm5ZGpyJsfueNTC4rGGY4KeIpSkAM5Psp3KsdSaS8iXaIVXbn8greTJ3wi+OLB4uYfrdIUOgeRZP3CWbzZsdb4iP2wbp5aMBX3hVEkpUpDpd1KB9n3Mjq3qzjVRfjdPFSEJls9962YUVUo/MwPqofcZwW0l0S7LqYcAU7kgbHu6B0g06QhuyQdLBCI3bqD0Ryq5niNn1+ii86u5dJBMIts10OAKfrMQROQUheGBkjStqn5K6GJasLspO1vBl3g0kkpNqPOdGtVrU1ykprfcVh2mA32qpMb8qsW1SjS8MYrm5ydPcY5kbzsoQKQIrZydCwBgkQPcmZE8tqZne8X8zFNvToTa/kxXo75SQkhMXtgBe9wSXtIc76j8Y6FhmBQ5z8kIT8QJw93nEGaDpDQCAAX13AKaGvQ0LfZTPixzQ93LYtXzvSm7XStSS1NcWNV2KxjRYmaTkjKCjnDa4/w643C7T4YPaNtbfdIpswr5wXsxjL30Se92M+Pag18nyBFBTTe8q3w=="
+}
