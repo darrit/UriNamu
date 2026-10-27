@@ -1,4 +1,5 @@
 import { type Locale } from "./i18n";
+import { guideStepFromStorage, type GuideStep } from "./guide";
 
 const key = "urinamu.preferences";
 
@@ -8,6 +9,8 @@ export type Preferences = {
   showPartnerSlots: boolean;
   /** Absent until the first launch of this version asks for a choice. */
   language: Locale | null;
+  /** 4 means the automatic hints stay quiet. */
+  guideStep: GuideStep;
 };
 
 const languageOf = (value: unknown): Locale | null =>
@@ -18,6 +21,7 @@ export const defaultPreferences = (): Preferences => ({
   removeDescendants: false,
   showPartnerSlots: true,
   language: null,
+  guideStep: 0,
 });
 
 export function loadPreferences(): Preferences {
@@ -25,11 +29,13 @@ export function loadPreferences(): Preferences {
     const raw = localStorage.getItem(key);
     if (!raw) return defaultPreferences();
     const parsed = JSON.parse(raw) as Partial<Preferences>;
+    const language = languageOf(parsed.language);
     return {
       askRemoveDescendants: parsed.askRemoveDescendants !== false,
       removeDescendants: parsed.removeDescendants === true,
       showPartnerSlots: parsed.showPartnerSlots !== false,
-      language: languageOf(parsed.language),
+      language,
+      guideStep: guideStepFromStorage(parsed.guideStep, language !== null),
     };
   } catch {
     return defaultPreferences();
