@@ -2,6 +2,7 @@ import {
   ChevronUp,
   Columns3,
   Download,
+  FileImage,
   FolderTree,
   GitMerge,
   History,
@@ -215,6 +216,24 @@ export function GuideTransfer() {
       <button type="button" className="primary guide-undo-target" tabIndex={-1}>
         <Download size={15} /> {t("export")}
       </button>
+    </div>
+  );
+}
+
+export function GuideExportChoice() {
+  return (
+    <div className="guide-sheet" aria-hidden="true">
+      <h3>{t("exportChooseTitle")}</h3>
+      <p>{t("exportChooseBody")}</p>
+      <div className="actions export-choices">
+        <button type="button" className="primary" tabIndex={-1}>
+          <FileImage size={16} /> {t("exportAsPdf")}
+        </button>
+        <button type="button" tabIndex={-1}>
+          <Download size={16} /> {t("exportAsUrinamu")}
+        </button>
+      </div>
+      <p className="hint">{t("exportChooseHint")}</p>
     </div>
   );
 }

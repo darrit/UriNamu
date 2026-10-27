@@ -100,6 +100,19 @@ describe("Zusammenführen", () => {
     expect(JSON.stringify({ left, right })).toBe(snapshot);
     expect(() => validate(result)).not.toThrow();
   });
+  it("behält ein Heiratsdatum des verbundenen Paares", () => {
+    const { left, right, options } = fixture();
+    right.unions[0].marriedOn = "1988-05-02";
+    const fromRight = mergeFamilies(left, right, options);
+    expect(
+      fromRight.unions.find((u) => u.a === "mother" || u.b === "mother")!.marriedOn,
+    ).toBe("1988-05-02");
+    left.unions[0].marriedOn = "1984-06-18";
+    const fromLeft = mergeFamilies(left, right, options);
+    expect(
+      fromLeft.unions.find((u) => u.id === unionKey("mother", "father"))!.marriedOn,
+    ).toBe("1984-06-18");
+  });
   it("gleicht dasselbe Kind nur nach ausdrücklicher Zuordnung ab", () => {
     const { left, right, options } = fixture();
     options.matches = { kid2: "kid" };

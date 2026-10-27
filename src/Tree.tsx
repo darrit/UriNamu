@@ -19,11 +19,54 @@ import {
   freePair,
   blockersAround,
   dynastyRegion,
+  personFootprint,
   type Layout,
   type Point,
 } from "./layout";
 import { dateLabel } from "./dates";
 import { getLocale, localeTag, t } from "./i18n";
+import { type PosterFrame } from "./poster";
+
+function overlaps(
+  a: { x: number; y: number; w: number; h: number },
+  b: { x: number; y: number; w: number; h: number },
+) {
+  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+/** Puts the wedding date in the gap, or just beyond the two cards when the gap is too narrow. */
+function weddingAnchor(
+  originA: Point,
+  originB: Point,
+  joint: Point,
+  children: Point[],
+  endA: Point,
+  endB: Point,
+  mode: Layout,
+): Point {
+  let dx = 0;
+  let dy = 1;
+  if (children.length) {
+    const cx = children.reduce((sum, point) => sum + point.x, 0) / children.length;
+    const cy = children.reduce((sum, point) => sum + point.y, 0) / children.length;
+    dx = cx - joint.x;
+    dy = cy - joint.y;
+  } else if (Math.abs(endB.y - endA.y) > Math.abs(endB.x - endA.x)) {
+    dx = 1;
+    dy = 0;
+  }
+  const len = Math.hypot(dx, dy) || 1;
+  const stepX = (dx / len) * 4;
+  const stepY = (dy / len) * 4;
+  const boxes = [personFootprint(originA, mode), personFootprint(originB, mode)];
+  let point = { ...joint };
+  for (let i = 0; i < 80; i++) {
+    const label = { x: point.x - 40, y: point.y - 10, w: 80, h: 20 };
+    if (!boxes.some((box) => overlaps(label, box))) return point;
+    point = { x: point.x + stepX, y: point.y + stepY };
+  }
+  return point;
+}
 export function Portrait({ p }: { p: Person }) {
   return (
     <span
@@ -71,6 +114,7 @@ export default function Tree({
   guidePersonId = null,
   guide = null,
   preview = false,
+  poster = null,
 }: {
   family: Family;
   layout: Layout;
@@ -95,6 +139,8 @@ export default function Tree({
   guide?: ReactNode;
   /** A still of the real canvas for the guide. No controls and no dragging. */
   preview?: boolean;
+  /** One tile of a full-size print of this layout. */
+  poster?: PosterFrame | null;
 }) {
   const placedFamily = useMemo(() => preserveLayout(null, family), [family]);
   const [moving, setMoving] = useState<Record<string, Point>>({});
@@ -214,6 +260,7 @@ export default function Tree({
     });
   };
   useEffect(() => {
+    if (poster) return;
     if (focus && scene.positions[focus]) {
       const p = scene.positions[focus];
       setView((v) => {
@@ -225,7 +272,7 @@ export default function Tree({
         };
       });
     } else fit();
-  }, [layout, size.w, size.h, focus]);
+  }, [layout, size.w, size.h, focus, poster]);
   useEffect(() => () => clearTimeout(timer.current), []);
   const focusPerson = (id: string) => {
     if (focus === id) {
@@ -248,7 +295,7 @@ export default function Tree({
     });
   useEffect(() => {
     const el = container.current;
-    if (!el) return;
+    if (!el || poster) return;
     const wheel = (e: WheelEvent) => {
       e.preventDefault();
       const rect = el.getBoundingClientRect();
@@ -261,7 +308,7 @@ export default function Tree({
     };
     el.addEventListener("wheel", wheel, { passive: false });
     return () => el.removeEventListener("wheel", wheel);
-  }, [size]);
+  }, [size, poster]);
   const ancestorChild = family.members.find((p) => p.id === ancestorFor);
   useEffect(() => {
     if (ancestorFor && (!ancestorChild || ancestorChild.parents.length >= 2))
@@ -447,10 +494,19 @@ export default function Tree({
     ];
   });
   dynasties.sort((a, b) => b.area - a.area);
+  const ink =
+    layout === "tapestry"
+      ? { partner: "#baa474", child: "#dcd0ae", separated: "#a5968a", width: 2 }
+      : { partner: "#b49183", child: "#8ca79a", separated: "#9d8992", width: 1.7 };
   return (
     <div
-      className={`canvas ${layout}${preview ? " preview" : ""}`}
+      className={`canvas ${layout}${preview ? " preview" : ""}${poster ? " poster" : ""}`}
       ref={container}
+      style={
+        poster
+          ? { width: poster.tileWidth, height: poster.tileHeight }
+          : undefined
+      }
       onPointerDown={(e) => {
         if (preview) return;
         if ((e.target as HTMLElement).closest('button,[role="menu"]')) return;
@@ -491,13 +547,41 @@ export default function Tree({
           <span className="wordmark-namu">NAMU</span> · {t("ourRoots")}
         </div>
       )}
+      {poster && (
+        <div
+          className={`poster-sheet ${layout}`}
+          style={{
+            width: poster.sheetWidth,
+            height: poster.sheetHeight,
+            transform: `translate(${-poster.tileX}px, ${-poster.tileY}px)`,
+          }}
+        >
+          <div className="poster-heading">
+            {layout === "tapestry" && (
+              <div className="tapestry-title">
+                <span className="wordmark-uri">URI</span>{" "}
+                <span className="wordmark-namu">NAMU</span> · {t("ourRoots")}
+              </div>
+            )}
+            <strong>{family.name}</strong>
+          </div>
+        </div>
+      )}
       <div
         className="world"
-        style={{
-          left: view.x / view.k,
-          top: view.y / view.k,
-          zoom: view.k,
-        }}
+        style={
+          poster
+            ? {
+                left: poster.originX - poster.tileX,
+                top: poster.originY - poster.tileY,
+                zoom: 1,
+              }
+            : {
+                left: view.x / view.k,
+                top: view.y / view.k,
+                zoom: view.k,
+              }
+        }
       >
         {dynasties.map((region) => (
           <div
@@ -532,13 +616,19 @@ export default function Tree({
             </div>
           </div>
         ))}
-        <svg className="edges" width="1" height="1" aria-hidden="true">
+        <svg className="edges" width="1" height="1" fill="none" overflow="visible" aria-hidden="true">
           {scene.unions.map((u) => (
             <g key={u.id} data-relationship={u.id}>
               <path
                 className={u.separated ? "separated" : "partnership"}
                 d={u.partnerPath || curve(u.a, u.b)}
+                fill="none"
+                stroke={u.separated ? ink.separated : ink.partner}
+                strokeWidth={ink.width}
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
+              {!poster && (
               <path
                 className="partnership-hit"
                 d={u.partnerPath || curve(u.a, u.b)}
@@ -607,10 +697,15 @@ export default function Tree({
                   setMoving({});
                 }}
               />
+              )}
               {u.separated && (
                 <path
                   className="strike"
                   d={`M${u.joint.x - 6},${u.joint.y - 9}l12,18m-5,-18l12,18`}
+                  fill="none"
+                  stroke="#bd9b8b"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
                 />
               )}
               {u.children.map((p, i) => (
@@ -618,6 +713,11 @@ export default function Tree({
                   key={i}
                   className="child"
                   d={u.childPaths?.[i] || curve(u.joint, p)}
+                  fill="none"
+                  stroke={ink.child}
+                  strokeWidth={ink.width}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               ))}
             </g>
@@ -626,6 +726,12 @@ export default function Tree({
             <path
               key={"ancestor" + s.personId + s.index}
               className="ancestor-edge"
+              fill="none"
+              stroke="#a9a37c"
+              strokeWidth={ink.width}
+              strokeLinecap="round"
+              strokeDasharray="4 6"
+              opacity="0.6"
               d={curve(
                 { x: s.x + 90, y: s.y + 60 },
                 {
@@ -636,9 +742,50 @@ export default function Tree({
             />
           ))}
           {scene.singles.map((s, i) => (
-            <path key={"s" + i} className="child" d={curve(s.a, s.b)} />
+            <path
+              key={"s" + i}
+              className="child"
+              d={curve(s.a, s.b)}
+              fill="none"
+              stroke={ink.child}
+              strokeWidth={ink.width}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           ))}
         </svg>
+        {scene.unions.map((drawn) => {
+          const stored = family.unions.find((item) => item.id === drawn.id);
+          if (!stored?.marriedOn) return null;
+          const originA = scene.positions[stored.a];
+          const originB = scene.positions[stored.b];
+          if (!originA || !originB) return null;
+          const at = weddingAnchor(
+            originA,
+            originB,
+            drawn.joint,
+            drawn.children,
+            drawn.a,
+            drawn.b,
+            layout,
+          );
+          const faded =
+            !!query &&
+            [stored.a, stored.b].every((id) => {
+              const person = family.members.find((item) => item.id === id);
+              return !person || !matchesQuery(person, query);
+            });
+          return (
+            <span
+              key={stored.id}
+              className={`wedding-date${faded ? " search-miss" : ""}`}
+              style={{ left: at.x, top: at.y }}
+              title={t("weddingDate")}
+            >
+              {dateLabel(stored.marriedOn)}
+            </span>
+          );
+        })}
         {family.members
           .map((p) => {
             const pos = scene.positions[p.id];
@@ -789,14 +936,27 @@ export default function Tree({
                       stroke="#7a6240"
                     />
                     <text
+                      fill="#4b3324"
+                      fontFamily="Georgia, serif"
+                      fontWeight="bold"
                       fontSize={displayName(p).length > 24 ? 10 : 12}
+                      style={{ fontVariant: "small-caps" }}
                       textAnchor="middle"
                     >
                       <textPath href={"#curve" + p.id} startOffset="50%">
                         {symbol(p)} {displayName(p)}
                       </textPath>
                     </text>
-                    <text x="120" y="62" textAnchor="middle" fontSize="9">
+                    <text
+                      x="120"
+                      y="62"
+                      fill="#4b3324"
+                      fontFamily="Georgia, serif"
+                      fontStyle="italic"
+                      fontWeight="400"
+                      textAnchor="middle"
+                      fontSize="9"
+                    >
                       {years(p)}
                     </text>
                   </svg>

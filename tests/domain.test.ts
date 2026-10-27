@@ -198,6 +198,25 @@ describe("Familienstand", () => {
     assignMarriage(separated);
     expect(separated.marriage).toBe("unspecified");
   });
+  it("speichert ein Heiratsdatum und lehnt eines außerhalb der Lebensdaten ab", () => {
+    const tree = family();
+    const union = tree.unions.find((item) => item.id === "1|2")!;
+    union.marriedOn = "1958-06-14";
+    expect(() => validate(tree)).not.toThrow();
+    expect(normalize(tree).unions.find((item) => item.id === "1|2")!.marriedOn).toBe(
+      "1958-06-14",
+    );
+    union.marriedOn = "1900-01-01";
+    expect(() => validate(tree)).toThrow(/Lebensdaten/);
+    union.marriedOn = "2016-01-01";
+    expect(() => validate(tree)).toThrow(/Lebensdaten/);
+    union.marriedOn = "1958-02-31";
+    expect(() => validate(tree)).toThrow(/Datum/);
+    union.marriedOn = "";
+    expect(normalize(tree).unions.find((item) => item.id === "1|2")!.marriedOn).toBe(
+      undefined,
+    );
+  });
   it("zeigt das Plus nur, solange Kinder noch offen sind", () => {
     const tree = family();
     const parents = tree.unions.find((union) => union.id === "1|2")!;

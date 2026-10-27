@@ -32,6 +32,8 @@ export interface Union {
   status: "active" | "separated";
   ended: boolean;
   marriage?: Marriage;
+  /** Wedding day, as YYYY-MM-DD. Absent when unknown. */
+  marriedOn?: string;
   /** False hides the child plus without recording that there are no children. */
   childPrompt?: boolean;
   /**
@@ -250,6 +252,23 @@ export function validate(f: Family): void {
       (u.marriage === "divorced" && u.status !== "separated")
     )
       throw Error(t("errUnion"));
+    if (u.marriedOn) {
+      if (
+        typeof u.marriedOn !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(u.marriedOn) ||
+        new Date(u.marriedOn).toISOString().slice(0, 10) !== u.marriedOn
+      )
+        throw Error(t("errDate"));
+      for (const id of [u.a, u.b]) {
+        const partner = map.get(id);
+        if (!partner) continue;
+        if (
+          (partner.born && u.marriedOn < partner.born) ||
+          (partner.died && u.marriedOn > partner.died)
+        )
+          throw Error(t("errMarriageDate"));
+      }
+    }
     keys.add(u.id);
     if (u.status === "active") {
       if (active.has(u.a) || active.has(u.b))
@@ -335,6 +354,9 @@ export function normalize(raw: unknown): Family {
         });
     }
   f.unions.forEach(assignMarriage);
+  for (const union of f.unions)
+    if (typeof union.marriedOn !== "string" || !union.marriedOn.trim())
+      delete union.marriedOn;
   for (const union of f.unions) {
     if (!union.dynasty) continue;
     const a = f.members.find((p) => p.id === union.a);
