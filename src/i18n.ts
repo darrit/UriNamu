@@ -43,7 +43,44 @@ const de = {
   exportAsPdf: "Als PDF",
   exportAsUrinamu: "Als UriNamu-Datei",
   exportChooseHint:
-    "Das PDF ist ein gewöhnliches Bild des offenen Stammbaums und geht auch in der Vorschau. Die UriNamu-Datei ist verschlüsselt. Danach kommen die beiden Passwortfelder. Der Dateiaustausch geht nur in der installierten App.",
+    "Das PDF ist ein Bild des offenen Stammbaums und geht auch in der Vorschau. Mit dem Häkchen liegen Namen, Daten und Notizen in der Datei, ohne Fotos, damit du sie wieder einlesen kannst. Gib diese PDF nur weiter, wenn das in Ordnung ist. Die UriNamu-Datei ist verschlüsselt. Danach kommen die beiden Passwortfelder. Der Dateiaustausch geht nur in der installierten App.",
+  exportPdfInclude:
+    "Namen, Daten und Notizen zum Wiedereinlesen beilegen, ohne Fotos",
+  importChooseTitle: "Importieren",
+  importChooseBody: "Was soll geöffnet werden?",
+  importAsPdf: "Als PDF",
+  importAsUrinamu: "Als UriNamu-Datei",
+  importChooseHint:
+    "Eine PDF wird auf diesem Rechner gelesen und nicht hochgeladen. Beigelegte UriNamu-Daten werden übernommen. Fehlen sie oder sind sie unlesbar, wird der Text gelesen. Eine Tafel mit *, + und oo wird mit Paaren und Kindern gelesen. Denselben Text kannst du auch selbst wählen. Fotos aus der PDF werden keine Porträts. Die verschlüsselte Datei geht nur in der installierten App.",
+  pdfReadTitle: "PDF einlesen",
+  pdfReadBody:
+    "Die PDF bleibt auf diesem Rechner. Zuerst werden beigelegte UriNamu-Daten gelesen. Fehlen sie oder sind sie unlesbar, wird der Text ausgelesen.",
+  pdfChoose: "PDF wählen",
+  pdfReading: "PDF wird gelesen …",
+  pdfInvalid: "Die PDF konnte nicht gelesen werden.",
+  pdfEncrypted: "Diese PDF ist verschlüsselt und kann hier nicht gelesen werden.",
+  pdfTooBig: "Die PDF ist größer als 80 MB.",
+  pdfEmbeddedNote: "Die beigelegten UriNamu-Daten wurden gelesen.",
+  pdfChartNote:
+    "Die Tafel wird nach den Zeilen gelesen. * ist die Geburt, + der Tod. Die neueste Ehe ist der aktuelle Partner, außer sie ist geschieden. Ein Minus ist der aktuelle Partner ohne Ehe. Ein Gleichheitszeichen ist ein früherer Partner ohne Ehe. Steht ein Minus neben einer Ehe, wird es ebenfalls als früherer Partner ohne Ehe gelesen. Ein Strich nach unten sind die Kinder, unabhängig vom Nachnamen. Nachnamen mit Schrägstrich sind Geburtsname und die Nachnamen der Ehen, der letzte ist der aktuelle. Ein unbekannter Name bleibt ... Ein unbekanntes Sterbedatum lässt das Datum leer und heißt unbekannt.",
+  pdfGenericNote:
+    "Der Text der PDF wurde gelesen. Verbindungen gibt es nur, wo der Text sie nennt.",
+  pdfEmbeddedBroken:
+    "Die beigelegten UriNamu-Daten waren unlesbar. Stattdessen wurde der Text gelesen.",
+  pdfGenericEmpty: "Im Text wurden keine Personen erkannt.",
+  pdfNoText:
+    "In dieser PDF steht kein auslesbarer Text. Ein reines Bild kann nicht in Personen zerlegt werden. Beim Export kann das Häkchen die Namen und Daten beilegen.",
+  pdfReadText: "Text stattdessen auslesen",
+  pdfUseEmbedded: "UriNamu-Daten verwenden",
+  pdfCreateTree: "Als neuen Stammbaum anlegen",
+  pdfPeopleCount: "{count} Personen",
+  pdfNoPhotos:
+    "Fotos aus der PDF werden nicht zu Porträts. Die bisherige Familie bleibt erhalten.",
+  pdfDefaultName: "Eingelesene Familie",
+  pdfChildOf: "Kind von {names}",
+  pdfPartnerOf: "mit {name}",
+  pdfTruncated: "Es wurden nur die ersten 500 Personen übernommen.",
+  pdfPartial: "Es wurden die ersten 300 Seiten gelesen.",
   exportPdfBusy: "PDF {done}/{total}",
   exportPdfFailed: "Das PDF konnte nicht erstellt werden.",
   pdfFilter: "PDF",
@@ -83,6 +120,7 @@ const de = {
   layoutClassic: "Klassisch",
   layoutHorizontal: "Horizontal",
   layoutTapestry: "Wandteppich",
+  layoutChart: "Tafel",
   searchPlaceholder: "Mitglied suchen …",
   searchLabel: "Mitglied suchen",
   noMembersYet: "Noch keine Mitglieder. Füge deine erste Person hinzu.",
@@ -139,6 +177,8 @@ const de = {
   surnamePlaceholder: "z. B. von Testfamiliec",
   birthName: "Geburtsname (optional)",
   birthNamePlaceholder: "z. B. Testfamilieg",
+  marriageNames: "Nachnamen aus Ehen",
+  marriageNamesPlaceholder: "z. B. Testfamilied / Testfamiliee",
   gender: "Geschlecht",
   pleaseChoose: "Bitte auswählen",
   male: "♂ Männlich",
@@ -163,7 +203,12 @@ const de = {
   weddingDate: "Heiratsdatum",
   weddingDateOptional: "Heiratsdatum (optional)",
   marriedOnShort: "geheiratet {date}",
-  unspecified: "Ledig/unbestimmt",
+  unspecified: "Nicht verheiratet",
+  recordSeparation: "Trennung eintragen",
+  separationAsk: "Trennung ohne Ehe eintragen? Beide Personen, ihre Verbindung und gemeinsame Kinder bleiben erhalten. Danach kann eine neue Partnerschaft angelegt werden.",
+  logSeparated: "Trennung eingetragen",
+  formerUnmarried: "Frühere Partnerschaft ohne Ehe",
+  currentUnmarried: "Aktuelle Partnerschaft ohne Ehe",
   recordDivorce: "Scheidung eintragen",
   editHint: "Erst Speichern übernimmt deine Änderungen.",
   viewHint: "Zum Ändern auf den Stift klicken.",
@@ -196,6 +241,9 @@ const de = {
     "{name}: {count} Mitglieder. Als neuen Stammbaum aufnehmen? Die bisherige Familie bleibt erhalten.",
   changeDeath: "Sterbedatum ändern",
   markDeceased: "Als verstorben markieren",
+  deathUnknown: "unbekannt",
+  dateUnknown: "unbekannt",
+  markDeathUnknown: "Datum unbekannt",
   enterDeath: "Bitte das Sterbedatum eingeben.",
   deathDate: "Sterbedatum",
   deathHint: "Das Porträt wird optisch zurückgenommen, ohne ein Kreuz.",
@@ -204,9 +252,9 @@ const de = {
   marriageTitle: "Familienstand der Partnerschaft",
   maritalLabel: "Familienstand",
   marriageBody:
-    "Eine verbundene Partnerschaft gilt als Verheiratet. Nur Verheiratet oder Geschieden kann als gemeinsames Paar beim Zusammenführen ausgewählt werden.",
+    "Auch Partnerschaften ohne Ehe gehören zum Stammbaum. Wähle den tatsächlichen Familienstand. Beim Zusammenführen ist weiterhin ein verheiratetes oder geschiedenes Paar nötig.",
   marriageHint:
-    "„Geschieden“ beendet die aktive Verbindung. Eine verbundene Partnerschaft wird als Verheiratet gespeichert.",
+    "„Nicht verheiratet“ erhält den bisherigen Beziehungsstatus. Eine solche Partnerschaft beendest du mit „Trennung eintragen“. „Geschieden“ beendet eine Ehe; frühere Partner und gemeinsame Kinder bleiben sichtbar.",
   saveMarriage: "Familienstand speichern",
   marriageSaveFailed: "Familienstand konnte nicht gespeichert werden.",
   deleteTreeTitle: "Stammbaum löschen?",
@@ -259,6 +307,15 @@ const de = {
   parentsComplete: "Eltern bereits vollständig",
   stopAncestors: "Ergänzung beenden",
   addAncestors: "Vorfahren ergänzen",
+  linkToChild: "Linie zum Kind",
+  linkToParent: "Linie zum Elternteil",
+  cancelLink: "Linie abbrechen",
+  linkPickChild:
+    "Klicke die Person an, die das Kind ist. Escape bricht ab.",
+  linkPickParent:
+    "Klicke die Person an, die das Elternteil ist. Escape bricht ab.",
+  linkDragChild: "Loslassen auf der Person, die das Kind ist.",
+  linkDragParent: "Loslassen auf der Person, die das Elternteil ist.",
   openProfile: "Profil öffnen",
   removePerson: "Person entfernen",
   movePair: "Paar verschieben",
@@ -375,6 +432,7 @@ const de = {
   logPairMoved: "Paar verschoben",
   logTidied: "Anordnung zusammengezogen",
   logAncestorAdded: "Vorfahre hinzugefügt",
+  logLinked: "Elternlinie gezogen",
   logMemberAdded: "Mitglied hinzugefügt",
   logProfileUpdated: "Profil aktualisiert",
   logDeathSet: "Sterbedatum eingetragen",
@@ -479,7 +537,7 @@ const de = {
     "Ziehen verschiebt diese Person. Ein Klick setzt sie in die Mitte. Doppelklick oder Enter öffnet das Profil.",
   guideBeatMenuTitle: "Das Menü am Porträt",
   guideBeatMenuBody: "Rechtsklick auf das Porträt öffnet dieses Menü.",
-  guideBeatLayoutsTitle: "Drei Ansichten",
+  guideBeatLayoutsTitle: "Vier Ansichten",
   guideBeatLayoutsBody:
     "Klassisch, Horizontal und Wandteppich stehen über der Fläche und zeigen denselben Baum. Zusammenrücken sitzt unten rechts auf der Fläche und ordnet die offene Ansicht nach Generationen.",
   guideChapterPerson: "Erste Person",
@@ -499,7 +557,7 @@ const de = {
   guideChapterTreesBody:
     "Meine Stammbäume in der Seitenleiste legt weitere Bäume an. Der Stift benennt, das Mülltonnensymbol löscht den Baum samt Sicherungen. Zusammenführen verbindet zwei Bäume nur über ein verheiratetes oder geschiedenes Paar. Lies die Namen unter „Diese Personen werden zusammengeführt“. Beide bisherigen Bäume bleiben, das Ergebnis ist ein neuer Baum.",
   guideChapterKeepBody:
-    "Ganz oben: der linke Pfeil ist Rückgängig, der rechte Wiederherstellen, für die letzten 30 Schritte dieser Sitzung. Sicherungsverlauf in der Seitenleiste hält die letzten 100 gespeicherten Stände. Exportieren fragt zuerst nach PDF oder verschlüsselter UriNamu-Datei. Ohne das Passwort lässt sich die Datei nicht öffnen. Der Baum auf diesem Rechner bleibt offen. Importieren öffnet so eine Datei.",
+    "Ganz oben: der linke Pfeil ist Rückgängig, der rechte Wiederherstellen, für die letzten 30 Schritte dieser Sitzung. Sicherungsverlauf in der Seitenleiste hält die letzten 100 gespeicherten Stände. Exportieren fragt zuerst nach PDF oder verschlüsselter UriNamu-Datei. Beim PDF kann das Häkchen Namen, Daten und Notizen beilegen, ohne Fotos. Importieren fragt nach einer PDF oder einer UriNamu-Datei. Eine PDF wird auf diesem Rechner gelesen und als neuer Stammbaum angelegt. Ohne das Passwort lässt sich die UriNamu-Datei nicht öffnen. Der Baum auf diesem Rechner bleibt offen.",
   guideMergeHint:
     "Lies die Namen unter „Diese Personen werden zusammengeführt“. Nur dieses Paar verbindet die Bäume. Beide bisherigen Bäume bleiben liegen.",
   guideExportHint:
@@ -536,7 +594,7 @@ const de = {
     "Dasselbe Fenster, nur zum Anschauen. Die Felder sind nur zu lesen. Bearbeiten mit dem Stift schaltet das Ändern ein, danach erscheint Foto wählen. Der Hinweis darunter sagt dasselbe.",
   guideStepFamilyTitle: "Partner und Kind",
   guideStepFamilyBody:
-    "Die Linien zeichnet das Programm, sobald Partner und Kind angelegt sind. Beides legst du im Menü am Porträt an, nicht durch Ziehen.",
+    "Die Linien zeichnet das Programm, sobald Partner und Kind angelegt sind. Beides legst du im Menü am Porträt an. Für zwei Personen, die schon im Baum stehen, zeige auf ein Porträt: der Punkt oben zieht zum Elternteil, der Punkt unten zum Kind.",
   guideStepMembersTitle: "Mitglieder",
   guideStepMembersBody:
     "In der Seitenleiste, unter Stammbaum. Die Zeile ist eine Person. Ein Klick öffnet das Profil, der Stift steht rechts in der Zeile.",
@@ -558,15 +616,15 @@ const de = {
   guideStepRemoveTitle: "Person entfernen",
   guideStepRemoveBody:
     "Zuerst die linke Frage. Bestätigen nimmt nur diese Person und ihre direkten Verbindungen, die anderen bleiben. Hat sie Nachkommen, kommt die rechte Frage davor: nur diese Person, oder den nachfolgenden Baum.",
-  guideStepLayoutsTitle: "Drei Ansichten",
+  guideStepLayoutsTitle: "Vier Ansichten",
   guideStepLayoutsBody:
-    "Die drei Schaltflächen stehen in der Leiste über der Fläche. Klassisch, Horizontal und Wandteppich zeigen jedes Mal denselben Baum. Unten die drei Bilder von Testce, Testam und Testbr.",
+    "Die vier Schaltflächen stehen in der Leiste über der Fläche. Klassisch, Horizontal, Wandteppich und Tafel zeigen jedes Mal denselben Baum. Die Tafel schreibt *, + und oo wie auf einer Nachfahrentafel. Unten die Bilder von Testce, Testam und Testbr.",
   guideStepTidyTitle: "Zusammenrücken",
   guideStepTidyBody:
     "Unten rechts auf der Fläche, in der Gruppe mit der Prozentzahl, ganz rechts. Der helle Rand markiert es. Es ordnet nur die gerade offene Ansicht nach Generationen. Links daneben verkleinerst du, vergrößerst du und passt alles ein. Vorher liegen die drei auseinander, nachher in den Generationen.",
   guideStepCollapseTitle: "Einklappen",
   guideStepCollapseBody:
-    "Die Schaltfläche steht über der Fläche. Sie blendet Mitglied hinzufügen, die drei Ansichten und die Suche aus. Ausklappen holt sie zurück.",
+    "Die Schaltfläche steht über der Fläche. Sie blendet Mitglied hinzufügen, die vier Ansichten und die Suche aus. Ausklappen holt sie zurück.",
   guideStepSearchTitle: "Mitglied suchen",
   guideStepSearchBody:
     "Das Feld steht rechts in derselben Leiste. Hier steht Testbr darin: Testce und Testam werden blass, Testbr bleibt deutlich. Alle bleiben an ihrem Platz.",
@@ -593,7 +651,7 @@ const de = {
     "In der Seitenleiste. Jede Zeile ist ein gespeicherter Stand, Öffnen steht rechts. Der Klick stellt die Frage rechts daneben. Der aktuelle Stand bleibt im Verlauf erhalten. Es sind die letzten 100 Stände, Fotos eingeschlossen, auf diesem Rechner.",
   guideStepExportTitle: "Exportieren und Importieren",
   guideStepExportBody:
-    "Ganz oben: Importieren und Exportieren (hier umrandet). Exportieren öffnet die Auswahl. Als PDF speichert den offenen Stammbaum als gewöhnliches PDF. Als UriNamu-Datei öffnet das Fenster mit den beiden Passwortfeldern. Ohne das Passwort lässt sich die Datei nicht öffnen. In der Browser-Vorschau geht der Dateiaustausch nicht, nur in der installierten App. Das PDF geht auch in der Vorschau.",
+    "Ganz oben: Importieren und Exportieren (hier umrandet). Importieren öffnet die Auswahl. Als PDF liest eine PDF auf diesem Rechner und zeigt danach die gefundenen Personen. Eine Tafel mit *, + und oo wird mit Paaren und Kindern gelesen. Beigelegte UriNamu-Daten gelten zuerst. Text stattdessen auslesen nimmt den Text, auch wenn die Daten unlesbar sind. Als neuen Stammbaum anlegen lässt die bisherige Familie liegen. Fotos aus der PDF werden keine Porträts. Als UriNamu-Datei öffnet das Fenster mit dem Passwort. Exportieren öffnet die andere Auswahl. Als PDF speichert den offenen Stammbaum als gewöhnliches PDF. Das Häkchen legt Namen, Daten und Notizen in die Datei, ohne Fotos. Als UriNamu-Datei öffnet das Fenster mit den beiden Passwortfeldern. Ohne das Passwort lässt sich die Datei nicht öffnen. In der Browser-Vorschau geht der Dateiaustausch nicht, nur in der installierten App. Das PDF geht auch in der Vorschau.",
 } as const;
 
 export type MessageKey = keyof typeof de;
@@ -629,7 +687,42 @@ const en: Catalog = {
   exportAsPdf: "As PDF",
   exportAsUrinamu: "As a UriNamu file",
   exportChooseHint:
-    "The PDF is an ordinary picture of the open family tree and also works in the preview. The UriNamu file is encrypted. The two password fields come next. File exchange works only in the installed app.",
+    "The PDF is a picture of the open family tree and also works in the preview. With the check mark, names, dates and notes are stored in the file, without photos, so you can read it back. Pass this PDF on only if that is all right. The UriNamu file is encrypted. The two password fields come next. File exchange works only in the installed app.",
+  exportPdfInclude: "Include names, dates and notes for reading back, without photos",
+  importChooseTitle: "Import",
+  importChooseBody: "What should be opened?",
+  importAsPdf: "As PDF",
+  importAsUrinamu: "As a UriNamu file",
+  importChooseHint:
+    "A PDF is read on this computer and is not uploaded. UriNamu data included in it is used. If it is missing or unreadable, the text is read. A chart with *, + and oo is read with its couples and children. You can choose that text yourself as well. Photos in the PDF do not become portraits. The encrypted file works only in the installed app.",
+  pdfReadTitle: "Read a PDF",
+  pdfReadBody:
+    "The PDF stays on this computer. UriNamu data included in it is read first. If it is missing or unreadable, the text is read.",
+  pdfChoose: "Choose PDF",
+  pdfReading: "Reading PDF …",
+  pdfInvalid: "The PDF could not be read.",
+  pdfEncrypted: "This PDF is encrypted and cannot be read here.",
+  pdfTooBig: "The PDF is larger than 80 MB.",
+  pdfEmbeddedNote: "The included UriNamu data was read.",
+  pdfChartNote:
+    "The chart is read by its rows. * is a birth, + a death. The newest marriage is the current partner, unless it is a divorce. A minus is the current partner without a marriage. An equals sign is an earlier partner without a marriage. A minus beside a marriage is read as an earlier partner without a marriage too. A line downward marks the children, whatever the surname. Surnames separated by slashes are the birth name and the surnames from marriages; the last one is current. An unknown name stays .... An unknown date of death leaves the date empty and reads unknown.",
+  pdfGenericNote:
+    "The text of the PDF was read. Connections are made only where the text states them.",
+  pdfEmbeddedBroken:
+    "The included UriNamu data could not be read. The text was read instead.",
+  pdfGenericEmpty: "No people were recognised in the text.",
+  pdfNoText:
+    "This PDF has no readable text. A plain picture cannot be split into people. On export, the check mark can include the names and dates.",
+  pdfReadText: "Read the text instead",
+  pdfUseEmbedded: "Use UriNamu data",
+  pdfCreateTree: "Create as a new family tree",
+  pdfPeopleCount: "{count} people",
+  pdfNoPhotos: "Photos in the PDF do not become portraits. The current family stays.",
+  pdfDefaultName: "Imported family",
+  pdfChildOf: "Child of {names}",
+  pdfPartnerOf: "with {name}",
+  pdfTruncated: "Only the first 500 people were kept.",
+  pdfPartial: "Only the first 300 pages were read.",
   exportPdfBusy: "PDF {done}/{total}",
   exportPdfFailed: "The PDF could not be created.",
   pdfFilter: "PDF",
@@ -667,6 +760,7 @@ const en: Catalog = {
   layoutClassic: "Classic",
   layoutHorizontal: "Horizontal",
   layoutTapestry: "Tapestry",
+  layoutChart: "Chart",
   searchPlaceholder: "Search for a member …",
   searchLabel: "Search for a member",
   noMembersYet: "No members yet. Add your first person.",
@@ -720,6 +814,8 @@ const en: Catalog = {
   surnamePlaceholder: "e.g. Testfamiliec",
   birthName: "Birth name (optional)",
   birthNamePlaceholder: "e.g. Testfamilieg",
+  marriageNames: "Surnames from marriages",
+  marriageNamesPlaceholder: "e.g. Testfamilied / Testfamiliee",
   gender: "Gender",
   pleaseChoose: "Please choose",
   male: "♂ Male",
@@ -744,7 +840,12 @@ const en: Catalog = {
   weddingDate: "Wedding date",
   weddingDateOptional: "Wedding date (optional)",
   marriedOnShort: "married on {date}",
-  unspecified: "Single / unspecified",
+  unspecified: "Not married",
+  recordSeparation: "Record separation",
+  separationAsk: "Record a separation without marriage? Both people, their connection and shared children remain. A new partnership can then be added.",
+  logSeparated: "Separation recorded",
+  formerUnmarried: "Former unmarried partnership",
+  currentUnmarried: "Current unmarried partnership",
   recordDivorce: "Record divorce",
   editHint: "Changes apply only after you save.",
   viewHint: "Click the pencil to make changes.",
@@ -775,6 +876,9 @@ const en: Catalog = {
     "{name}: {count} members. Add it as a new family tree? The current family stays.",
   changeDeath: "Change date of death",
   markDeceased: "Mark as deceased",
+  deathUnknown: "unknown",
+  dateUnknown: "unknown",
+  markDeathUnknown: "Date unknown",
   enterDeath: "Please enter the date of death.",
   deathDate: "Date of death",
   deathHint: "The portrait is visually set back, without a cross.",
@@ -783,9 +887,9 @@ const en: Catalog = {
   marriageTitle: "Marital status of the partnership",
   maritalLabel: "Marital status",
   marriageBody:
-    "A connected partnership counts as married. Only married or divorced can be chosen as the shared couple when merging.",
+    "Unmarried partnerships also belong in the family tree. Choose the actual marital status. Merging still requires a married or divorced couple.",
   marriageHint:
-    "“Divorced” ends the active connection. A connected partnership is stored as married.",
+    "“Not married” preserves the relationship status. End an unmarried partnership with “Record separation”. “Divorced” ends a marriage; former partners and shared children remain visible.",
   saveMarriage: "Save marital status",
   marriageSaveFailed: "Marital status could not be saved.",
   deleteTreeTitle: "Delete family tree?",
@@ -835,6 +939,13 @@ const en: Catalog = {
   parentsComplete: "Parents already complete",
   stopAncestors: "Stop adding",
   addAncestors: "Add ancestors",
+  linkToChild: "Line to the child",
+  linkToParent: "Line to the parent",
+  cancelLink: "Cancel the line",
+  linkPickChild: "Click the person who is the child. Escape cancels.",
+  linkPickParent: "Click the person who is the parent. Escape cancels.",
+  linkDragChild: "Release on the person who is the child.",
+  linkDragParent: "Release on the person who is the parent.",
   openProfile: "Open profile",
   removePerson: "Remove person",
   movePair: "Move couple",
@@ -949,6 +1060,7 @@ const en: Catalog = {
   logPairMoved: "Couple moved",
   logTidied: "Layout tidied",
   logAncestorAdded: "Ancestor added",
+  logLinked: "Parent line drawn",
   logMemberAdded: "Member added",
   logProfileUpdated: "Profile updated",
   logDeathSet: "Date of death entered",
@@ -1051,7 +1163,7 @@ const en: Catalog = {
     "Drag to move this person. A click centers them. Double-click or Enter opens the profile.",
   guideBeatMenuTitle: "The menu on the portrait",
   guideBeatMenuBody: "Right-click the portrait to open this menu.",
-  guideBeatLayoutsTitle: "Three views",
+  guideBeatLayoutsTitle: "Four views",
   guideBeatLayoutsBody:
     "Classic, Horizontal and Tapestry sit above the canvas and show the same tree. Tidy up sits at the bottom right of the canvas and arranges the open view by generation.",
   guideChapterPerson: "First person",
@@ -1071,7 +1183,7 @@ const en: Catalog = {
   guideChapterTreesBody:
     "My trees creates further trees. Merge joins two trees through a married or divorced couple. Read the names under “These people will be merged”. Only that couple joins the trees. Both existing trees stay.",
   guideChapterKeepBody:
-    "The arrow at the top right (Undo) covers the last 30 steps of this session. Backup history in the sidebar keeps the last 100 saved states. Export asks first: a PDF, or an encrypted UriNamu file. Without the password the file cannot be opened. Write it down apart from the file. The tree on this computer stays open.",
+    "The arrow at the top right (Undo) covers the last 30 steps of this session. Backup history in the sidebar keeps the last 100 saved states. Export asks first: a PDF, or an encrypted UriNamu file. For a PDF, the check mark can include names, dates and notes, without photos. Import asks for a PDF or a UriNamu file. A PDF is read on this computer and opened as a new family tree. Without the password the UriNamu file cannot be opened. Write it down apart from the file. The tree on this computer stays open.",
   guideMergeHint:
     "Read the names under “These people will be merged”. Only that couple joins the trees. Both existing trees stay.",
   guideExportHint:
@@ -1108,7 +1220,7 @@ const en: Catalog = {
     "The same window, only for looking. The fields are read-only. Edit, with the pencil, turns changing on, and Choose photo appears then. The hint underneath says the same.",
   guideStepFamilyTitle: "Partner and child",
   guideStepFamilyBody:
-    "The lines appear once a partner and a child exist. You add both from the menu on the portrait, not by dragging.",
+    "The lines appear once a partner and a child exist. You add both from the menu on the portrait. For two people already in the tree, point at a portrait: the dot above draws to the parent, the dot below to the child.",
   guideStepMembersTitle: "Members",
   guideStepMembersBody:
     "In the sidebar, under Family tree. The row is one person. A click opens the profile. The pencil sits on the right of the row.",
@@ -1130,15 +1242,15 @@ const en: Catalog = {
   guideStepRemoveTitle: "Remove person",
   guideStepRemoveBody:
     "The question on the left comes first. Confirming removes only this person and their direct connections; the others stay. If they have descendants, the question on the right comes before that: only this person, or the following tree.",
-  guideStepLayoutsTitle: "Three views",
+  guideStepLayoutsTitle: "Four views",
   guideStepLayoutsBody:
-    "The three buttons sit in the bar above the canvas. Classic, Horizontal and Tapestry each show the same tree. Below are the three pictures of Testce, Testam and Testbr.",
+    "The four buttons sit in the bar above the canvas. Classic, Horizontal, Tapestry and Chart each show the same tree. Chart writes *, + and oo the way a descendant chart does. Below are the pictures of Testce, Testam and Testbr.",
   guideStepTidyTitle: "Tidy up",
   guideStepTidyBody:
     "At the bottom right of the canvas, in the group with the percentage, at the far right. The light outline marks it. It arranges only the view that is open, by generation. To its left you zoom out, zoom in and fit everything. Before, the three sit apart; after, they sit in their generations.",
   guideStepCollapseTitle: "Collapse",
   guideStepCollapseBody:
-    "The button sits above the canvas. It hides Add member, the three views and the search. Expand brings them back.",
+    "The button sits above the canvas. It hides Add member, the four views and the search. Expand brings them back.",
   guideStepSearchTitle: "Search for a member",
   guideStepSearchBody:
     "The field sits on the right of the same bar. Here it contains Testbr: Testce and Testam fade, Testbr stays clear. All of them stay where they are.",
@@ -1165,7 +1277,7 @@ const en: Catalog = {
     "In the sidebar. Each row is a saved state, and Open sits on the right. The click asks the question beside it. The current state stays in the history. These are the last 100 states, photos included, on this computer.",
   guideStepExportTitle: "Export and Import",
   guideStepExportBody:
-    "At the very top: Import and Export (outlined here). Export opens the choice. As PDF saves the open family tree as an ordinary PDF. As a UriNamu file opens the window with the two password fields. Without the password the file cannot be opened. In the browser preview the file exchange is unavailable; it works in the installed app. The PDF works in the preview as well.",
+    "At the very top: Import and Export (outlined here). Import opens the choice. As PDF reads a PDF on this computer and then shows the people found. A chart with *, + and oo is read with its couples and children. Included UriNamu data is used first. Read the text instead uses the text, also when that data cannot be read. Create as a new family tree leaves the current family in place. Photos in the PDF do not become portraits. As a UriNamu file opens the window with the password. Export opens the other choice. As PDF saves the open family tree as an ordinary PDF. The check mark puts names, dates and notes in the file, without photos. As a UriNamu file opens the window with the two password fields. Without the password the file cannot be opened. In the browser preview the file exchange is unavailable; it works in the installed app. The PDF works in the preview as well.",
 };
 
 const ko: Catalog = {
@@ -1198,7 +1310,40 @@ const ko: Catalog = {
   exportAsPdf: "PDF로",
   exportAsUrinamu: "UriNamu 파일로",
   exportChooseHint:
-    "PDF는 열린 가계도의 보통 그림이고 미리보기에서도 됩니다. UriNamu 파일은 암호화됩니다. 이어서 비밀번호 칸이 둘 나옵니다. 파일 교환은 설치된 앱에서만 됩니다.",
+    "PDF는 열린 가계도의 그림이고 미리보기에서도 됩니다. 체크하면 이름, 날짜, 메모가 사진 없이 파일에 들어가 다시 읽을 수 있습니다. 그것이 괜찮아야 이 PDF를 건네세요. UriNamu 파일은 암호화됩니다. 이어서 비밀번호 칸이 둘 나옵니다. 파일 교환은 설치된 앱에서만 됩니다.",
+  exportPdfInclude: "다시 읽도록 이름, 날짜, 메모를 넣고 사진은 빼기",
+  importChooseTitle: "가져오기",
+  importChooseBody: "무엇을 열까요?",
+  importAsPdf: "PDF로",
+  importAsUrinamu: "UriNamu 파일로",
+  importChooseHint:
+    "PDF는 이 컴퓨터에서 읽히고 업로드되지 않습니다. 들어 있는 UriNamu 데이터가 쓰입니다. 없거나 읽을 수 없으면 글을 읽습니다. *, + , oo가 있는 도표는 부부와 자녀로 읽습니다. 그 글은 직접 고를 수도 있습니다. PDF의 사진은 초상이 되지 않습니다. 암호화된 파일은 설치된 앱에서만 됩니다.",
+  pdfReadTitle: "PDF 읽기",
+  pdfReadBody:
+    "PDF는 이 컴퓨터에 남습니다. 먼저 들어 있는 UriNamu 데이터를 읽습니다. 없거나 읽을 수 없으면 글을 읽습니다.",
+  pdfChoose: "PDF 고르기",
+  pdfReading: "PDF 읽는 중 …",
+  pdfInvalid: "PDF를 읽지 못했습니다.",
+  pdfEncrypted: "이 PDF는 암호화되어 있어 여기서 읽을 수 없습니다.",
+  pdfTooBig: "PDF가 80 MB보다 큽니다.",
+  pdfEmbeddedNote: "들어 있는 UriNamu 데이터를 읽었습니다.",
+  pdfChartNote:
+    "도표는 줄로 읽습니다. *는 출생, +는 사망입니다. 가장 최근 결혼이 현재 배우자이고, 이혼이면 아닙니다. 빼기 표시는 결혼하지 않은 현재 배우자입니다. 등호는 결혼하지 않은 이전 배우자입니다. 빼기 표시가 결혼 옆에 있으면 역시 결혼하지 않은 이전 배우자로 읽습니다. 아래로 가는 선은 성과 상관없이 자녀입니다. 빗금으로 나뉜 성은 출생 성과 혼인 성이고, 마지막이 현재 성입니다. 모르는 이름은 ...입니다. 모르는 사망일은 날짜가 비고 미상으로 씁니다.",
+  pdfGenericNote: "PDF의 글을 읽었습니다. 글이 말한 연결만 만들어집니다.",
+  pdfEmbeddedBroken: "들어 있는 UriNamu 데이터를 읽지 못했습니다. 대신 글을 읽었습니다.",
+  pdfGenericEmpty: "글에서 사람을 찾지 못했습니다.",
+  pdfNoText:
+    "이 PDF에는 읽을 글이 없습니다. 그림만 있는 파일은 사람으로 나누지 못합니다. 내보낼 때 체크하면 이름과 날짜를 넣을 수 있습니다.",
+  pdfReadText: "대신 글 읽기",
+  pdfUseEmbedded: "UriNamu 데이터 사용",
+  pdfCreateTree: "새 가계도로 만들기",
+  pdfPeopleCount: "{count}명",
+  pdfNoPhotos: "PDF의 사진은 초상이 되지 않습니다. 지금 가족은 그대로 남습니다.",
+  pdfDefaultName: "읽어 온 가족",
+  pdfChildOf: "{names}의 자녀",
+  pdfPartnerOf: "{name}와(과)",
+  pdfTruncated: "앞의 500명만 가져왔습니다.",
+  pdfPartial: "앞의 300페이지만 읽었습니다.",
   exportPdfBusy: "PDF {done}/{total}",
   exportPdfFailed: "PDF를 만들지 못했습니다.",
   pdfFilter: "PDF",
@@ -1236,6 +1381,7 @@ const ko: Catalog = {
   layoutClassic: "고전",
   layoutHorizontal: "가로",
   layoutTapestry: "벽걸이",
+  layoutChart: "도표",
   searchPlaceholder: "구성원 검색 …",
   searchLabel: "구성원 검색",
   noMembersYet: "아직 구성원이 없습니다. 첫 사람을 추가하세요.",
@@ -1288,6 +1434,8 @@ const ko: Catalog = {
   surnamePlaceholder: "예: 예시성",
   birthName: "출생 시 성 (선택)",
   birthNamePlaceholder: "예: 예시출생성",
+  marriageNames: "혼인 성",
+  marriageNamesPlaceholder: "예: Testfamilied / Testfamiliee",
   gender: "성별",
   pleaseChoose: "선택하세요",
   male: "♂ 남성",
@@ -1312,7 +1460,12 @@ const ko: Catalog = {
   weddingDate: "결혼일",
   weddingDateOptional: "결혼일 (선택)",
   marriedOnShort: "{date}에 결혼",
-  unspecified: "미혼/미정",
+  unspecified: "혼인하지 않음",
+  recordSeparation: "결별 기록",
+  separationAsk: "혼인하지 않은 관계의 결별을 기록할까요? 두 사람과 관계, 공동 자녀는 그대로 유지되며 새 관계를 추가할 수 있습니다.",
+  logSeparated: "결별 기록됨",
+  formerUnmarried: "혼인하지 않은 이전 관계",
+  currentUnmarried: "혼인하지 않은 현재 관계",
   recordDivorce: "이혼 기록",
   editHint: "저장해야 변경 내용이 반영됩니다.",
   viewHint: "연필을 눌러 수정하세요.",
@@ -1343,6 +1496,9 @@ const ko: Catalog = {
     "{name}: 구성원 {count}명. 새 가계도로 추가할까요? 기존 가족은 그대로 남습니다.",
   changeDeath: "사망일 변경",
   markDeceased: "사망으로 표시",
+  deathUnknown: "미상",
+  dateUnknown: "미상",
+  markDeathUnknown: "날짜 미상",
   enterDeath: "사망일을 입력하세요.",
   deathDate: "사망일",
   deathHint: "초상은 십자가 없이 시각적으로만 옅어집니다.",
@@ -1351,9 +1507,9 @@ const ko: Catalog = {
   marriageTitle: "관계의 혼인 상태",
   maritalLabel: "혼인 상태",
   marriageBody:
-    "연결된 관계는 기혼으로 둡니다. 가계도를 합칠 때 공통 부부로 고를 수 있는 상태는 기혼과 이혼뿐입니다.",
+    "혼인하지 않은 관계도 가계도에 포함됩니다. 실제 혼인 상태를 선택하세요. 가계도를 합칠 때는 기혼 또는 이혼한 부부가 필요합니다.",
   marriageHint:
-    "“이혼”은 현재 연결을 끝냅니다. 연결된 관계는 기혼으로 저장됩니다.",
+    "“혼인하지 않음”은 관계 상태를 유지합니다. 혼인하지 않은 관계는 “결별 기록”으로 끝냅니다. “이혼”은 혼인을 끝내며 이전 파트너와 공동 자녀는 계속 표시됩니다.",
   saveMarriage: "혼인 상태 저장",
   marriageSaveFailed: "혼인 상태를 저장하지 못했습니다.",
   deleteTreeTitle: "가계도를 삭제할까요?",
@@ -1401,6 +1557,13 @@ const ko: Catalog = {
   parentsComplete: "부모가 이미 모두 있음",
   stopAncestors: "추가 끝내기",
   addAncestors: "조상 추가",
+  linkToChild: "자녀로 선 긋기",
+  linkToParent: "부모로 선 긋기",
+  cancelLink: "선 취소",
+  linkPickChild: "자녀인 사람을 누르세요. Escape는 취소합니다.",
+  linkPickParent: "부모인 사람을 누르세요. Escape는 취소합니다.",
+  linkDragChild: "자녀인 사람 위에서 놓으세요.",
+  linkDragParent: "부모인 사람 위에서 놓으세요.",
   openProfile: "프로필 열기",
   removePerson: "사람 제거",
   movePair: "부부 이동",
@@ -1515,6 +1678,7 @@ const ko: Catalog = {
   logPairMoved: "부부 이동",
   logTidied: "배치를 가지런히 모음",
   logAncestorAdded: "조상 추가",
+  logLinked: "부모 선을 그었습니다",
   logMemberAdded: "구성원 추가",
   logProfileUpdated: "프로필 수정",
   logDeathSet: "사망일 입력",
@@ -1611,7 +1775,7 @@ const ko: Catalog = {
     "끌면 이 사람이 움직입니다. 한 번 누르면 가운데로 옵니다. 두 번 누르거나 Enter는 프로필을 엽니다.",
   guideBeatMenuTitle: "초상의 메뉴",
   guideBeatMenuBody: "초상을 오른쪽 단추로 누르면 이 메뉴가 열립니다.",
-  guideBeatLayoutsTitle: "세 가지 보기",
+  guideBeatLayoutsTitle: "네 가지 보기",
   guideBeatLayoutsBody:
     "고전, 가로, 벽걸이는 화면 위에 있고 같은 가계도를 보여 줍니다. 가지런히 모으기는 화면 오른쪽 아래에 있고 열린 보기를 세대별로 정리합니다.",
   guideChapterPerson: "첫 사람",
@@ -1631,7 +1795,7 @@ const ko: Catalog = {
   guideChapterTreesBody:
     "내 가계도에서 나무를 더 만듭니다. 합치기는 기혼 또는 이혼한 부부로 두 가계도를 잇습니다. “이 사람들이 합쳐집니다” 아래의 이름을 읽으세요. 이 부부만 가계도를 잇습니다. 두 원래 가계도는 남습니다.",
   guideChapterKeepBody:
-    "오른쪽 위 화살표(실행 취소)는 이 자리의 최근 30걸음입니다. 옆 막대의 백업 기록은 저장된 최근 100개를 담습니다. 내보내기는 먼저 PDF인지 암호화된 UriNamu 파일인지 묻습니다. 비밀번호가 없으면 파일을 열 수 없습니다. 파일과 따로 적어두세요. 이 컴퓨터의 가계도는 그대로 열려 있습니다.",
+    "오른쪽 위 화살표(실행 취소)는 이 자리의 최근 30걸음입니다. 옆 막대의 백업 기록은 저장된 최근 100개를 담습니다. 내보내기는 먼저 PDF인지 암호화된 UriNamu 파일인지 묻습니다. PDF에서는 체크하면 이름, 날짜, 메모가 사진 없이 들어갑니다. 가져오기는 PDF인지 UriNamu 파일인지 묻습니다. PDF는 이 컴퓨터에서 읽혀 새 가계도가 됩니다. 비밀번호가 없으면 UriNamu 파일을 열 수 없습니다. 파일과 따로 적어두세요. 이 컴퓨터의 가계도는 그대로 열려 있습니다.",
   guideMergeHint:
     "“이 사람들이 합쳐집니다” 아래의 이름을 읽으세요. 이 부부만 가계도를 잇습니다. 두 원래 가계도는 남습니다.",
   guideExportHint:
@@ -1668,7 +1832,7 @@ const ko: Catalog = {
     "같은 창이고, 보기만 합니다. 칸은 읽기 전용입니다. 연필이 있는 편집이 수정을 켜고, 그다음에 사진 선택이 나타납니다. 아래 힌트가 같은 말을 합니다.",
   guideStepFamilyTitle: "배우자와 자녀",
   guideStepFamilyBody:
-    "배우자와 자녀가 생기면 선이 그려집니다. 둘 다 초상의 메뉴에서 추가합니다. 끌어서는 생기지 않습니다.",
+    "배우자와 자녀가 생기면 선이 그려집니다. 둘 다 초상의 메뉴에서 추가합니다. 이미 있는 두 사람은 초상 위에 마우스를 올립니다. 위 점은 부모로, 아래 점은 자녀로 선을 긋습니다.",
   guideStepMembersTitle: "구성원",
   guideStepMembersBody:
     "옆 막대에서 가계도 아래입니다. 한 줄이 한 사람입니다. 한 번 누르면 프로필이 열립니다. 연필은 줄 오른쪽에 있습니다.",
@@ -1690,15 +1854,15 @@ const ko: Catalog = {
   guideStepRemoveTitle: "사람 제거",
   guideStepRemoveBody:
     "왼쪽 질문이 먼저 옵니다. 확인하면 그 사람과 직접 연결만 빠지고 다른 사람은 남습니다. 후손이 있으면 그 전에 오른쪽 질문이 옵니다. 그 사람만, 또는 이어지는 가계.",
-  guideStepLayoutsTitle: "세 가지 보기",
+  guideStepLayoutsTitle: "네 가지 보기",
   guideStepLayoutsBody:
-    "세 단추는 화면 위 막대에 있습니다. 고전, 가로, 벽걸이는 매번 같은 가계도입니다. 아래는 Testce, Testam, Lena의 세 그림입니다.",
+    "네 단추는 화면 위 막대에 있습니다. 고전, 가로, 벽걸이, 도표는 매번 같은 가계도입니다. 도표는 후손표처럼 *, + 와 oo를 씁니다. 아래는 Testce, Testam, Lena의 그림입니다.",
   guideStepTidyTitle: "가지런히 모으기",
   guideStepTidyBody:
     "화면 오른쪽 아래, 퍼센트와 함께 있는 묶음의 맨 오른쪽입니다. 밝은 테두리가 그것을 표시합니다. 지금 열린 보기만 세대별로 정리합니다. 그 왼쪽에서 축소, 확대, 모두 맞추기를 합니다. 이전에는 세 사람이 떨어져 있고, 이후에는 세대에 놓입니다.",
   guideStepCollapseTitle: "접기",
   guideStepCollapseBody:
-    "이 단추는 화면 위에 있습니다. 구성원 추가, 세 가지 보기, 검색을 숨깁니다. 펼치기가 되돌립니다.",
+    "이 단추는 화면 위에 있습니다. 구성원 추가, 네 가지 보기, 검색을 숨깁니다. 펼치기가 되돌립니다.",
   guideStepSearchTitle: "구성원 검색",
   guideStepSearchBody:
     "같은 막대 오른쪽에 칸이 있습니다. 여기에는 Lena가 들어 있습니다. Thomas와 Clara는 옅어지고 Lena는 선명합니다. 자리는 그대로입니다.",
@@ -1725,7 +1889,7 @@ const ko: Catalog = {
     "옆 막대에 있습니다. 한 줄이 저장된 상태 하나이고, 열기는 오른쪽에 있습니다. 누르면 옆의 질문이 나옵니다. 현재 상태는 기록에 남습니다. 저장된 최근 100개이고, 사진이 포함되며, 이 컴퓨터에 있습니다.",
   guideStepExportTitle: "내보내기와 가져오기",
   guideStepExportBody:
-    "맨 위입니다. 가져오기와 내보내기(여기 테두리). 내보내기는 선택을 엽니다. PDF로는 열린 가계도를 보통 PDF로 저장합니다. UriNamu 파일로는 비밀번호 칸 둘이 있는 창이 열립니다. 비밀번호가 없으면 파일을 열 수 없습니다. 브라우저 미리보기에서는 파일 교환이 되지 않고, 설치된 앱에서 됩니다. PDF는 미리보기에서도 됩니다.",
+    "맨 위입니다. 가져오기와 내보내기(여기 테두리). 가져오기는 선택을 엽니다. PDF로는 이 컴퓨터에서 PDF를 읽고 찾은 사람을 보여 줍니다. *, + , oo가 있는 도표는 부부와 자녀로 읽습니다. 들어 있는 UriNamu 데이터가 먼저입니다. 대신 글 읽기는 그 데이터를 읽지 못해도 글을 읽습니다. 새 가계도로 만들기는 지금 가족을 남겨 둡니다. PDF의 사진은 초상이 되지 않습니다. UriNamu 파일로는 비밀번호 창이 열립니다. 내보내기는 다른 선택을 엽니다. PDF로는 열린 가계도를 보통 PDF로 저장합니다. 체크하면 이름, 날짜, 메모가 사진 없이 파일에 들어갑니다. UriNamu 파일로는 비밀번호 칸 둘이 있는 창이 열립니다. 비밀번호가 없으면 파일을 열 수 없습니다. 브라우저 미리보기에서는 파일 교환이 되지 않고, 설치된 앱에서 됩니다. PDF는 미리보기에서도 됩니다.",
 };
 
 const catalogs: Record<Locale, Catalog> = { de, en, ko };

@@ -2,6 +2,10 @@ import MergeDialog from "./MergeDialog";
 import LibraryDialog from "./LibraryDialog";
 import { GuideBeatCard, GuideBook, type GuideChapter } from "./GuidePanel";
 import { PdfJob } from "./PdfJob";
+
+const PdfImport = lazy(() =>
+  import("./PdfImport").then((module) => ({ default: module.PdfImport })),
+);
 import { pdfFileName, savePdfFile } from "./savePdf";
 import {
   guideBeat,
@@ -12,7 +16,7 @@ import {
 import PhotoCrop from "./PhotoCrop";
 import DateField from "./DateField";
 import { dateLabel, dateValue } from "./dates";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Plus,
   Search,
@@ -37,6 +41,7 @@ import {
   TreePine,
   Columns3,
   Sparkles,
+  ScrollText,
   ChevronDown,
   ChevronUp,
   BookOpen,
@@ -52,6 +57,7 @@ import {
   validate,
   assignMarriage,
   updatePerson,
+  linkParent,
   removePerson,
   descendantIds,
   childrenOf,
@@ -62,6 +68,7 @@ import {
   matchesQuery,
   nameInputs,
   setDeathDate,
+  separatePartnership,
 } from "./domain";
 import {
   desktop,
@@ -212,6 +219,8 @@ export default function App() {
     [branch, setBranch] = useState<Union | null>(null),
     [transfer, setTransfer] = useState<"export" | "import" | null>(null),
     [pdfFamily, setPdfFamily] = useState<Family | null>(null),
+    [pdfIncludeData, setPdfIncludeData] = useState(true),
+    [pdfImportOpen, setPdfImportOpen] = useState(false),
     [pdfStep, setPdfStep] = useState<{ done: number; total: number } | null>(
       null,
     ),
@@ -571,17 +580,16 @@ export default function App() {
     );
   };
   async function separate(u: Union) {
+    const married = u.marriage === "married" || u.marriage === "divorced";
     if (
       !family ||
       !(await ask(
-        t("divorceAsk"),
+        t(married ? "divorceAsk" : "separationAsk"),
       ))
     )
       return;
-    const next = structuredClone(family);
-    next.unions.find((x) => x.id === u.id)!.status = "separated";
-    next.unions.find((x) => x.id === u.id)!.marriage = "divorced";
-    if (await commit(next, "logDivorced")) setEditor(null);
+    const next = separatePartnership(family, u.id);
+    if (await commit(next, married ? "logDivorced" : "logSeparated")) setEditor(null);
   }
   async function undoAction(forward = false) {
     const source = forward ? redo : undo;
@@ -825,6 +833,7 @@ export default function App() {
                           ["classic", "layoutClassic", TreePine],
                           ["horizontal", "layoutHorizontal", Columns3],
                           ["tapestry", "layoutTapestry", Sparkles],
+                          ["chart", "layoutChart", ScrollText],
                         ] as const
                       ).map(([id, label, Icon]) => (
                         <button
@@ -894,6 +903,15 @@ export default function App() {
                 }
                 onAncestor={addAncestor}
                 onChild={(parentId) => add("", [parentId])}
+                onLink={(childId, parentId) => {
+                  if (!family) return;
+                  try {
+                    const next = linkParent(family, childId, parentId);
+                    if (next !== family) void commit(next, "logLinked");
+                  } catch (e) {
+                    setError(String(e));
+                  }
+                }}
                 onDeath={setDeathPersonId}
                 onRemove={(id) => {
                   void requestRemove(id);
@@ -1062,16 +1080,35 @@ export default function App() {
             onClose={() => {
               if (!busy) setDeathPersonId(null);
             }}
-            onSave={async (died) => {
-              const next = setDeathDate(family, deathPersonId, died);
+            onSave={async (died, deceased) => {
+              const next = setDeathDate(family, deathPersonId, died, deceased);
               const person = family.members.find(
                 (p) => p.id === deathPersonId,
               )!;
-              if (!(await confirmDeathChange(person, died))) return;
+              if (person.died === died && Boolean(person.deceased) === deceased) return;
+              const action = died || deceased
+                ? person.died || person.deceased
+                  ? t("changeDeath")
+                  : t("markDeceased")
+                : t("clearDeceased");
+              if (
+                !(await ask(
+                  t("deathAsk", {
+                    action,
+                    name: displayName(person),
+                    detail: died
+                      ? t("deathDetailSet", { date: dateLabel(died) })
+                      : deceased
+                        ? t("deathDetailSet", { date: t("deathUnknown") })
+                        : t("deathDetailClear"),
+                  }),
+                ))
+              )
+                return;
               if (
                 await commit(
                   next,
-                  died ? "logDeathSet" : "logDeathCleared",
+                  died || deceased ? "logDeathSet" : "logDeathCleared",
                 )
               )
                 setDeathPersonId(null);
@@ -1158,17 +1195,30 @@ export default function App() {
           ask={ask}
           onImport={(f) => newTree(f, "logImported")}
           onNotice={setNotice}
-          onPdf={() => {
+          onPdf={(includeData) => {
             if (!family?.members.length) return;
+            setPdfIncludeData(includeData);
             setPdfStep(null);
             setPdfFamily(structuredClone(family));
           }}
+          onPdfImport={() => setPdfImportOpen(true)}
         />
+      )}
+      {pdfImportOpen && (
+        <Suspense fallback={null}>
+          <PdfImport
+            onClose={() => setPdfImportOpen(false)}
+            onCreate={(next) => {
+              return newTree(next, "logImported");
+            }}
+          />
+        </Suspense>
       )}
       {pdfFamily && (
         <PdfJob
           family={pdfFamily}
           layout={layout}
+          includeData={pdfIncludeData}
           onProgress={(done, total) => setPdfStep({ done, total })}
           onDone={(bytes) => {
             const name = pdfFileName(pdfFamily.name);
@@ -1252,7 +1302,7 @@ export default function App() {
             u.marriage = marriage;
             if (marriage === "married") u.status = "active";
             if (marriage === "divorced") u.status = "separated";
-            if (marriedOn) u.marriedOn = marriedOn;
+            if (marriedOn && marriage !== "unspecified") u.marriedOn = marriedOn;
             else delete u.marriedOn;
             assignMarriage(u);
             try {
@@ -1674,6 +1724,22 @@ function PersonEditor({
               />
             </label>
             <label>
+              {t("marriageNames")}
+              <input
+                maxLength={200}
+                placeholder={t("marriageNamesPlaceholder")}
+                value={(p.marriageNames ?? []).join(" / ")}
+                onChange={(e) => {
+                  const parts = e.target.value
+                    .split("/")
+                    .map((part) => part.trim())
+                    .filter(Boolean)
+                    .slice(0, 6);
+                  change("marriageNames", parts.length ? parts : undefined);
+                }}
+              />
+            </label>
+            <label>
               {t("gender")}
               <select
                 value={p.gender}
@@ -1856,7 +1922,7 @@ function PersonEditor({
                     disabled={busy || dirty}
                     onClick={() => onSeparate(u)}
                   >
-                    {t("recordDivorce")}
+                    {t(u.marriage === "married" ? "recordDivorce" : "recordSeparation")}
                   </button>
                 )}
               </div>
@@ -1988,6 +2054,7 @@ function Transfer({
   onImport,
   onNotice,
   onPdf,
+  onPdfImport,
 }: {
   mode: "export" | "import";
   family: Family;
@@ -1995,14 +2062,36 @@ function Transfer({
   onClose: () => void;
   onImport: (f: Family) => Promise<boolean>;
   onNotice: (s: string) => void;
-  onPdf: () => void;
+  onPdf: (includeData: boolean) => void;
+  onPdfImport: () => void;
 }) {
   const [password, setPassword] = useState(""),
     [repeat, setRepeat] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
-    [kind, setKind] = useState<"choose" | "file">(
-      mode === "export" ? "choose" : "file",
+    [includeData, setIncludeData] = useState(true),
+    [kind, setKind] = useState<"choose" | "file">("choose");
+  if (kind === "choose" && mode === "import")
+    return (
+      <Modal title={t("importChooseTitle")} onClose={onClose}>
+        <p>{t("importChooseBody")}</p>
+        <div className="actions export-choices">
+          <button
+            type="button"
+            className="primary"
+            onClick={() => {
+              onPdfImport();
+              onClose();
+            }}
+          >
+            <FileImage size={16} /> {t("importAsPdf")}
+          </button>
+          <button type="button" onClick={() => setKind("file")}>
+            <Upload size={16} /> {t("importAsUrinamu")}
+          </button>
+        </div>
+        <p className="hint">{t("importChooseHint")}</p>
+      </Modal>
     );
   if (kind === "choose")
     return (
@@ -2014,7 +2103,7 @@ function Transfer({
             className="primary"
             disabled={!family.members.length}
             onClick={() => {
-              onPdf();
+              onPdf(includeData);
               onClose();
             }}
           >
@@ -2024,6 +2113,14 @@ function Transfer({
             <Download size={16} /> {t("exportAsUrinamu")}
           </button>
         </div>
+        <label className="choice-check">
+          <input
+            type="checkbox"
+            checked={includeData}
+            onChange={(event) => setIncludeData(event.target.checked)}
+          />
+          {t("exportPdfInclude")}
+        </label>
         <p className="hint">{t("exportChooseHint")}</p>
       </Modal>
     );
@@ -2141,21 +2238,21 @@ function DeathDialog({
   person: Person;
   busy: boolean;
   onClose: () => void;
-  onSave: (value: string) => Promise<void>;
+  onSave: (value: string, deceased: boolean) => Promise<void>;
 }) {
   const [value, setValue] = useState(person.died);
   const [error, setError] = useState("");
-  const save = async (died: string) => {
+  const save = async (died: string, deceased: boolean) => {
     setError("");
     try {
-      await onSave(died);
+      await onSave(died, deceased);
     } catch (e) {
       setError(String(e));
     }
   };
   return (
     <Modal
-      title={person.died ? t("changeDeath") : t("markDeceased")}
+      title={person.died || person.deceased ? t("changeDeath") : t("markDeceased")}
       onClose={onClose}
     >
       <p>{displayName(person)}</p>
@@ -2167,7 +2264,7 @@ function DeathDialog({
             setError(t("enterDeath"));
             return;
           }
-          void save(died);
+          void save(died, false);
         }}
       >
         <div className="fields">
@@ -2193,8 +2290,11 @@ function DeathDialog({
           <button className="primary" disabled={busy}>
             {t("saveDeath")}
           </button>
-          {person.died && (
-            <button type="button" disabled={busy} onClick={() => void save("")}>
+          <button type="button" disabled={busy} onClick={() => void save("", true)}>
+            {t("markDeathUnknown")}
+          </button>
+          {(person.died || person.deceased) && (
+            <button type="button" disabled={busy} onClick={() => void save("", false)}>
               {t("clearDeath")}
             </button>
           )}
@@ -2335,7 +2435,7 @@ function MarriageDialog({
   onSave: (value: Marriage, marriedOn: string) => Promise<string>;
 }) {
   const [value, setValue] = useState<Marriage>(
-      union.status === "active" ? "married" : union.marriage || "unspecified",
+      union.marriage || "unspecified",
     ),
     [marriedOn, setMarriedOn] = useState(union.marriedOn || ""),
     [error, setError] = useState("");
@@ -2357,20 +2457,18 @@ function MarriageDialog({
               disabled={busy}
               onChange={(e) => setValue(e.target.value as Marriage)}
             >
-              {union.status !== "active" && (
-                <option value="unspecified">{t("unspecified")}</option>
-              )}
+              <option value="unspecified">{t("unspecified")}</option>
               <option value="married">{t("married")}</option>
               <option value="divorced">{t("divorced")}</option>
             </select>
           </label>
-          <DateField
+          {value !== "unspecified" && <DateField
             label={t("weddingDateOptional")}
             value={marriedOn}
             example="18.06.1984"
             disabled={busy}
             onChange={setMarriedOn}
-          />
+          />}
         </div>
         <p className="hint">
           {t("marriageHint")}

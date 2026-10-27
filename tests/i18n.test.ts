@@ -36,10 +36,10 @@ describe("Sprachen", () => {
       born: "",
       died: "",
     } as Person;
-    expect(years(person)).toContain("Geburt offen");
+    expect(years(person)).toContain("unbekannt");
     setLocale("en");
-    expect(years(person)).toContain("Birth open");
+    expect(years(person)).toContain("unknown");
     setLocale("ko");
-    expect(years(person)).toContain("출생 미상");
+    expect(years(person)).toContain("미상");
   });
 });

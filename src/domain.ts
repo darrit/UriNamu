@@ -7,8 +7,12 @@ export interface Person {
   firstName?: string;
   lastName?: string;
   birthName?: string;
+  /** Surnames taken at marriages, in order. The last one is the current surname. */
+  marriageNames?: string[];
   born: string;
   died: string;
+  /** True when the person died and the day itself is unknown. */
+  deceased?: boolean;
   place: string;
   bio: string;
   gender: Gender;
@@ -16,7 +20,7 @@ export interface Person {
   photo: string;
   parents: string[];
   positions?: Partial<
-    Record<"classic" | "horizontal" | "tapestry", { x: number; y: number }>
+    Record<"classic" | "horizontal" | "tapestry" | "chart", { x: number; y: number }>
   >;
   partner?: string;
   /** Dynasty founded by this person. Descendants belong to it. */
@@ -71,8 +75,9 @@ export const newPerson = (): Person => ({
 export const unionKey = (a: string, b: string) => [a, b].sort().join("|");
 
 /**
- * A connected partnership is a marriage. A line struck for divorce is
- * divorced. A separated pair that was never connected stays unspecified.
+ * A connected marriage stays married. A line struck for divorce is divorced.
+ * A connected pair that was never married stays unspecified. A separated pair
+ * that was never married stays unspecified too.
  */
 export function assignMarriage(union: Union): void {
   if (union.status === "separated") {
@@ -80,6 +85,7 @@ export function assignMarriage(union: Union): void {
       union.marriage = "divorced";
     return;
   }
+  if (union.marriage === "unspecified") return;
   union.marriage = "married";
 }
 export const childrenOf = (f: Family, u: Union) =>
@@ -159,7 +165,7 @@ export function validate(f: Family): void {
         Array.isArray(p.positions) ||
         Object.entries(p.positions).some(
           ([mode, point]) =>
-            !["classic", "horizontal", "tapestry"].includes(mode) ||
+            !["classic", "horizontal", "tapestry", "chart"].includes(mode) ||
             !point ||
             !Number.isFinite(point.x) ||
             !Number.isFinite(point.y) ||
@@ -176,11 +182,21 @@ export function validate(f: Family): void {
         (typeof p[key] !== "string" || p[key]!.length > 100)
       )
         throw Error(t("errNameFields"));
+    if (
+      p.marriageNames !== undefined &&
+      (!Array.isArray(p.marriageNames) ||
+        p.marriageNames.length > 6 ||
+        p.marriageNames.some(
+          (name) => typeof name !== "string" || !name.trim() || name.length > 80,
+        ))
+    )
+      throw Error(t("errNameFields"));
     for (const k of ["born", "died", "place", "bio", "photo"] as const)
       if (typeof p[k] !== "string") throw Error(t("errProfile"));
     if (
       !["male", "female", ""].includes(p.gender) ||
-      !["normal", "dimmed", "struck"].includes(p.appearance)
+      !["normal", "dimmed", "struck"].includes(p.appearance) ||
+      (p.deceased !== undefined && typeof p.deceased !== "boolean")
     )
       throw Error(t("errAppearance"));
     if (
@@ -319,6 +335,7 @@ export function normalize(raw: unknown): Family {
       appearance: p.appearance || "normal",
       photo: p.photo || "",
       parents: p.parents || [],
+      deceased: p.deceased === true || undefined,
       partner: undefined,
     })),
     unions:
@@ -337,7 +354,7 @@ export function normalize(raw: unknown): Family {
           b: p.partner,
           status: "active",
           ended: false,
-          marriage: "unspecified",
+          marriage: "married",
         });
     }
   for (const p of f.members)
@@ -402,7 +419,7 @@ export function updatePerson(f: Family, p: Person, partner: string): Family {
         b: partner,
         status: "active",
         ended: false,
-        marriage: "unspecified",
+        marriage: "married",
       });
   }
   for (const member of next.members)
@@ -426,6 +443,22 @@ export function updatePerson(f: Family, p: Person, partner: string): Family {
   validate(next);
   return next;
 }
+/** Retain former partners and their children without inventing a marriage. */
+export function separatePartnership(family: Family, unionId: string): Family {
+  const next = structuredClone(family);
+  const union = next.unions.find((item) => item.id === unionId);
+  if (!union) throw Error(t("errUnion"));
+  union.status = "separated";
+  if (union.marriage === "married" || union.marriage === "divorced")
+    union.marriage = "divorced";
+  else {
+    union.marriage = "unspecified";
+    delete union.marriedOn;
+  }
+  validate(next);
+  return next;
+}
+
 export function descendantIds(f: Family, id: string): string[] {
   const found = new Set<string>();
   const visit = (parentId: string) => {
@@ -438,6 +471,41 @@ export function descendantIds(f: Family, id: string): string[] {
   visit(id);
   return [...found];
 }
+
+/** Draws the parent line between two people who are already in the tree. */
+export function linkParent(
+  family: Family,
+  childId: string,
+  parentId: string,
+): Family {
+  if (childId === parentId) throw Error(t("errParent"));
+  const child = family.members.find((person) => person.id === childId);
+  const parent = family.members.find((person) => person.id === parentId);
+  if (!child || !parent) throw Error(t("errMissingPerson"));
+  if (child.parents.includes(parentId)) return family;
+  if (child.parents.length >= 2) throw Error(t("errTwoParents"));
+  if (descendantIds(family, childId).includes(parentId))
+    throw Error(t("errCycle"));
+  const next = structuredClone(family);
+  const linked = next.members.find((person) => person.id === childId)!;
+  linked.parents = [...linked.parents, parentId];
+  if (linked.parents.length === 2) {
+    const [a, b] = linked.parents;
+    const key = unionKey(a, b);
+    if (!next.unions.some((union) => union.id === key))
+      next.unions.push({
+        id: key,
+        a,
+        b,
+        status: "separated",
+        ended: false,
+        marriage: "unspecified",
+      });
+  }
+  validate(next);
+  return next;
+}
+
 export function removePerson(
   f: Family,
   id: string,
@@ -457,21 +525,23 @@ export function removePerson(
   validate(next);
   return next;
 }
-export function setDeathDate(f: Family, id: string, died: string): Family {
+export function setDeathDate(f: Family, id: string, died: string, deceased = Boolean(died)): Family {
   const next = structuredClone(f);
   const person = next.members.find((p) => p.id === id);
   if (!person)
     throw Error(t("errMissingPerson"));
   person.died = died;
+  person.deceased = !died && deceased ? true : undefined;
   validate(next);
   return next;
 }
+export const isDeceased = (p: Person) => Boolean(p.died || p.deceased);
 export const symbol = (p: Person) =>
   p.gender === "male" ? "♂" : p.gender === "female" ? "♀" : "";
 export const years = (p: Person) =>
   [
-    p.born ? dateLabel(p.born) : t("birthOpen"),
-    p.died ? `† ${dateLabel(p.died)}` : "",
+    p.born ? dateLabel(p.born) : t("dateUnknown"),
+    p.died ? `† ${dateLabel(p.died)}` : p.deceased ? `† ${t("deathUnknown")}` : "",
   ]
     .filter(Boolean)
     .join(" – ");
@@ -513,6 +583,20 @@ function storedPersonName<T extends Person>(p: T): T {
     name: [firstName ?? "", lastName ?? ""].filter(Boolean).join(" "),
   };
 }
+/** Birth name, then each marriage surname, in the order a descendant chart writes them. */
+export function chartSurnames(person: Person | undefined): string {
+  if (!person) return "";
+  const birth = person.birthName?.trim() ?? "";
+  const married = (person.marriageNames ?? []).map((name) => name.trim()).filter(Boolean);
+  const line = [birth, ...married].filter(Boolean);
+  if (line.length) return line.join(" / ");
+  const parts = nameParts(person);
+  const full = person.name.trim();
+  if (parts.firstName && full.startsWith(`${parts.firstName} `))
+    return full.slice(parts.firstName.length).trim();
+  return parts.lastName;
+}
+
 export function displayName(p: Person | undefined): string {
   if (!p) return "";
   if (!p.birthName?.trim()) return p.name;

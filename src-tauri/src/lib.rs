@@ -39,8 +39,12 @@ pub struct Person {
     pub last_name: String,
     #[serde(default, rename = "birthName")]
     pub birth_name: String,
+    #[serde(default, rename = "marriageNames", skip_serializing_if = "Vec::is_empty")]
+    pub marriage_names: Vec<String>,
     pub born: String,
     pub died: String,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub deceased: bool,
     pub place: String,
     pub bio: String,
     pub gender: String,
@@ -62,6 +66,9 @@ fn child_prompt_default() -> bool {
 }
 fn is_true(value: &bool) -> bool {
     *value
+}
+fn is_false(value: &bool) -> bool {
+    !*value
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Dynasty {
@@ -166,6 +173,10 @@ pub fn validate(f: &Family) -> Result<()> {
             || p.first_name.chars().count() > 100
             || p.last_name.chars().count() > 100
             || p.birth_name.chars().count() > 100
+            || p.marriage_names.len() > 6
+            || p.marriage_names.iter().any(|name| {
+                name.trim().is_empty() || name.chars().count() > 80
+            })
             || p.parents.len() > 2
             || p.parents.iter().collect::<HashSet<_>>().len() != p.parents.len()
             || !["male", "female", ""].contains(&p.gender.as_str())
@@ -176,7 +187,7 @@ pub fn validate(f: &Family) -> Result<()> {
             || p.bio.len() > 20000
             || p.photo.len() > 2_000_000
             || p.positions.iter().any(|(mode, point)| {
-                !["classic", "horizontal", "tapestry"].contains(&mode.as_str())
+                !["classic", "horizontal", "tapestry", "chart"].contains(&mode.as_str())
                     || !point.x.is_finite()
                     || !point.y.is_finite()
                     || point.x.abs() > 1_000_000.0

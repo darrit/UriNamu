@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Tree from "./Tree";
+import { attachFamily } from "./pdfAttach";
 import { type Family } from "./domain";
 import { type Layout } from "./layout";
 import {
@@ -43,12 +44,14 @@ async function paintTile(
 export function PdfJob({
   family,
   layout,
+  includeData,
   onProgress,
   onDone,
   onError,
 }: {
   family: Family;
   layout: Layout;
+  includeData: boolean;
   onProgress: (done: number, total: number) => void;
   onDone: (bytes: Uint8Array) => void;
   onError: (error: unknown) => void;
@@ -73,9 +76,17 @@ export function PdfJob({
       });
     void (async () => {
       try {
-        const bytes = await buildPdf(pages, tiles, pixelRatio, waitPaint, () =>
-          cancel,
-        (index, total) => progress.current(index, total), setFrame);
+        const bytes = await buildPdf(
+          pages,
+          tiles,
+          pixelRatio,
+          waitPaint,
+          () => cancel,
+          (index, total) => progress.current(index, total),
+          setFrame,
+          family,
+          includeData,
+        );
         if (!cancel) done.current(bytes);
       } catch (error) {
         if (!cancel) fail.current(error);
@@ -84,7 +95,7 @@ export function PdfJob({
     return () => {
       cancel = true;
     };
-  }, [family, layout]);
+  }, [family, layout, includeData]);
 
   useEffect(() => {
     if (!frame || !host.current) return;
@@ -125,6 +136,7 @@ export function PdfJob({
           onBranch={idle}
           onAncestor={idle}
           onChild={idle}
+          onLink={idle}
           onSeparate={idle}
           onDeath={idle}
           onDynasty={idle}
@@ -144,6 +156,8 @@ async function buildPdf(
   cancelled: () => boolean,
   onProgress: (done: number, total: number) => void,
   setFrame: (frame: PosterFrame) => void,
+  family: Family,
+  includeData: boolean,
 ) {
   const { PDFDocument, StandardFonts, rgb } = await import("pdf-lib");
   const pdf = await PDFDocument.create();
@@ -182,5 +196,7 @@ async function buildPdf(
       });
     });
   }
+  if (includeData) await attachFamily(pdf, family);
+  else pdf.setTitle(family.name);
   return pdf.save();
 }

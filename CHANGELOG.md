@@ -1,5 +1,69 @@
 # Changelog
 
+## 0.7.13 — 2026-10-31
+
+- Preserve the selected layout on PDF import. Recognize partner strokes touching frame edges and associate successive partners with the descendant when the chart identifies a unique central person.
+- Show unmarried partnership status in every layout and explicitly mark divorced wedding labels with an equals sign alongside their dates.
+
+## 0.7.12 — 2026-10-31
+
+- Record separation for unmarried partners without turning their relationship into a divorce. Former partners, their connection and shared children remain in every layout, including after adding a new partner.
+- Allow active partnerships to be marked not married in the profile. Hide and clear wedding dates for unmarried relationships, and distinguish separation from divorce in actions, confirmations and history.
+
+## 0.7.11 — 2026-10-31
+
+- Combine a PDF couple's equals sign with its wedding branch: retain the wedding date and mark the marriage divorced. An equals sign without a wedding remains a separated unmarried partnership; a minus identifies a current unmarried partnership.
+- Select the newest marriage only if it is not divorced, without reactivating an older marriage. Recognize partnership signs between person frames, including signs drawn as strokes, without importing them as people.
+
+## 0.7.10 — 2026-10-31
+
+- Import framed descendant PDFs using transformed person frames and connected drawing strokes. Long sibling bars and diagonal branches retain their actual parents; crossing lines and unconnected partners no longer create guessed relationships.
+- Preserve the printed generation alignment across layouts and when tidying the chart. Repeated tidying keeps the same placement, including people without recorded parents.
+- Recognize LAG as a partnership without marriage and retain incomplete dates as notes. Regression tests use invented data; private source documents are not included.
+
+## 0.7.9 — 2026-10-27
+
+- The chart writes = for an earlier partner who was not married. A minus stays the current partner without a marriage.
+
+## 0.7.8 — 2026-10-27
+
+- A chart child stays with the couple whose stroke reaches them. A long diagonal that does not land on that couple is not a parent line.
+- The chart view draws the same curves and partner places as the other layouts. Its cards still show *, +, oo and minus.
+- Tidy closes gaps toward the nearest people on the same rank. A child or partner keeps that new place while the line still belongs to their parents, and returns beside them when it does not.
+
+## 0.7.7 — 2026-10-27
+
+- Point at a portrait: the dot above draws the line to a parent, the dot below to a child.
+- A slash in a chart surname is the birth name, then each marriage surname. The chart view writes the sheet's *, +, oo and minus, and an imported tree stays on the canvas.
+
+## 0.7.6 — 2026-10-27
+
+- A chart child follows the stroke that leaves a couple, including a diagonal down to a person further along the row. Ticks under one bar stay with that couple.
+
+## 0.7.5 — 2026-10-27
+
+- Two people already in the tree can be joined as parent and child. The line can start at the parent or at the child.
+
+## 0.7.4 — 2026-10-27
+
+- A chart child follows the line that stays between one generation and the next, and stops at the next family. Compacting keeps that left-to-right order. A divorce is drawn across the wedding date. An unknown birth or wedding date reads unknown.
+
+## 0.7.3 — 2026-10-27
+
+- A normal minus in a chart is the current partner without a marriage. If that person also has a marriage, the newest marriage stays current and the minus partner remains visible.
+
+## 0.7.2 — 2026-10-27
+
+- A chart's newest marriage is the current partnership, unless that marriage is divorced. A single minus is the current partner without a marriage, and o-o stays visible as an earlier partner. Children follow the line downward, whatever the surname. An unknown name stays as dots. An unknown date of death still marks the person deceased and the date stays empty.
+
+## 0.7.1 — 2026-10-27
+
+- A descendant chart is read by its rows. Births, deaths, marriages and the children under each couple are kept, including the people at the top. An incomplete date stays as a note.
+
+## 0.7.0 — 2026-10-27
+
+- A PDF can be read on this computer and opened as a new family tree. UriNamu data included in the PDF is used when it is present. Otherwise, or when you ask, the text is read. Photos in the PDF do not become portraits.
+
 ## 0.6.2 — 2026-10-27
 
 - The PDF libraries load only when a PDF is exported, so the built application stays under Vite's chunk-size warning.

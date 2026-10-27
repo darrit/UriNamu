@@ -5,6 +5,7 @@ import {
   validate,
   newPerson,
   updatePerson,
+  linkParent,
   assignMarriage,
   childBranchControl,
   removePerson,
@@ -16,6 +17,7 @@ import {
   nameInputs,
   nameParts,
   setDeathDate,
+  separatePartnership,
   years,
 } from "../src/domain";
 import { layoutFamily } from "../src/layout";
@@ -153,6 +155,13 @@ describe("Stammbaum-Anordnung", () => {
     expect(s.unions.find((u) => u.id === "7|8")?.separated).toBe(true);
     expect(s.slots.some((p) => p.id === "7")).toBe(true);
   });
+  it("chart: dieselben Bögen und Partnerplätze wie die anderen Ansichten", () => {
+    const s = layoutFamily(family(), "chart", null);
+    expect(Object.keys(s.positions)).toHaveLength(11);
+    expect(s.slots.length).toBeGreaterThan(0);
+    expect(s.unions.every((union) => union.partnerPath?.includes("C"))).toBe(true);
+    expect(s.unions.every((union) => (union.childPaths ?? []).every((path) => path.includes("C")))).toBe(true);
+  });
 });
 
 describe("Familienstand", () => {
@@ -182,9 +191,12 @@ describe("Familienstand", () => {
       "married",
     );
   });
-  it("behält eine verbundene Ehe und macht aus einer durchgestrichenen Ehe eine Scheidung", () => {
+  it("lässt eine verbundene Partnerschaft ohne Ehe unbestimmt und macht aus einer durchgestrichenen Ehe eine Scheidung", () => {
     const married = family().unions[0];
     married.marriage = "unspecified";
+    assignMarriage(married);
+    expect(married.marriage).toBe("unspecified");
+    married.marriage = "married";
     assignMarriage(married);
     expect(married.marriage).toBe("married");
     married.status = "separated";
@@ -299,6 +311,9 @@ describe("Sterbedatum", () => {
     const before = family();
     const next = setDeathDate(before, "7", "2020-07-15");
     expect(next.members.find((p) => p.id === "7")!.died).toBe("2020-07-15");
+    const unknown = setDeathDate(before, "7", "", true);
+    expect(unknown.members.find((p) => p.id === "7")).toMatchObject({ died: "", deceased: true });
+    expect(years(unknown.members.find((p) => p.id === "7")!)).toContain("unbekannt");
     expect(years(next.members.find((p) => p.id === "7")!)).toContain(
       "† 15.07.2020",
     );
@@ -318,10 +333,74 @@ describe("Sterbedatum", () => {
       setDeathDate(family(), "nicht-vorhanden", "2020-01-01"),
     ).toThrow();
   });
+  it("zieht eine Elternlinie zwischen zwei vorhandenen Personen", () => {
+    const person = (id: string, born: string) => ({
+      ...newPerson(),
+      id,
+      name: id,
+      firstName: id,
+      born,
+    });
+    const tree = (): ReturnType<typeof family> => ({
+      version: 2,
+      name: "Probe",
+      members: [person("a", "1900-01-01"), person("b", "1920-01-01"), person("c", "1901-01-01")],
+      unions: [],
+    });
+    const down = linkParent(tree(), "b", "a");
+    expect(down.members.find((item) => item.id === "b")!.parents).toEqual(["a"]);
+    expect(down.unions).toHaveLength(0);
+    const up = linkParent(down, "b", "c");
+    expect(up.members.find((item) => item.id === "b")!.parents).toEqual([
+      "a",
+      "c",
+    ]);
+    expect(up.unions).toEqual([
+      expect.objectContaining({
+        id: "a|c",
+        status: "separated",
+        marriage: "unspecified",
+      }),
+    ]);
+    const again = linkParent(up, "b", "a");
+    expect(again).toBe(up);
+    expect(() => linkParent(up, "b", "b")).toThrow();
+    expect(() => linkParent(tree(), "a", "b")).toThrow();
+    const lined = linkParent(tree(), "b", "a");
+    expect(() => linkParent(lined, "a", "b")).toThrow();
+    const full = linkParent(lined, "b", "c");
+    expect(() => linkParent(full, "b", "a")).not.toThrow();
+    const extra = person("d", "1924-01-01");
+    full.members.push(extra);
+    expect(() => linkParent(full, "b", "d")).toThrow();
+  });
 });
 
 it("keeps family branches in ancestral order rather than crossing alphabetically", () => {
   const s = layoutFamily(family(), "classic", null);
   expect(s.positions["7"].x).toBeLessThan(s.positions["10"].x);
   expect(s.positions["9"].x).toBeLessThan(s.positions["10"].x);
+});
+
+describe('frühere Partnerschaften ohne Ehe', () => {
+  it.each([false, true])('erhält frühere Partner und ihre Verbindung (gemeinsames Kind: %s)', (withChild) => {
+    const members = ['A', 'B', 'C', ...(withChild ? ['Kind'] : [])].map(id => ({...newPerson(), id, name: id, parents: id === 'Kind' ? ['A','B'] : []}));
+    const original = normalize({version:2,name:'Test',members,unions:[{id:unionKey('A','B'),a:'A',b:'B',status:'active',ended:false,marriage:'unspecified'}]});
+    const separated = separatePartnership(original, unionKey('A','B'));
+    expect(original.unions[0].status).toBe('active');
+    expect(separated.unions[0]).toMatchObject({status:'separated',marriage:'unspecified'});
+    expect(separated.unions[0].marriedOn).toBeUndefined();
+    expect(separated.members).toEqual(original.members);
+    const withNewPartner = updatePerson(separated, separated.members[0], 'C');
+    const restored = normalize(JSON.parse(JSON.stringify(withNewPartner)));
+    expect(restored.unions.find(u=>u.id===unionKey('A','B'))).toMatchObject({status:'separated',marriage:'unspecified'});
+    expect(restored.unions.find(u=>u.id===unionKey('A','C'))?.status).toBe('active');
+    for(const mode of ['classic','horizontal','tapestry','chart'] as const)
+      expect(layoutFamily(restored,mode,null).unions.some(u=>u.id===unionKey('A','B'))).toBe(true);
+    if(withChild) expect(restored.members.find(p=>p.id==='Kind')?.parents).toEqual(['A','B']);
+  });
+  it('behält bei einer Scheidung das Heiratsdatum',()=>{
+    const original = normalize({version:2,name:'Test',members:['A','B'].map(id=>({...newPerson(),id,name:id})),unions:[{id:unionKey('A','B'),a:'A',b:'B',status:'active',ended:false,marriage:'married',marriedOn:'2000-01-02'}]});
+    expect(separatePartnership(original,unionKey('A','B')).unions[0]).toMatchObject({status:'separated',marriage:'divorced',marriedOn:'2000-01-02'});
+  });
 });

@@ -9,7 +9,7 @@ import {
   nameParts,
   displayName,
 } from "./domain";
-import { tidyLayout, type Layout } from "./layout";
+import { tidyLayout, layoutModes } from "./layout";
 import { t, type MessageKey } from "./i18n";
 export const PROFILE_FIELDS = [
   "name",
@@ -176,8 +176,7 @@ export function mergeFamilies(
   }
   for (const person of merged.members) delete person.positions;
   let arranged = merged;
-  for (const mode of ["classic", "horizontal", "tapestry"] as Layout[])
-    arranged = tidyLayout(arranged, mode, true);
+  for (const mode of layoutModes) arranged = tidyLayout(arranged, mode, true);
   return arranged;
 }
 

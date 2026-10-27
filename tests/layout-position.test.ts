@@ -1008,4 +1008,55 @@ describe("Stable positions across partnerships", () => {
     expect(scene.positions.a.x).toBe(0);
     expect(scene.positions.b.x).toBeGreaterThan(30);
   });
+  it("keeps a dragged child next to the nearest sibling instead of the old seat", () => {
+    const at = (id: string, name: string, x: number, y: number, parents: string[] = []) => ({
+      ...newPerson(),
+      id,
+      name,
+      parents,
+      positions: { classic: { x, y } },
+    });
+    const family: Family = {
+      version: 2,
+      name: "T",
+      members: [
+        at("p", "Parent", 2000, 0),
+        at("a", "Testae", 1800, 250, ["p"]),
+        at("b", "Testai", 2100, 250, ["p"]),
+        at("c", "Testam", 2600, 250, ["p"]),
+      ],
+      unions: [],
+    };
+    const tidy = tidyLayout(family, "classic", true);
+    const x = (id: string) => tidy.members.find((person) => person.id === id)!.positions!.classic!.x;
+    expect(x("c")).toBeGreaterThan(x("b"));
+    expect(x("b")).toBeGreaterThan(x("a"));
+    expect(x("a")).toBeGreaterThan(1500);
+    expect(x("c") - x("b")).toBeLessThan(400);
+  });
+  it("returns a child who was dragged onto the wrong side of the family", () => {
+    const at = (id: string, name: string, x: number, y: number, parents: string[] = []) => ({
+      ...newPerson(),
+      id,
+      name,
+      parents,
+      positions: { classic: { x, y } },
+    });
+    const family: Family = {
+      version: 2,
+      name: "T",
+      members: [
+        at("p", "Parent", 400, 0),
+        at("m", "Mate", 620, 0),
+        at("a", "Testae", 500, 250, ["p", "m"]),
+        at("c", "Testam", 9000, 250, ["p", "m"]),
+      ],
+      unions: [{ id: "p|m", a: "p", b: "m", status: "active", ended: false, marriage: "married" }],
+    };
+    const tidy = tidyLayout(family, "classic", true);
+    const x = (id: string) => tidy.members.find((person) => person.id === id)!.positions!.classic!.x;
+    expect(Math.abs(x("c") - x("a"))).toBeLessThan(500);
+    expect(x("c")).toBeLessThan(2000);
+    expect(x("p")).toBeGreaterThan(200);
+  });
 });

@@ -722,6 +722,86 @@ footer {
   font-size: 10px;
   pointer-events: none;
 }
+.canvas.linking .person {
+  cursor: crosshair;
+}
+.person.link-source {
+  outline: 2px solid #cbb98a;
+  outline-offset: 3px;
+}
+.link-ports {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+}
+.link-port {
+  position: absolute;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  border: 2px solid #cbb98a;
+  background: #1c261f;
+  box-shadow: 0 0 0 3px #111915;
+  opacity: 0;
+  pointer-events: auto;
+  cursor: crosshair;
+}
+.link-port.up { top: -7px; }
+.link-port.down { bottom: -7px; }
+.person:hover + .link-ports .link-port,
+.link-ports:hover .link-port,
+.link-ports:focus-within .link-port,
+.canvas.ports-shown .link-port,
+.canvas.linking .link-port {
+  opacity: 1;
+}
+.canvas.preview .link-port { pointer-events: none; }
+.canvas.chart .person {
+  width: 168px;
+  height: 108px;
+  display: block;
+  padding: 8px 10px;
+  border-radius: 2px;
+  background: #17211c;
+}
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.25;
+}
+.chart-card strong { font-size: 14px; font-weight: 600; }
+.chart-card span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: #d5d8c6;
+}
+.link-hint {
+  position: absolute;
+  top: 58px;
+  left: 50%;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transform: translateX(-50%);
+  padding: 8px 8px 8px 14px;
+  background: #1c2c22;
+  border: 1px solid #8ca79a;
+  border-radius: 10px;
+  color: #e6e2cf;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.link-hint button {
+  padding: 6px 10px;
+  font-size: 12px;
+}
 .zoom {
   position: absolute;
   right: 23px;
@@ -1095,6 +1175,26 @@ fieldset:disabled textarea {
   gap: 9px;
   margin-top: 24px;
   flex-wrap: wrap;
+}
+.pdf-people {
+  display: grid;
+  gap: 8px;
+  max-height: 280px;
+  overflow: auto;
+  margin-top: 8px;
+}
+.pdf-people > div {
+  padding: 8px 10px;
+  text-align: left;
+  border: 1px solid #3c4a40;
+  border-radius: 8px;
+}
+.pdf-people strong,
+.pdf-people small {
+  display: block;
+}
+.pdf-people small {
+  color: #c8b48a;
 }
 .export-choices {
   flex-direction: column;
@@ -1552,6 +1652,22 @@ fieldset:disabled textarea {
   font: 11px Georgia, serif;
   white-space: nowrap;
 }
+.wedding-strike {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(100% - 4px);
+  height: 150%;
+  transform: translate(-50%, -50%);
+  overflow: visible;
+  pointer-events: none;
+}
+.wedding-strike path {
+  fill: none;
+  stroke: #bd9b8b;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
 .wedding-date.search-miss {
   opacity: 0.28;
 }
@@ -1906,6 +2022,11 @@ aside .nav {
   display: block;
   width: 100%;
   margin-top: 4px;
+}
+.guide-sheet .choice-check input {
+  display: inline-block;
+  width: auto;
+  margin-top: 3px;
 }
 .guide-sheet .actions {
   margin-top: 12px;

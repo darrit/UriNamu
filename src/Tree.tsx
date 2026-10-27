@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, Fragment, type ReactNode, type PointerEvent as ReactPointerEvent } from "react";
 import { Plus, Minus, Maximize, Focus, ArrowUpLeft, Shrink } from "lucide-react";
 import {
   type Family,
@@ -8,6 +8,8 @@ import {
   years,
   displayName,
   matchesQuery,
+  chartSurnames,
+  nameParts,
   childBranchControl,
 } from "./domain";
 import {
@@ -70,7 +72,7 @@ function weddingAnchor(
 export function Portrait({ p }: { p: Person }) {
   return (
     <span
-      className={`portrait${p.died ? " portrait--deceased" : ""}`}
+      className={`portrait${p.died || p.deceased ? " portrait--deceased" : ""}`}
       title={p.died ? t("diedOn", { date: dateLabel(p.died) }) : undefined}
     >
       {p.photo ? (
@@ -105,12 +107,14 @@ export default function Tree({
   onBranch,
   onAncestor,
   onChild,
+  onLink,
   onSeparate,
   onDeath,
   onDynasty,
   onJoinDynasty,
   onRemove,
   showPartnerSlots = true,
+  showLinkPorts = false,
   guidePersonId = null,
   guide = null,
   preview = false,
@@ -129,12 +133,15 @@ export default function Tree({
   onBranch: (id: string) => void;
   onAncestor: (id: string, index: number) => void;
   onChild: (parentId: string) => void;
+  onLink: (childId: string, parentId: string) => void;
   onSeparate: (id: string) => void;
   onDeath: (id: string) => void;
   onDynasty: (id: string) => void;
   onJoinDynasty: (personId: string, founderId: string) => void;
   onRemove: (id: string) => void;
   showPartnerSlots?: boolean;
+  /** Guide still: the parent and child points stay visible. */
+  showLinkPorts?: boolean;
   guidePersonId?: string | null;
   guide?: ReactNode;
   /** A still of the real canvas for the guide. No controls and no dragging. */
@@ -176,6 +183,14 @@ export default function Tree({
     null,
   );
   const [ancestorFor, setAncestorFor] = useState<string | null>(null);
+  const [draft, setDraft] = useState<{
+    id: string;
+    toward: "parent" | "child";
+    from: Point;
+    to: Point;
+    clientX: number;
+    clientY: number;
+  } | null>(null);
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(
     null,
   );
@@ -246,11 +261,11 @@ export default function Tree({
       pad = preview ? 8 : 60,
       head = preview ? 8 : 140,
       k = Math.max(
-        0.08,
+        0.02,
         Math.min(
           preview ? 1.6 : 1,
-          (size.w - pad) / b.width,
-          (size.h - head) / b.height,
+          (size.w - pad) / Math.max(b.width, 1),
+          (size.h - head) / Math.max(b.height, 1),
         ),
       );
     setView({
@@ -286,7 +301,7 @@ export default function Tree({
   };
   const zoom = (factor: number, anchor = { x: size.w / 2, y: size.h / 2 }) =>
     setView((v) => {
-      const k = Math.max(0.08, Math.min(2.5, v.k * factor));
+      const k = Math.max(0.02, Math.min(2.5, v.k * factor));
       return {
         k,
         x: anchor.x - ((anchor.x - v.x) * k) / v.k,
@@ -309,6 +324,14 @@ export default function Tree({
     el.addEventListener("wheel", wheel, { passive: false });
     return () => el.removeEventListener("wheel", wheel);
   }, [size, poster]);
+  useEffect(() => {
+    if (!draft) return;
+    const key = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDraft(null);
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, [draft]);
   const ancestorChild = family.members.find((p) => p.id === ancestorFor);
   useEffect(() => {
     if (ancestorFor && (!ancestorChild || ancestorChild.parents.length >= 2))
@@ -336,7 +359,7 @@ export default function Tree({
       {
         key: "death",
         group: "other" as const,
-        label: menuPerson.died ? t("changeDeathShort") : t("markDeceased"),
+        label: menuPerson.died || menuPerson.deceased ? t("changeDeathShort") : t("markDeceased"),
         nested: false,
         onClick: () => close(() => onDeath(menuPerson.id)),
       },
@@ -382,7 +405,7 @@ export default function Tree({
       ...active.map((union) => ({
         key: union.id,
         group: "other" as const,
-        label: t("recordDivorce"),
+        label: t(union.marriage === "married" ? "recordDivorce" : "recordSeparation"),
         nested: false,
         onClick: () => close(() => onSeparate(union.id)),
       })),
@@ -432,6 +455,7 @@ export default function Tree({
         disabled: menuPerson.parents.length >= 2,
         onClick: () =>
           close(() => {
+            setDraft(null);
             setAncestorFor(ancestorFor === menuPerson.id ? null : menuPerson.id);
             focusPerson(menuPerson.id);
           }),
@@ -494,13 +518,55 @@ export default function Tree({
     ];
   });
   dynasties.sort((a, b) => b.area - a.area);
+  const draftRef = useRef(draft);
+  draftRef.current = draft;
+  const beginLink = (event: ReactPointerEvent, id: string, toward: "parent" | "child", pos: Point) => {
+    if (event.button !== 0 || preview || savingMove.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const box = personFootprint(pos, layout);
+    const from = toward === "parent"
+      ? { x: box.x + box.w / 2, y: box.y }
+      : { x: box.x + box.w / 2, y: box.y + box.h };
+    const next = { id, toward, from, to: from, clientX: event.clientX, clientY: event.clientY };
+    draftRef.current = next;
+    setDraft(next);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+  const moveLink = (event: ReactPointerEvent) => {
+    const current = draftRef.current;
+    if (!current) return;
+    event.stopPropagation();
+    const next = {
+      ...current,
+      to: {
+        x: current.from.x + (event.clientX - current.clientX) / view.k,
+        y: current.from.y + (event.clientY - current.clientY) / view.k,
+      },
+    };
+    draftRef.current = next;
+    setDraft(next);
+  };
+  const endLink = (event: ReactPointerEvent) => {
+    const current = draftRef.current;
+    draftRef.current = null;
+    setDraft(null);
+    if (!current) return;
+    const target = document
+      .elementsFromPoint(event.clientX, event.clientY)
+      .map((node) => (node instanceof Element ? node.closest("[data-person]") : null))
+      .find((node): node is HTMLElement => node instanceof HTMLElement && !!node.dataset.person && node.dataset.person !== current.id);
+    if (!target?.dataset.person) return;
+    if (current.toward === "child") onLink(target.dataset.person, current.id);
+    else onLink(current.id, target.dataset.person);
+  };
   const ink =
     layout === "tapestry"
       ? { partner: "#baa474", child: "#dcd0ae", separated: "#a5968a", width: 2 }
       : { partner: "#b49183", child: "#8ca79a", separated: "#9d8992", width: 1.7 };
   return (
     <div
-      className={`canvas ${layout}${preview ? " preview" : ""}${poster ? " poster" : ""}`}
+      className={`canvas ${layout}${preview ? " preview" : ""}${poster ? " poster" : ""}${draft ? " linking" : ""}${showLinkPorts ? " ports-shown" : ""}`}
       ref={container}
       style={
         poster
@@ -510,6 +576,7 @@ export default function Tree({
       onPointerDown={(e) => {
         if (preview) return;
         if ((e.target as HTMLElement).closest('button,[role="menu"]')) return;
+        if (draft) setDraft(null);
         e.preventDefault();
         drag.current = { x: e.clientX, y: e.clientY, tx: view.x, ty: view.y };
         e.currentTarget.setPointerCapture(e.pointerId);
@@ -698,16 +765,6 @@ export default function Tree({
                 }}
               />
               )}
-              {u.separated && (
-                <path
-                  className="strike"
-                  d={`M${u.joint.x - 6},${u.joint.y - 9}l12,18m-5,-18l12,18`}
-                  fill="none"
-                  stroke="#bd9b8b"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
-              )}
               {u.children.map((p, i) => (
                 <path
                   key={i}
@@ -753,10 +810,21 @@ export default function Tree({
               strokeLinejoin="round"
             />
           ))}
+          {draft && (
+            <path
+              className="link-draft"
+              d={`M${draft.from.x},${draft.from.y}L${draft.to.x},${draft.to.y}`}
+              fill="none"
+              stroke="#cbb98a"
+              strokeWidth="1.6"
+              strokeDasharray="5 4"
+            />
+          )}
         </svg>
         {scene.unions.map((drawn) => {
           const stored = family.unions.find((item) => item.id === drawn.id);
-          if (!stored?.marriedOn) return null;
+          if (!stored) return null;
+          const married = stored.marriage === "married" || stored.marriage === "divorced";
           const originA = scene.positions[stored.a];
           const originB = scene.positions[stored.b];
           if (!originA || !originB) return null;
@@ -775,27 +843,40 @@ export default function Tree({
               const person = family.members.find((item) => item.id === id);
               return !person || !matchesQuery(person, query);
             });
+          const divorced = stored.marriage === "divorced";
+          const former = !married && stored.status === "separated";
+          const wedding = stored.marriedOn ? dateLabel(stored.marriedOn) : t("dateUnknown");
+          const mark = married ? `${divorced ? "= " : ""}${layout === "chart" ? "oo " : ""}${wedding}` : former ? "=" : "–";
           return (
             <span
               key={stored.id}
-              className={`wedding-date${faded ? " search-miss" : ""}`}
+              className={`wedding-date${divorced ? " is-divorced" : ""}${faded ? " search-miss" : ""}${!married ? " is-minus" : ""}`}
               style={{ left: at.x, top: at.y }}
-              title={t("weddingDate")}
+              title={married ? t("weddingDate") : former ? t("formerUnmarried") : t("currentUnmarried")}
             >
-              {dateLabel(stored.marriedOn)}
+              {mark}
+              {divorced && (
+                <svg className="wedding-strike" viewBox="0 0 28 20" aria-hidden="true">
+                  <path d="M4 1.5l9 17M13 1.5l9 17" />
+                </svg>
+              )}
             </span>
           );
         })}
         {family.members
           .map((p) => {
             const pos = scene.positions[p.id];
+            const box = personFootprint(pos, layout);
+            const names = nameParts(p);
             return (
+              <Fragment key={p.id}>
               <button
-                key={p.id}
                 data-person={p.id}
                 className={`person ${focus === p.id ? "selected" : ""}${
                   matchesQuery(p, query) ? "" : " search-miss"
-                }${guidePersonId === p.id ? " guide-target" : ""}`}
+                }${guidePersonId === p.id ? " guide-target" : ""}${
+                  draft?.id === p.id ? " link-source" : ""
+                }`}
                 style={{ left: pos.x, top: pos.y }}
                 title={t("personTitle", { name: displayName(p) })}
                 onPointerDown={(e) => {
@@ -901,6 +982,17 @@ export default function Tree({
                     <Focus size={11} /> {t("inFocus")}
                   </span>
                 )}
+                {layout === "chart" ? (
+                  <span className="chart-card">
+                    <strong>{names.firstName || "..."}</strong>
+                    <span className="chart-names">{chartSurnames(p) || "..."}</span>
+                    <span>* {p.born ? dateLabel(p.born) : t("dateUnknown")}</span>
+                    {(p.died || p.deceased) && (
+                      <span>+ {p.died ? dateLabel(p.died) : t("deathUnknown")}</span>
+                    )}
+                  </span>
+                ) : (
+                  <>
                 <Portrait p={p} />
                 <span className="person-text">
                   <strong>
@@ -961,7 +1053,34 @@ export default function Tree({
                     </text>
                   </svg>
                 )}
+                  </>
+                )}
               </button>
+              {!poster && (showLinkPorts || !preview) && (
+                <span
+                  className="link-ports"
+                  style={{ left: box.x, top: box.y, width: box.w, height: box.h }}
+                >
+                  {(["parent", "child"] as const).map((toward) => (
+                    <span
+                      key={toward}
+                      role="button"
+                      tabIndex={-1}
+                      className={`link-port ${toward === "parent" ? "up" : "down"}`}
+                      aria-label={t(toward === "parent" ? "linkToParent" : "linkToChild")}
+                      title={t(toward === "parent" ? "linkToParent" : "linkToChild")}
+                      onPointerDown={(event) => beginLink(event, p.id, toward, pos)}
+                      onPointerMove={moveLink}
+                      onPointerUp={endLink}
+                      onPointerCancel={() => {
+                        draftRef.current = null;
+                        setDraft(null);
+                      }}
+                    />
+                  ))}
+                </span>
+              )}
+              </Fragment>
             );
           })}
         {!query &&
@@ -1043,6 +1162,22 @@ export default function Tree({
         !family.members.some((p) => matchesQuery(p, query)) && (
           <div className="empty">{t("noneFound")}</div>
         )}
+      {!preview && draft && (
+        <div className="link-hint" role="status">
+          <span>
+            {draft.toward === "child" ? t("linkDragChild") : t("linkDragParent")}
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              draftRef.current = null;
+              setDraft(null);
+            }}
+          >
+            {t("cancel")}
+          </button>
+        </div>
+      )}
       {!preview && <div className="canvas-hint">{t("canvasHint")}</div>}
       {guide}
       {menu &&
@@ -1055,7 +1190,7 @@ export default function Tree({
             aria-label={t("personActions")}
             style={{
               left: Math.max(8, Math.min(menu.x, window.innerWidth - 254)),
-              top: Math.max(8, Math.min(menu.y, window.innerHeight - 460)),
+              top: Math.max(8, Math.min(menu.y, window.innerHeight - 560)),
             }}
             onContextMenu={(e) => e.preventDefault()}
           >

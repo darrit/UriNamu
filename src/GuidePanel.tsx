@@ -11,6 +11,8 @@ import {
   GuideDynastyForm,
   GuideExportChoice,
   GuideExportForm,
+  GuideImportChoice,
+  GuidePdfReview,
   GuideFamily,
   GuideHistoryList,
   GuideHistoryNav,
@@ -316,6 +318,8 @@ export function GuideBook({
             >
               <div className="guide-shots">
                 <GuideTransfer />
+                <GuideImportChoice />
+                <GuidePdfReview />
                 <GuideExportChoice />
                 <GuideExportForm />
               </div>

@@ -1,5 +1,6 @@
 import { type Family, type Person, childrenOf, dynastyMembers } from "./domain";
-export type Layout = "classic" | "horizontal" | "tapestry";
+export type Layout = "classic" | "horizontal" | "tapestry" | "chart";
+export const layoutModes = ["classic", "horizontal", "tapestry", "chart"] as const;
 export type Point = { x: number; y: number };
 
 /**
@@ -207,6 +208,7 @@ function slotSize(mode: Layout) {
 /** Visible card, or the tapestry portrait plus its name ribbon. */
 export function personFootprint(point: Point, mode: Layout): Rect {
   if (mode === "tapestry") return { x: point.x - 17, y: point.y, w: 214, h: 126 };
+  if (mode === "chart") return { x: point.x, y: point.y, w: 168, h: 108 };
   return { x: point.x, y: point.y, w: 180, h: 120 };
 }
 
@@ -579,7 +581,7 @@ function placePartnerSlots(
 export function preserveLayout(previous: Family | null, next: Family): Family {
   const result = structuredClone(next);
   const stored = { partnerSlots: false };
-  for (const mode of ["classic", "horizontal", "tapestry"] as const) {
+  for (const mode of layoutModes) {
     const before = previous
       ? layoutFamily(previous, mode, null, {}, stored).positions
       : {};
@@ -680,6 +682,11 @@ function generationRanks(f: Family): Record<string, number> {
     }
     if (!changed) break;
   }
+  // A partner who is also a descendant keeps pushing the same few people
+  // downward on every pass. The distinct levels are the real generations.
+  const order = [...new Set(Object.values(ranks))].sort((a, b) => a - b);
+  const dense = new Map(order.map((rank, index) => [rank, index]));
+  for (const id of Object.keys(ranks)) ranks[id] = dense.get(ranks[id])!;
   return ranks;
 }
 
@@ -693,6 +700,17 @@ function arrangeMetrics(mode: Layout, partnerSlots: boolean) {
       groupGap: 88,
       pairGap: 120,
       rankGap: 150,
+      originAlong: 0,
+    };
+  if (mode === "chart")
+    return {
+      along: 168,
+      rank: 108,
+      slot: partnerSlots ? 56 : 0,
+      memberGap: 48,
+      groupGap: 72,
+      pairGap: 96,
+      rankGap: 86,
       originAlong: 0,
     };
   if (mode === "tapestry")
@@ -728,15 +746,20 @@ export function arrangeFamily(
   family: Family,
   mode: Layout,
   partnerSlots = true,
+  seat = new Map<string, number>(),
 ): Record<string, Point> {
   const ranks = generationRanks(family);
   const metrics = arrangeMetrics(mode, partnerSlots);
   const memberById = new Map(family.members.map((person) => [person.id, person]));
+  const earlier = (a: string, b: string) => {
+    const left = seat.get(a);
+    const right = seat.get(b);
+    if (left !== undefined && right !== undefined && left !== right) return left - right;
+    return memberById.get(a)!.name.localeCompare(memberById.get(b)!.name, "de");
+  };
   const seen = new Set<string>();
   const households: { ids: string[]; rank: number }[] = [];
-  const ordered = [...family.members].sort((a, b) =>
-    a.name.localeCompare(b.name, "de"),
-  );
+  const ordered = [...family.members].sort((a, b) => earlier(a.id, b.id));
   for (const person of ordered) {
     if (seen.has(person.id)) continue;
     const ids: string[] = [];
@@ -809,11 +832,7 @@ export function arrangeFamily(
   const householdGap = (left: { ids: string[] }, right: { ids: string[] }) =>
     isCouple(left) && isCouple(right) ? metrics.pairGap : metrics.groupGap;
   const orderedChildren = (household: { ids: string[]; rank: number }) =>
-    exclusiveChildren(household).sort((a, b) =>
-      memberById
-        .get(a.ids[0])!
-        .name.localeCompare(memberById.get(b.ids[0])!.name, "de"),
-    );
+    exclusiveChildren(household).sort((a, b) => earlier(a.ids[0], b.ids[0]));
   const gapsBetween = (list: { ids: string[] }[]) =>
     list
       .slice(1)
@@ -835,6 +854,8 @@ export function arrangeFamily(
     left: number,
   ) => {
     let ids = [...household.ids].sort((a, b) => {
+      const seated = seat.has(a) && seat.has(b) && seat.get(a) !== seat.get(b);
+      if (seated) return seat.get(a)! - seat.get(b)!;
       const center = (id: string) => {
         const parents = (memberById.get(id)?.parents ?? []).filter((parent) =>
           positions[parent],
@@ -860,7 +881,8 @@ export function arrangeFamily(
       ),
     );
     const later = ids.filter((id) => !former.includes(id));
-    const row = former.length && later.length ? former : ids;
+    const keepChartOrder = ids.every((id) => seat.has(id));
+    const row = !keepChartOrder && former.length && later.length ? former : ids;
     let cursor = left + Math.max(0, (householdWidth({ ids: row }) < householdWidth({ ids })
       ? (householdWidth({ ids }) - householdWidth({ ids: row })) / 2
       : 0));
@@ -872,7 +894,7 @@ export function arrangeFamily(
         mode === "horizontal" ? { x: rank, y: along } : { x: along, y: rank };
       cursor += memberWidth(id) + metrics.memberGap;
     }
-    if (later.length && former.length) {
+    if (!keepChartOrder && later.length && former.length) {
       const first = former[0];
       const last = former[former.length - 1];
       const firstAlong = mode === "horizontal" ? positions[first].y : positions[first].x;
@@ -960,11 +982,7 @@ export function arrangeFamily(
   let left = 0;
   let previousCouples = false;
   for (const cluster of clusters.values()) {
-    const shared = sharedChildren(cluster).sort((a, b) =>
-      memberById
-        .get(a.ids[0])!
-        .name.localeCompare(memberById.get(b.ids[0])!.name, "de"),
-    );
+    const shared = sharedChildren(cluster).sort((a, b) => earlier(a.ids[0], b.ids[0]));
     const couples = cluster.some(isCouple) || shared.some(isCouple);
     if (left > 0)
       left += previousCouples && couples ? metrics.pairGap : metrics.groupGap;
@@ -1543,10 +1561,16 @@ export function layoutFamily(
     }
   }
   holdDynastyWalls(f, positions, mode);
-  const center = (id: string) => ({
-    x: positions[id].x + 90,
-    y: positions[id].y + (mode === "tapestry" ? 35 : 60),
-  });
+  const center = (id: string) => {
+    if (mode === "chart") {
+      const box = personFootprint(positions[id], mode);
+      return { x: box.x + box.w / 2, y: box.y + box.h / 2 };
+    }
+    return {
+      x: positions[id].x + 90,
+      y: positions[id].y + (mode === "tapestry" ? 35 : 60),
+    };
+  };
   const cardObstacles = Object.values(positions).map((point) =>
     inflate(personFootprint(point, mode)),
   );
@@ -1562,6 +1586,8 @@ export function layoutFamily(
         ? flipped
         : { ...link.mid };
     }
+    const kids = childrenOf(f, u).map((p) => positions[p.id]);
+    const parents = [positions[u.a], positions[u.b]];
     return {
       id: u.id,
       partnerPath: link.d,
@@ -1570,26 +1596,14 @@ export function layoutFamily(
       joint: link.mid,
       branch: link.mid,
       marker,
-      children: childrenOf(f, u).map((p) =>
+      children: kids.map((point) =>
         connectionPort(
-          positions[p.id],
-          childStart(
-            link.mid,
-            [positions[u.a], positions[u.b]],
-            positions[p.id],
-            mode,
-          ),
+          point,
+          childStart(link.mid, parents, point, mode),
           mode,
         ),
       ),
-      childPaths: childrenOf(f, u).map((p) =>
-        childConnector(
-          link.mid,
-          positions[p.id],
-          [positions[u.a], positions[u.b]],
-          mode,
-        ),
-      ),
+      childPaths: kids.map((point) => childConnector(link.mid, point, parents, mode)),
       separated: u.status === "separated",
       ended: u.ended,
     };
@@ -1872,13 +1886,13 @@ export function tidyLayout(
   partnerSlots = true,
 ): Family {
   const next = structuredClone(family);
-  for (const person of next.members) {
-    if (!person.positions?.[mode]) continue;
-    const positions = { ...person.positions };
-    delete positions[mode];
-    person.positions = Object.keys(positions).length ? positions : undefined;
-  }
-  const arranged = arrangeFamily(next, mode, partnerSlots);
+  const seated = next.members.every((person) => person.positions?.[mode]);
+  const arranged =
+    seated && mode === "chart"
+      ? compactChartRows(next)
+      : seated && rowsAreUsable(next, mode)
+      ? compactHierarchy(next, mode)
+      : arrangeFromSeats(next, mode, partnerSlots);
   for (const person of next.members) {
     const point = arranged[person.id];
     if (!point) continue;
@@ -1888,6 +1902,242 @@ export function tidyLayout(
     };
   }
   return next;
+}
+
+/** Compress shared columns without changing printed generations or branch order. */
+function compactChartRows(family: Family): Record<string, Point> {
+  const rows = new Map<number, Person[]>();
+  for (const person of family.members) {
+    const y = person.positions!.chart!.y;
+    rows.set(y, [...(rows.get(y) ?? []), person]);
+  }
+  const before = new Map<string, Person>();
+  for (const row of rows.values()) {
+    row.sort((a, b) => a.positions!.chart!.x - b.positions!.chart!.x);
+    row.slice(1).forEach((person, i) => before.set(person.id, row[i]));
+  }
+  const points: Record<string, Point> = {};
+  const columns = new Map<number, Person[]>();
+  for (const person of family.members) {
+    const x = person.positions!.chart!.x;
+    columns.set(x, [...(columns.get(x) ?? []), person]);
+  }
+  let previous: number | undefined;
+  let cursor = Math.min(...columns.keys());
+  for (const [x, people] of [...columns].sort((a, b) => a[0] - b[0])) {
+    if (previous !== undefined) cursor += Math.min(x - previous, cardSeparation("chart").x);
+    for (const person of people) {
+      const left = before.get(person.id);
+      if (left && points[left.id]) cursor = Math.max(cursor, points[left.id].x + anchorSeparation("chart", gapKind(family, left.id, person.id)).x);
+    }
+    const columnStart = cursor;
+    for (const person of people) {
+      const left = before.get(person.id);
+      const at = left && points[left.id]
+        ? Math.max(columnStart, points[left.id].x + anchorSeparation("chart", gapKind(family, left.id, person.id)).x)
+        : columnStart;
+      points[person.id] = { x: at, y: person.positions!.chart!.y };
+      cursor = Math.max(cursor, at);
+    }
+    previous = x;
+  }
+  return points;
+}
+
+function arrangeFromSeats(family: Family, mode: Layout, partnerSlots: boolean) {
+  const seat = new Map<string, number>();
+  for (const person of family.members) {
+    const point = person.positions?.[mode];
+    if (point) seat.set(person.id, mode === "horizontal" ? point.y : point.x);
+  }
+  for (const person of family.members) {
+    if (!person.positions?.[mode]) continue;
+    const positions = { ...person.positions };
+    delete positions[mode];
+    person.positions = Object.keys(positions).length ? positions : undefined;
+  }
+  return arrangeFamily(family, mode, partnerSlots, seat);
+}
+
+/** People already share a generation row, so tidy can close gaps instead of rebuilding from the left. */
+function rowsAreUsable(family: Family, mode: Layout) {
+  const ranks = generationRanks(family);
+  const byRank = new Map<number, number[]>();
+  for (const person of family.members) {
+    const point = person.positions?.[mode];
+    if (!point) return false;
+    const cross = mode === "horizontal" ? point.x : point.y;
+    const rank = ranks[person.id] ?? 0;
+    byRank.set(rank, [...(byRank.get(rank) ?? []), cross]);
+  }
+  for (const values of byRank.values()) {
+    if (Math.max(...values) - Math.min(...values) > 80) return false;
+  }
+  return family.members.length > 0;
+}
+
+/**
+ * Closes gaps toward the nearest person on the same rank.
+ * A child or partner may stay where they were dragged while that place still
+ * belongs to their parents. Outside that band they return beside their siblings.
+ */
+function compactHierarchy(family: Family, mode: Layout): Record<string, Point> {
+  const ranks = generationRanks(family);
+  const alongKey = mode === "horizontal" ? "y" : "x";
+  const along = new Map<string, number>();
+  const crossSaved = new Map<string, number>();
+  for (const person of family.members) {
+    const point = person.positions![mode]!;
+    along.set(person.id, point[alongKey]);
+    crossSaved.set(person.id, mode === "horizontal" ? point.x : point.y);
+  }
+  const original = new Map(along);
+  const memberById = new Map(family.members.map((person) => [person.id, person]));
+  const rankIds = new Map<number, string[]>();
+  for (const person of family.members) {
+    const rank = ranks[person.id] ?? 0;
+    rankIds.set(rank, [...(rankIds.get(rank) ?? []), person.id]);
+  }
+  const gap = (a: string, b: string) => anchorSeparation(mode, gapKind(family, a, b))[alongKey];
+  const ordered = (ids: string[]) =>
+    [...ids].sort((a, b) => along.get(a)! - along.get(b)! || a.localeCompare(b));
+
+  const closeGaps = (ids: string[]) => {
+    const row = ordered(ids);
+    for (let pass = 0; pass < row.length + 1; pass += 1) {
+      const median = row.reduce((sum, id) => sum + along.get(id)!, 0) / row.length;
+      for (let index = 0; index < row.length - 1; index += 1) {
+        const left = row[index];
+        const right = row[index + 1];
+        const need = gap(left, right);
+        const have = along.get(right)! - along.get(left)!;
+        if (Math.abs(have - need) < 1) continue;
+        const leftAway = Math.abs(along.get(left)! - median);
+        const rightAway = Math.abs(along.get(right)! - median);
+        if (have > need) {
+          if (rightAway >= leftAway) along.set(right, along.get(left)! + need);
+          else along.set(left, along.get(right)! - need);
+        } else if (rightAway >= leftAway) along.set(right, along.get(left)! + need);
+        else along.set(left, along.get(right)! - need);
+      }
+    }
+  };
+
+  type Unit = {
+    ids: string[];
+    parents: string[];
+    anchor: number | null;
+    parentLow: number | null;
+    parentHigh: number | null;
+    parentKey: string;
+  };
+
+  for (const rank of [...rankIds.keys()].sort((a, b) => a - b)) {
+    const ids = rankIds.get(rank)!;
+    const remaining = new Set(ids);
+    const units: Unit[] = [];
+    for (const start of ordered(ids)) {
+      if (!remaining.has(start)) continue;
+      const component: string[] = [];
+      const queue = [start];
+      while (queue.length) {
+        const current = queue.pop()!;
+        if (!remaining.has(current)) continue;
+        remaining.delete(current);
+        component.push(current);
+        for (const union of family.unions) {
+          const other = union.a === current ? union.b : union.b === current ? union.a : "";
+          if (other && remaining.has(other)) queue.push(other);
+        }
+      }
+      const parents = [
+        ...new Set(component.flatMap((id) => memberById.get(id)!.parents)),
+      ].filter((id) => along.has(id));
+      const parentAlong = parents.map((id) => along.get(id)!);
+      units.push({
+        ids: component,
+        parents,
+        anchor: parentAlong.length ? parentAlong.reduce((sum, value) => sum + value, 0) / parentAlong.length : null,
+        parentLow: parentAlong.length ? Math.min(...parentAlong) : null,
+        parentHigh: parentAlong.length ? Math.max(...parentAlong) : null,
+        parentKey: [...parents].sort().join("|"),
+      });
+    }
+
+    const roots = units.filter((unit) => unit.anchor === null);
+    if (roots.length) closeGaps(roots.flatMap((unit) => unit.ids));
+
+    const groups = new Map<string, Unit[]>();
+    for (const unit of units) {
+      if (unit.anchor === null) continue;
+      groups.set(unit.parentKey, [...(groups.get(unit.parentKey) ?? []), unit]);
+    }
+    for (const group of groups.values()) {
+      const parents = group[0].parents;
+      const parentShift =
+        parents.reduce((sum, id) => sum + along.get(id)! - original.get(id)!, 0) / parents.length;
+      const flat = group.flatMap((unit) => unit.ids);
+      for (const id of flat) along.set(id, along.get(id)! + parentShift);
+      const card = anchorSeparation(mode, "person")[alongKey];
+      const siblingWidth = Math.max(0, flat.length - 1) * card;
+      const low = group[0].parentLow! - siblingWidth - card;
+      const high = group[0].parentHigh! + siblingWidth + card;
+      const inside = flat.filter((id) => {
+        const at = along.get(id)!;
+        return at >= low && at <= high;
+      });
+      for (const unit of group) {
+        const center = unit.ids.reduce((sum, id) => sum + along.get(id)!, 0) / unit.ids.length;
+        if (center >= low && center <= high) continue;
+        const nearest = inside.reduce<string | null>((best, id) => {
+          if (!best) return id;
+          return Math.abs(along.get(id)! - center) < Math.abs(along.get(best)! - center) ? id : best;
+        }, null);
+        const shift = (nearest ? along.get(nearest)! : group[0].anchor!) - center;
+        for (const id of unit.ids) along.set(id, along.get(id)! + shift);
+      }
+      closeGaps(flat);
+    }
+    const blocks = [
+      ...roots.map((unit) => ({
+        ids: unit.ids,
+        anchor: unit.ids.reduce((sum, id) => sum + along.get(id)!, 0) / unit.ids.length,
+      })),
+      ...[...groups.values()].map((group) => ({
+        ids: group.flatMap((unit) => unit.ids),
+        anchor: group[0].anchor!,
+      })),
+    ].sort(
+      (a, b) =>
+        Math.min(...a.ids.map((id) => along.get(id)!)) - Math.min(...b.ids.map((id) => along.get(id)!)),
+    );
+    for (let pass = 0; pass < blocks.length; pass += 1) {
+      for (let index = 0; index < blocks.length - 1; index += 1) {
+        const left = blocks[index];
+        const right = blocks[index + 1];
+        const leftEdge = left.ids.reduce((best, id) => (along.get(id)! > along.get(best)! ? id : best));
+        const rightEdge = right.ids.reduce((best, id) => (along.get(id)! < along.get(best)! ? id : best));
+        const have = along.get(rightEdge)! - along.get(leftEdge)!;
+        const need = gap(leftEdge, rightEdge);
+        if (have >= need) continue;
+        const push = need - have;
+        const moveRight = Math.abs(along.get(rightEdge)! - right.anchor) >= Math.abs(along.get(leftEdge)! - left.anchor);
+        const target = moveRight ? right : left;
+        const sign = moveRight ? 1 : -1;
+        for (const id of target.ids) along.set(id, along.get(id)! + sign * push);
+      }
+    }
+  }
+
+  const points: Record<string, Point> = {};
+  for (const person of family.members) {
+    const rank = ranks[person.id] ?? 0;
+    const crosses = (rankIds.get(rank) ?? []).map((id) => crossSaved.get(id)!).sort((a, b) => a - b);
+    const cross = crosses[Math.floor(crosses.length / 2)] ?? 0;
+    const at = along.get(person.id)!;
+    points[person.id] = mode === "horizontal" ? { x: cross, y: at } : { x: at, y: cross };
+  }
+  return points;
 }
 
 export function branchMarkerPosition(

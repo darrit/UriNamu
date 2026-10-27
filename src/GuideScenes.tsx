@@ -18,6 +18,7 @@ import {
   Settings,
   Shrink,
   Sparkles,
+  ScrollText,
   Trash2,
   TreePine,
   Undo2,
@@ -164,6 +165,7 @@ export function GuideLayoutTabs() {
     [TreePine, "layoutClassic"],
     [Columns3, "layoutHorizontal"],
     [Sparkles, "layoutTapestry"],
+    [ScrollText, "layoutChart"],
   ] as const;
   return (
     <div className="tabs guide-replica">
@@ -220,6 +222,52 @@ export function GuideTransfer() {
   );
 }
 
+export function GuideImportChoice() {
+  return (
+    <div className="guide-sheet" aria-hidden="true">
+      <h3>{t("importChooseTitle")}</h3>
+      <p>{t("importChooseBody")}</p>
+      <div className="actions export-choices">
+        <button type="button" className="primary" tabIndex={-1}>
+          <FileImage size={16} /> {t("importAsPdf")}
+        </button>
+        <button type="button" tabIndex={-1}>
+          <Upload size={16} /> {t("importAsUrinamu")}
+        </button>
+      </div>
+      <p className="hint">{t("importChooseHint")}</p>
+    </div>
+  );
+}
+
+export function GuidePdfReview() {
+  return (
+    <div className="guide-sheet" aria-hidden="true">
+      <h3>{t("pdfReadTitle")}</h3>
+      <p>{t("pdfChartNote")}</p>
+      <p className="hint">{t("pdfNoPhotos")}</p>
+      <div className="pdf-people">
+        <div>
+          <strong>{t("guideSampleName")}</strong>
+          <small>{t("guideSampleYears")}</small>
+        </div>
+        <div>
+          <strong>{t("guideSamplePartner")}</strong>
+          <small>{t("pdfPartnerOf", { name: t("guideSampleName") })}</small>
+        </div>
+      </div>
+      <div className="actions">
+        <button type="button" tabIndex={-1}>
+          {t("pdfReadText")}
+        </button>
+        <button type="button" className="primary" tabIndex={-1}>
+          {t("pdfCreateTree")}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function GuideExportChoice() {
   return (
     <div className="guide-sheet" aria-hidden="true">
@@ -233,6 +281,10 @@ export function GuideExportChoice() {
           <Download size={16} /> {t("exportAsUrinamu")}
         </button>
       </div>
+      <label className="choice-check">
+        <input type="checkbox" checked onChange={() => {}} tabIndex={-1} />
+        {t("exportPdfInclude")}
+      </label>
       <p className="hint">{t("exportChooseHint")}</p>
     </div>
   );
@@ -248,7 +300,7 @@ export function GuidePortrait() {
 }
 
 export function GuideFamily() {
-  return <GuideTree family={household} layout="tapestry" variant="wide" />;
+  return <GuideTree family={household} layout="tapestry" variant="wide" showLinkPorts />;
 }
 
 export function GuideMenu({
@@ -310,7 +362,7 @@ export function GuideMenu({
     {
       key: "death",
       group: "other" as const,
-      label: person.died ? t("changeDeathShort") : t("markDeceased"),
+      label: person.died || person.deceased ? t("changeDeathShort") : t("markDeceased"),
     },
     ...active.map((union) => ({
       key: "divorce-" + union.id,
@@ -434,6 +486,7 @@ export function GuideLayouts() {
     ["classic", "layoutClassic"],
     ["horizontal", "layoutHorizontal"],
     ["tapestry", "layoutTapestry"],
+    ["chart", "layoutChart"],
   ] as const;
   return (
     <div className="guide-shots">
@@ -539,6 +592,15 @@ function GuidePersonForm({
               tabIndex={-1}
               placeholder={t("birthNamePlaceholder")}
               value={person.birthName || ""}
+            />
+          </label>
+          <label>
+            {t("marriageNames")}
+            <input
+              readOnly
+              tabIndex={-1}
+              placeholder={t("marriageNamesPlaceholder")}
+              value={(person.marriageNames ?? []).join(" / ")}
             />
           </label>
           <label>
@@ -905,12 +967,14 @@ function GuideTree({
   layout,
   variant,
   showPartnerSlots = false,
+  showLinkPorts = false,
   query = "",
 }: {
   family: Family;
   layout: Layout;
   variant: string;
   showPartnerSlots?: boolean;
+  showLinkPorts?: boolean;
   query?: string;
 }) {
   return (
@@ -922,6 +986,7 @@ function GuideTree({
         query={query}
         focus={null}
         showPartnerSlots={showPartnerSlots}
+        showLinkPorts={showLinkPorts}
         onFocus={idle}
         onMove={refuse}
         onMovePair={refuse}
@@ -931,6 +996,7 @@ function GuideTree({
         onBranch={idle}
         onAncestor={idle}
         onChild={idle}
+        onLink={idle}
         onSeparate={idle}
         onDeath={idle}
         onDynasty={idle}
