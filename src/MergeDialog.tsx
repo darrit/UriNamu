@@ -281,6 +281,7 @@ export default function MergeDialog({
                       </p>
                     )}
                   </div>
+                  <p className="hint">{t("guideMergeHint")}</p>
                   <div className="fields">
                     <label>
                       {t("newTreeName")}

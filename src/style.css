@@ -923,6 +923,9 @@ footer {
 .modal.wide {
   width: 590px;
 }
+.modal.guide-modal {
+  width: min(880px, calc(100% - 32px));
+}
 .modal::backdrop {
   background: #000a;
   backdrop-filter: blur(4px);
@@ -1627,4 +1630,266 @@ aside .family-summary {
 aside .nav {
   padding-top: 11px;
   padding-bottom: 11px;
+}
+.person.guide-target .portrait,
+.tapestry .person.guide-target .portrait {
+  outline: 2px solid #eee0b4;
+  outline-offset: 6px;
+}
+.guide-beat {
+  position: absolute;
+  z-index: 6;
+  left: 26px;
+  bottom: 58px;
+  width: min(340px, calc(100% - 160px));
+  padding: 14px;
+  background: #1b2720;
+  color: #e7e2d4;
+  border: 1px solid #6d6248;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px #0006;
+  cursor: default;
+  user-select: text;
+}
+.guide-beat h2 {
+  margin: 0 0 8px;
+  font: 16px Georgia, serif;
+  color: #f3ead4;
+}
+.guide-beat p,
+.guide-chapter p {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #d5d0c2;
+}
+.guide-beat .actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.guide-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.guide-tabs button {
+  padding: 7px 10px;
+  font-size: 11px;
+}
+.guide-tabs button.active {
+  background: #31483a;
+  border-color: #c4ad7b;
+  color: #f3ead4;
+}
+.guide-chapter {
+  margin-top: 16px;
+}
+.guide-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+}
+.guide-preview {
+  margin: 0;
+}
+.guide-preview figcaption,
+.guide-layout figcaption,
+.guide-tidy figcaption {
+  margin-top: 6px;
+  font-size: 10px;
+  color: #b7bda6;
+  text-align: center;
+}
+.guide-stage,
+.guide-layout,
+.guide-tidy figure,
+.guide-dynasty {
+  min-width: 108px;
+  min-height: 92px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #24352c;
+  border: 1px solid #42503e;
+}
+.guide-live {
+  position: relative;
+  width: 100%;
+  height: 168px;
+  overflow: hidden;
+  border-radius: 10px;
+  pointer-events: none;
+}
+.guide-live.card { width: 250px; height: 196px; }
+.guide-live.wide { width: 420px; height: 250px; }
+.guide-live.thumb { width: 168px; height: 132px; }
+.guide-live.slot { width: 300px; height: 180px; }
+.guide-live .canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.guide-live .canvas.preview { cursor: default; }
+.guide-live.drag .person { animation: guide-nudge 2.8s ease-in-out infinite; }
+.guide-shots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-start;
+}
+.guide-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.guide-step {
+  display: grid;
+  grid-template-columns: minmax(200px, max-content) minmax(220px, 1fr);
+  gap: 12px 16px;
+  align-items: center;
+  margin: 0;
+}
+.guide-step.stack {
+  grid-template-columns: 1fr;
+}
+.guide-step figcaption {
+  margin: 0;
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #d5d0c2;
+}
+.guide-step figcaption strong {
+  display: block;
+  margin: 0 0 4px;
+  color: #f3ead4;
+  font-size: 13px;
+  font-weight: 600;
+}
+.guide-replica,
+.guide-nav,
+.guide-zoom-replica {
+  pointer-events: none;
+}
+.guide-nav {
+  width: 236px;
+}
+.zoom.guide-zoom-replica {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  width: max-content;
+}
+.guide-key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #e7e2d4;
+}
+.guide-sheet {
+  width: min(420px, 100%);
+  padding: 14px;
+  border: 1px solid #4d5a46;
+  border-radius: 12px;
+  background: #19251d;
+  pointer-events: none;
+}
+.guide-sheet h3 {
+  margin: 0 0 8px;
+  font: 16px Georgia, serif;
+  color: #f3ead4;
+}
+.guide-sheet label {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+}
+.guide-sheet.wide {
+  width: min(640px, 100%);
+}
+.guide-pre {
+  white-space: pre-line;
+}
+.guide-sheet label > input,
+.guide-sheet .fields select,
+.guide-sheet .fields textarea {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+}
+.guide-sheet .actions {
+  margin-top: 12px;
+}
+.guide-sheet .member-row {
+  width: 100%;
+}
+.guide-sheet.history-list,
+.guide-sheet.match-preview {
+  margin-top: 0;
+  max-height: none;
+}
+.guide-sheet .history-list {
+  max-height: none;
+  margin-top: 8px;
+  overflow: visible;
+}
+.guide-ancestors {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+.guide-ancestor-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.guide-ancestor-row .partner-slot.ancestor-slot {
+  position: relative;
+  left: auto;
+  top: auto;
+}
+.guide-context.person-context {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: 246px;
+  flex: none;
+}
+.guide-undo,
+.guide-partner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  pointer-events: none;
+}
+.guide-undo {
+  flex-direction: row;
+  align-items: center;
+  padding: 12px;
+  border-radius: 10px;
+  background: #121b17;
+  border: 1px solid #303d35;
+}
+.guide-undo-target {
+  outline: 2px solid #eee0b4;
+  outline-offset: 3px;
+}
+.guide-setting {
+  margin-top: 0;
+  max-width: 280px;
+  pointer-events: none;
+}
+@keyframes guide-nudge {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(16px, 8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guide-live.drag .person { animation: none; }
 }

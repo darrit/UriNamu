@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.4.52 — 2026-10-27
+
+- Every guide explanation that describes a window or a control now shows that window: the member form, the profile, the menu states, search, dynasty, the library, merge, history and export.
+
+## 0.4.51 — 2026-10-27
+
+- The guide walks through each control beside the real button or picture, and the text names where that control sits and what it does.
+
+## 0.4.50 — 2026-10-27
+
+- The guide menu matches the real menu, and its text names the undo arrow at the top right and the partner-space check in Settings.
+
+## 0.4.49 — 2026-10-27
+
+- Guide pictures are the real cards, ribbons and lines of the Morgenstern example, including the menu, the three views, tidy-up and a dynasty.
+
+## 0.4.48 — 2026-10-27
+
+- A guide in the sidebar explains the first steps and the later possibilities, with small previews. The first hints can be skipped and stay quiet afterwards.
+
 ## 0.4.47 — 2026-10-27
 
 - The Windows installer installs the WebView2 runtime when it is missing. An existing runtime stays in place, and the download needs an internet connection.

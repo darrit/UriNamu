@@ -205,7 +205,7 @@ const de = {
   removeWithDescendants:
     "Möchtest du „{name}“ und {count} nachfolgende Personen wirklich entfernen? Der ganze nachfolgende Baum wird gelöscht. Die Änderung lässt sich rückgängig machen.",
   removePersonAsk:
-    "Möchtest du die Aktion „Person entfernen“ für {name} wirklich ausführen? Die Person und ihre direkten Verbindungen werden aus diesem Stammbaum entfernt. Andere Personen bleiben erhalten. Die Änderung lässt sich rückgängig machen.",
+    "Möchtest du die Aktion „Person entfernen“ für {name} wirklich ausführen? Die Person und ihre direkten Verbindungen werden aus diesem Stammbaum entfernt. Andere Personen bleiben erhalten. Der linke Pfeil oben rechts (Rückgängig) setzt genau diesen Schritt zurück.",
   deathAsk:
     "Möchtest du die Aktion „{action}“ für {name} wirklich ausführen? {detail}",
   deathDetailSet:
@@ -454,6 +454,133 @@ const de = {
   errMembersMissing: "Mitglieder fehlen.",
   errFamilyLarge: "Die Familiendatei überschreitet 32 MB.",
   errFileLarger: "Datei größer als 32 MB.",
+  guide: "Leitfaden",
+  guideTitle: "Leitfaden",
+  guideSkip: "Überspringen",
+  guideNext: "Weiter",
+  guideBeatEmptyTitle: "Die erste Person",
+  guideBeatEmptyBody:
+    "Steht die Leiste offen, liegt Mitglied hinzufügen über der Fläche. Vorname und Nachname genügen. Die Jahre können leer bleiben.",
+  guideBeatPersonTitle: "Das Porträt",
+  guideBeatPersonBody:
+    "Ziehen verschiebt diese Person. Ein Klick setzt sie in die Mitte. Doppelklick oder Enter öffnet das Profil.",
+  guideBeatMenuTitle: "Das Menü am Porträt",
+  guideBeatMenuBody: "Rechtsklick auf das Porträt öffnet dieses Menü.",
+  guideBeatLayoutsTitle: "Drei Ansichten",
+  guideBeatLayoutsBody:
+    "Klassisch, Horizontal und Wandteppich stehen über der Fläche und zeigen denselben Baum. Zusammenrücken sitzt unten rechts auf der Fläche und ordnet die offene Ansicht nach Generationen.",
+  guideChapterPerson: "Erste Person",
+  guideChapterMenu: "Menü",
+  guideChapterCanvas: "Fläche",
+  guideChapterDynasty: "Dynastie",
+  guideChapterTrees: "Bäume",
+  guideChapterKeep: "Bewahren",
+  guideChapterPersonBody:
+    "Mitglied hinzufügen steht über der Fläche. Vorname und Nachname sind Pflicht, die Jahre dürfen leer bleiben. Speichern legt das Porträt an. Ziehen verschiebt es, ein Klick setzt es in die Mitte, Doppelklick öffnet das Profil. Foto wählen schneidet das Bild zu; erst Speichern behält es.",
+  guideChapterMenuBody:
+    "Rechtsklick auf das Porträt öffnet das Menü. Plus legt Kind, Partner oder Elternplätze an. Als verstorben markieren nimmt das Porträt zurück. Scheidung eintragen erscheint erst bei einer aktiven Partnerschaft. Person entfernen fragt zuerst; die anderen Personen bleiben, den nachfolgenden Baum kannst du extra wählen.",
+  guideChapterCanvasBody:
+    "Klassisch, Horizontal und Wandteppich stehen über der Fläche. Zusammenrücken sitzt unten rechts und ordnet die offene Ansicht. Einklappen blendet diese Leiste aus. Die Suche lässt andere Porträts blass werden. Den leeren Partnerplatz schaltest du in den Einstellungen aus.",
+  guideChapterDynastyBody:
+    "Rechtsklick, dann Dynastie ab dem Namen. Name, Ecke und optional ein Bild, dann Dynastie speichern. Nachkommen gehören dazu. Das Zeichen sitzt in der Ecke, das Bild einmal mittig. Ohne Bild bleibt nur das Zeichen. Ein Partner tritt über sein Menü bei oder gründet eine eigene Dynastie. Menschen außerhalb rücken daneben.",
+  guideChapterTreesBody:
+    "Meine Stammbäume in der Seitenleiste legt weitere Bäume an. Der Stift benennt, das Mülltonnensymbol löscht den Baum samt Sicherungen. Zusammenführen verbindet zwei Bäume nur über ein verheiratetes oder geschiedenes Paar. Lies die Namen unter „Diese Personen werden zusammengeführt“. Beide bisherigen Bäume bleiben, das Ergebnis ist ein neuer Baum.",
+  guideChapterKeepBody:
+    "Ganz oben: der linke Pfeil ist Rückgängig, der rechte Wiederherstellen, für die letzten 30 Schritte dieser Sitzung. Sicherungsverlauf in der Seitenleiste hält die letzten 100 gespeicherten Stände. Exportieren schreibt eine verschlüsselte Datei; ohne das Passwort lässt sie sich nicht öffnen. Der Baum auf diesem Rechner bleibt offen. Importieren öffnet so eine Datei.",
+  guideMergeHint:
+    "Lies die Namen unter „Diese Personen werden zusammengeführt“. Nur dieses Paar verbindet die Bäume. Beide bisherigen Bäume bleiben liegen.",
+  guideExportHint:
+    "Ohne dieses Passwort lässt sich die Datei nicht öffnen. Bitte getrennt von der Datei aufschreiben. Der Baum auf diesem Rechner bleibt offen.",
+  guidePreviewDrag: "Ziehen",
+  guidePreviewClicks: "Klick, Doppelklick, Rechtsklick",
+  guidePreviewFamily: "Partner und Kind",
+  guidePreviewBefore: "Vorher",
+  guidePreviewAfter: "Nachher",
+  guidePreviewMenu: "Rechtsklick auf das Porträt",
+  guidePreviewUndo: "Oben rechts in der Leiste",
+  guidePreviewPartner: "Einstellungen, dann Speichern",
+  guideClick: "Klick",
+  guideDoubleClick: "Doppelklick",
+  guideRightClick: "Rechtsklick",
+  guideSampleName: "Anna",
+  guideSamplePartner: "Emil",
+  guideSampleChild: "Mia",
+  guideSampleOther: "Karl",
+  guideSampleYears: "1985",
+  guideSampleChildYears: "2012",
+  guideSampleDynasty: "Berg",
+  guideStepAddTitle: "Mitglied hinzufügen",
+  guideStepAddBody:
+    "Die Schaltfläche steht über der Fläche, solange die Leiste offen ist. Sie öffnet das Fenster im nächsten Bild.",
+  guideStepFormTitle: "Neues Mitglied",
+  guideStepFormBody:
+    "So öffnet sich das Fenster, schon zum Ändern, die Felder leer. Pflicht steht nur am Vornamen. Foto wählen ist schon da und schneidet das Bild zu. Unten heißt die Schaltfläche Änderungen speichern. Erst sie legt das Porträt an.",
+  guideStepPortraitTitle: "Das Porträt",
+  guideStepPortraitBody:
+    "Links liegt es still, rechts zieht es. Ziehen verschiebt nur dieses Porträt. Ein Klick setzt es in die Mitte der Fläche. Doppelklick oder Enter öffnet das Profil.",
+  guideStepProfileTitle: "Das Profil",
+  guideStepProfileBody:
+    "Dasselbe Fenster, nur zum Anschauen. Die Felder sind nur zu lesen. Bearbeiten mit dem Stift schaltet das Ändern ein, danach erscheint Foto wählen. Der Hinweis darunter sagt dasselbe.",
+  guideStepFamilyTitle: "Partner und Kind",
+  guideStepFamilyBody:
+    "Die Linien zeichnet das Programm, sobald Partner und Kind angelegt sind. Beides legst du im Menü am Porträt an, nicht durch Ziehen.",
+  guideStepMembersTitle: "Mitglieder",
+  guideStepMembersBody:
+    "In der Seitenleiste, unter Stammbaum. Die Zeile ist eine Person. Ein Klick öffnet das Profil, der Stift steht rechts in der Zeile.",
+  guideStepMenuTitle: "Rechtsklick auf das Porträt",
+  guideStepMenuBody:
+    "Oben steht der Name. Kind hinzufügen legt ein Kind dieser Person an. Neuen Partner hinzufügen legt eine verbundene Person an. Vorfahren ergänzen zeigt die leeren Plätze im nächsten Bild. Darunter: Als verstorben markieren, Dynastie ab dem Namen, Profil öffnen. Person entfernen ist rot abgesetzt.",
+  guideStepPartnerMenuTitle: "Wenn schon ein Partner da ist",
+  guideStepPartnerMenuBody:
+    "Thomas und Clara sind verbunden. Neuen Partner hinzufügen ist aus. Zusätzlich stehen Kind mit Clara Morgenstern hinzufügen und Scheidung eintragen.",
+  guideStepAncestorsTitle: "Vorfahren ergänzen",
+  guideStepAncestorsBody:
+    "Über dem Porträt liegen zwei leere Plätze, Beschriftung Vorfahre hinzufügen. Ein Klick auf einen Platz legt ein Elternteil an. Bei zwei Eltern steht im Menü „Eltern bereits vollständig“, die Plätze sind weg.",
+  guideStepDeathTitle: "Als verstorben markieren",
+  guideStepDeathBody:
+    "Das Porträt wird blass, das Band zeigt Geburts- und Sterbedatum. So sieht Wilhelm Morgenstern aus.",
+  guideStepDivorceTitle: "Scheidung eintragen",
+  guideStepDivorceBody:
+    "Beide Personen bleiben. Die Linie wird als geschieden gezeichnet. Lena bleibt das Kind von Thomas und Clara.",
+  guideStepRemoveTitle: "Person entfernen",
+  guideStepRemoveBody:
+    "Zuerst die linke Frage. Bestätigen nimmt nur diese Person und ihre direkten Verbindungen, die anderen bleiben. Hat sie Nachkommen, kommt die rechte Frage davor: nur diese Person, oder den nachfolgenden Baum.",
+  guideStepLayoutsTitle: "Drei Ansichten",
+  guideStepLayoutsBody:
+    "Die drei Schaltflächen stehen in der Leiste über der Fläche. Klassisch, Horizontal und Wandteppich zeigen jedes Mal denselben Baum. Unten die drei Bilder von Thomas, Clara und Lena.",
+  guideStepTidyTitle: "Zusammenrücken",
+  guideStepTidyBody:
+    "Unten rechts auf der Fläche, in der Gruppe mit der Prozentzahl, ganz rechts. Der helle Rand markiert es. Es ordnet nur die gerade offene Ansicht nach Generationen. Links daneben verkleinerst du, vergrößerst du und passt alles ein. Vorher liegen die drei auseinander, nachher in den Generationen.",
+  guideStepCollapseTitle: "Einklappen",
+  guideStepCollapseBody:
+    "Die Schaltfläche steht über der Fläche. Sie blendet Mitglied hinzufügen, die drei Ansichten und die Suche aus. Ausklappen holt sie zurück.",
+  guideStepSearchTitle: "Mitglied suchen",
+  guideStepSearchBody:
+    "Das Feld steht rechts in derselben Leiste. Hier steht Lena darin: Thomas und Clara werden blass, Lena bleibt deutlich. Alle bleiben an ihrem Platz.",
+  guideStepSlotTitle: "Der leere Partnerplatz",
+  guideStepSlotBody:
+    "Neben einem Porträt ohne Partner liegt ein Platz mit Plus, Beschriftung Partner hinzufügen. Einstellungen steht in der Seitenleiste. Häkchen bei „Partnerplatz neben Personen ohne Partner anzeigen“ wegnehmen und Speichern: der Platz verschwindet, die Personen bleiben.",
+  guideStepDynastyTitle: "Dynastie",
+  guideStepDynastyBody:
+    "Thomas trägt die Dynastie, Lena steht als Nachkommin darin, Johanna Weber steht daneben. Das M ist nur ein Beispielbild. Ohne Bild bleibt nur der Name in der Ecke.",
+  guideStepDynastyFormTitle: "Dynastie festlegen",
+  guideStepDynastyFormBody:
+    "Rechtsklick, dann Dynastie ab dem Namen, öffnet das linke Fenster. Name, Links oben oder Rechts oben, ein Bild ist optional, dann Dynastie speichern. Rechts das Menü von Clara: Thomas trägt die Dynastie schon, deshalb steht dort Dynastie „Morgenstern“ beitreten. Nochmal derselbe Eintrag heißt dann Verlassen.",
+  guideStepTreesTitle: "Meine Stammbäume",
+  guideStepTreesBody:
+    "In der Seitenleiste öffnet sich dieses Fenster. Der Stift benennt den Baum um. Das Mülltonnensymbol löscht ihn samt Sicherungen. Unten legst du einen neuen Baum an.",
+  guideStepMergeTitle: "Zusammenführen",
+  guideStepMergeBody:
+    "In der Seitenleiste. In beiden Bäumen wählst du dasselbe Paar, nur bei Familienstand Verheiratet oder Geschieden. Den stellst du im Profil unter Partnerschaften & Kinder ein. Die Namen unter der Überschrift sind die Zuordnung. Nur dieses Paar verbindet die Bäume. Beide bisherigen Bäume bleiben. Das Ergebnis ist ein neuer Baum.",
+  guideStepUndoTitle: "Rückgängig und Wiederherstellen",
+  guideStepUndoBody:
+    "Ganz oben, links neben Importieren. Der linke Pfeil ist Rückgängig, der rechte Wiederherstellen. Beides gilt für die letzten 30 Schritte dieser Sitzung. Rückgängig setzt auch Person entfernen zurück: die Person und ihre Verbindungen sind wieder da. Schließt du das Programm, ist diese Liste leer.",
+  guideStepHistoryTitle: "Sicherungsverlauf",
+  guideStepHistoryBody:
+    "In der Seitenleiste. Jede Zeile ist ein gespeicherter Stand, Öffnen steht rechts. Der Klick stellt die Frage rechts daneben. Der aktuelle Stand bleibt im Verlauf erhalten. Es sind die letzten 100 Stände, Fotos eingeschlossen, auf diesem Rechner.",
+  guideStepExportTitle: "Exportieren und Importieren",
+  guideStepExportBody:
+    "Ganz oben: Importieren links, Exportieren rechts und hier umrandet. Exportieren öffnet das Fenster mit den beiden Passwortfeldern. Ohne das Passwort lässt sich die Datei nicht öffnen. Der Baum auf diesem Rechner bleibt offen. In der Browser-Vorschau geht der Dateiaustausch nicht, nur in der installierten App.",
 } as const;
 
 export type MessageKey = keyof typeof de;
@@ -644,7 +771,7 @@ const en: Catalog = {
   removeWithDescendants:
     "Do you really want to remove “{name}” and {count} descendants? The whole following tree will be deleted. You can undo this change.",
   removePersonAsk:
-    "Do you really want to run “Remove person” for {name}? The person and their direct connections will be removed from this family tree. Other people stay. You can undo this change.",
+    "Do you really want to run “Remove person” for {name}? The person and their direct connections will be removed from this family tree. Other people stay. The left arrow at the top right (Undo) puts exactly this step back.",
   deathAsk: "Do you really want to run “{action}” for {name}? {detail}",
   deathDetailSet: "Date of death: {date}. The portrait is visually set back.",
   deathDetailClear:
@@ -886,6 +1013,133 @@ const en: Catalog = {
   errMembersMissing: "Members are missing.",
   errFamilyLarge: "The family file exceeds 32 MB.",
   errFileLarger: "File larger than 32 MB.",
+  guide: "Guide",
+  guideTitle: "Guide",
+  guideSkip: "Skip",
+  guideNext: "Next",
+  guideBeatEmptyTitle: "The first person",
+  guideBeatEmptyBody:
+    "When the bar is open, Add member sits above the canvas. A given name and surname are enough. The years can stay empty.",
+  guideBeatPersonTitle: "The portrait",
+  guideBeatPersonBody:
+    "Drag to move this person. A click centers them. Double-click or Enter opens the profile.",
+  guideBeatMenuTitle: "The menu on the portrait",
+  guideBeatMenuBody: "Right-click the portrait to open this menu.",
+  guideBeatLayoutsTitle: "Three views",
+  guideBeatLayoutsBody:
+    "Classic, Horizontal and Tapestry sit above the canvas and show the same tree. Tidy up sits at the bottom right of the canvas and arranges the open view by generation.",
+  guideChapterPerson: "First person",
+  guideChapterMenu: "Menu",
+  guideChapterCanvas: "Canvas",
+  guideChapterDynasty: "Dynasty",
+  guideChapterTrees: "Trees",
+  guideChapterKeep: "Keep",
+  guideChapterPersonBody:
+    "Add member creates a portrait. A given name and surname are enough, and the years may stay empty. Double-click opens the profile. Choose photo crops the portrait; only Save keeps it.",
+  guideChapterMenuBody:
+    "Right-click the portrait to open the menu. Entries with a plus add a child, a partner or ancestors. Remove person asks first. If you confirm, the other people stay. The left arrow at the top right puts exactly this step back: the removed person and their connections are there again. You hide the empty partner space beside the portrait in Settings. Clear the check and save.",
+  guideChapterCanvasBody:
+    "Classic, Horizontal and Tapestry show the same tree. Tidy up, at the bottom right of the canvas, arranges the open view by generation. Collapse at the top hides the bar above it.",
+  guideChapterDynastyBody:
+    "From this person, descendants belong to the dynasty. The mark sits in a top corner, and the picture sits once in the center. A partner can join or found their own dynasty. People outside the area move beside it.",
+  guideChapterTreesBody:
+    "My trees creates further trees. Merge joins two trees through a married or divorced couple. Read the names under “These people will be merged”. Only that couple joins the trees. Both existing trees stay.",
+  guideChapterKeepBody:
+    "The arrow at the top right (Undo) covers the last 30 steps of this session. Backup history in the sidebar keeps the last 100 saved states. Without the export password the file cannot be opened. Write it down apart from the file. The tree on this computer stays open.",
+  guideMergeHint:
+    "Read the names under “These people will be merged”. Only that couple joins the trees. Both existing trees stay.",
+  guideExportHint:
+    "Without this password the file cannot be opened. Write it down apart from the file. The tree on this computer stays open.",
+  guidePreviewDrag: "Drag",
+  guidePreviewClicks: "Click, double-click, right-click",
+  guidePreviewFamily: "Partner and child",
+  guidePreviewBefore: "Before",
+  guidePreviewAfter: "After",
+  guidePreviewMenu: "Right-click the portrait",
+  guidePreviewUndo: "Top right in the bar",
+  guidePreviewPartner: "Settings, then Save",
+  guideClick: "Click",
+  guideDoubleClick: "Double-click",
+  guideRightClick: "Right-click",
+  guideSampleName: "Anna",
+  guideSamplePartner: "Emil",
+  guideSampleChild: "Mia",
+  guideSampleOther: "Karl",
+  guideSampleYears: "1985",
+  guideSampleChildYears: "2012",
+  guideSampleDynasty: "Berg",
+  guideStepAddTitle: "Add member",
+  guideStepAddBody:
+    "The button sits above the canvas while the bar is open. It opens the window in the next picture.",
+  guideStepFormTitle: "New member",
+  guideStepFormBody:
+    "The window opens ready to edit, with the fields empty. Required sits only on the given name. Choose photo is already there and crops the picture. The button at the bottom reads Save changes. Only that places the portrait.",
+  guideStepPortraitTitle: "The portrait",
+  guideStepPortraitBody:
+    "The left one is still, the right one is being dragged. Drag moves only this portrait. A click centers it on the canvas. Double-click or Enter opens the profile.",
+  guideStepProfileTitle: "The profile",
+  guideStepProfileBody:
+    "The same window, only for looking. The fields are read-only. Edit, with the pencil, turns changing on, and Choose photo appears then. The hint underneath says the same.",
+  guideStepFamilyTitle: "Partner and child",
+  guideStepFamilyBody:
+    "The lines appear once a partner and a child exist. You add both from the menu on the portrait, not by dragging.",
+  guideStepMembersTitle: "Members",
+  guideStepMembersBody:
+    "In the sidebar, under Family tree. The row is one person. A click opens the profile. The pencil sits on the right of the row.",
+  guideStepMenuTitle: "Right-click the portrait",
+  guideStepMenuBody:
+    "The name is at the top. Add child creates a child of this person. Add a new partner creates a connected person. Add ancestors shows the empty places in the next picture. Below that: Mark as deceased, Dynasty from the name, Open profile. Remove person is set off in red.",
+  guideStepPartnerMenuTitle: "When a partner is already there",
+  guideStepPartnerMenuBody:
+    "Thomas and Clara are connected. Add a new partner is off. Add a child with Clara Morgenstern and Record divorce are there as well.",
+  guideStepAncestorsTitle: "Add ancestors",
+  guideStepAncestorsBody:
+    "Two empty places sit above the portrait, labelled Add ancestor. A click on a place creates a parent. With two parents the menu reads “Parents already complete” and the places are gone.",
+  guideStepDeathTitle: "Mark as deceased",
+  guideStepDeathBody:
+    "The portrait fades, and the ribbon shows the birth and death dates. This is how Wilhelm Morgenstern looks.",
+  guideStepDivorceTitle: "Record divorce",
+  guideStepDivorceBody:
+    "Both people stay. The line is drawn as divorced. Lena stays the child of Thomas and Clara.",
+  guideStepRemoveTitle: "Remove person",
+  guideStepRemoveBody:
+    "The question on the left comes first. Confirming removes only this person and their direct connections; the others stay. If they have descendants, the question on the right comes before that: only this person, or the following tree.",
+  guideStepLayoutsTitle: "Three views",
+  guideStepLayoutsBody:
+    "The three buttons sit in the bar above the canvas. Classic, Horizontal and Tapestry each show the same tree. Below are the three pictures of Thomas, Clara and Lena.",
+  guideStepTidyTitle: "Tidy up",
+  guideStepTidyBody:
+    "At the bottom right of the canvas, in the group with the percentage, at the far right. The light outline marks it. It arranges only the view that is open, by generation. To its left you zoom out, zoom in and fit everything. Before, the three sit apart; after, they sit in their generations.",
+  guideStepCollapseTitle: "Collapse",
+  guideStepCollapseBody:
+    "The button sits above the canvas. It hides Add member, the three views and the search. Expand brings them back.",
+  guideStepSearchTitle: "Search for a member",
+  guideStepSearchBody:
+    "The field sits on the right of the same bar. Here it contains Lena: Thomas and Clara fade, Lena stays clear. All of them stay where they are.",
+  guideStepSlotTitle: "The empty partner space",
+  guideStepSlotBody:
+    "Beside a portrait without a partner sits a space with a plus, labelled Add partner. Settings is in the sidebar. Clear the check “Show a partner space beside people without a partner” and save: the space disappears, the people stay.",
+  guideStepDynastyTitle: "Dynasty",
+  guideStepDynastyBody:
+    "Thomas carries the dynasty, Lena stands in it as a descendant, and Johanna Weber stands beside it. The M is only an example picture. Without a picture only the name in the corner remains.",
+  guideStepDynastyFormTitle: "Set a dynasty",
+  guideStepDynastyFormBody:
+    "Right-click, then Dynasty from the name, opens the window on the left. Name, Top left or Top right, an optional picture, then Save dynasty. On the right is Clara’s menu: Thomas already carries the dynasty, so it reads Join dynasty “Morgenstern”. The same entry then reads Leave dynasty “Morgenstern”.",
+  guideStepTreesTitle: "My family trees",
+  guideStepTreesBody:
+    "In the sidebar this window opens. The pencil renames the tree. The waste-bin deletes it together with its backups. Below that you create a new tree.",
+  guideStepMergeTitle: "Merge",
+  guideStepMergeBody:
+    "In the sidebar. In both trees you choose the same couple, and only when the marital status is Married or Divorced. You set that in the profile under Partnerships & children. The names under the heading are the pairing. Only that couple joins the trees. Both existing trees stay. The result is a new tree.",
+  guideStepUndoTitle: "Undo and Redo",
+  guideStepUndoBody:
+    "At the very top, to the left of Import. The left arrow is Undo, the right arrow is Redo. Both cover the last 30 steps of this session. Undo also puts Remove person back: the person and their connections are there again. When you close the program, this list is empty.",
+  guideStepHistoryTitle: "Backup history",
+  guideStepHistoryBody:
+    "In the sidebar. Each row is a saved state, and Open sits on the right. The click asks the question beside it. The current state stays in the history. These are the last 100 states, photos included, on this computer.",
+  guideStepExportTitle: "Export and Import",
+  guideStepExportBody:
+    "At the very top: Import on the left, Export on the right and outlined here. Export opens the window with the two password fields. Without the password the file cannot be opened. The tree on this computer stays open. In the browser preview the file exchange is unavailable; it works in the installed app.",
 };
 
 const ko: Catalog = {
@@ -1071,7 +1325,7 @@ const ko: Catalog = {
   removeWithDescendants:
     "“{name}”과 후손 {count}명을 정말 제거할까요? 이어지는 가계 전체가 삭제됩니다. 이 변경은 되돌릴 수 있습니다.",
   removePersonAsk:
-    "{name}에 대해 “사람 제거”를 정말 실행할까요? 그 사람과 직접 연결이 이 가계도에서 제거됩니다. 다른 사람은 남습니다. 이 변경은 되돌릴 수 있습니다.",
+    "{name}에 대해 “사람 제거”를 정말 실행할까요? 그 사람과 직접 연결이 이 가계도에서 제거됩니다. 다른 사람은 남습니다. 오른쪽 위 왼쪽 화살표(실행 취소)가 바로 이 걸음을 되돌립니다.",
   deathAsk: "{name}에 대해 “{action}”을 정말 실행할까요? {detail}",
   deathDetailSet: "사망일: {date}. 초상이 시각적으로 옅어집니다.",
   deathDetailClear: "사망일과 자동 초상 표시가 제거됩니다.",
@@ -1306,6 +1560,133 @@ const ko: Catalog = {
   errMembersMissing: "구성원이 없습니다.",
   errFamilyLarge: "가족 파일이 32 MB를 넘습니다.",
   errFileLarger: "파일이 32 MB보다 큽니다.",
+  guide: "안내",
+  guideTitle: "안내",
+  guideSkip: "건너뛰기",
+  guideNext: "다음",
+  guideBeatEmptyTitle: "첫 사람",
+  guideBeatEmptyBody:
+    "막대가 열려 있으면 구성원 추가가 화면 위에 있습니다. 이름과 성이면 됩니다. 연도는 비워 두어도 됩니다.",
+  guideBeatPersonTitle: "초상",
+  guideBeatPersonBody:
+    "끌면 이 사람이 움직입니다. 한 번 누르면 가운데로 옵니다. 두 번 누르거나 Enter는 프로필을 엽니다.",
+  guideBeatMenuTitle: "초상의 메뉴",
+  guideBeatMenuBody: "초상을 오른쪽 단추로 누르면 이 메뉴가 열립니다.",
+  guideBeatLayoutsTitle: "세 가지 보기",
+  guideBeatLayoutsBody:
+    "고전, 가로, 벽걸이는 화면 위에 있고 같은 가계도를 보여 줍니다. 가지런히 모으기는 화면 오른쪽 아래에 있고 열린 보기를 세대별로 정리합니다.",
+  guideChapterPerson: "첫 사람",
+  guideChapterMenu: "메뉴",
+  guideChapterCanvas: "화면",
+  guideChapterDynasty: "가문",
+  guideChapterTrees: "가계도",
+  guideChapterKeep: "보관",
+  guideChapterPersonBody:
+    "구성원 추가는 초상을 만듭니다. 이름과 성이면 되고, 연도는 비워 두어도 됩니다. 두 번 누르면 프로필이 열립니다. 사진 선택은 초상을 자르며, 저장해야 남습니다.",
+  guideChapterMenuBody:
+    "초상을 오른쪽 단추로 누르면 메뉴가 열립니다. 더하기가 있는 항목은 자녀, 배우자 또는 조상을 추가합니다. 사람 제거는 먼저 묻습니다. 확인하면 다른 사람은 남습니다. 오른쪽 위 왼쪽 화살표는 바로 이 걸음을 되돌립니다. 제거된 사람과 연결이 다시 있습니다. 초상 옆의 빈 배우자 자리는 설정에서 끕니다. 체크를 지우고 저장하세요.",
+  guideChapterCanvasBody:
+    "고전, 가로, 벽걸이는 같은 가계도를 보여 줍니다. 화면 오른쪽 아래의 가지런히 모으기가 열린 보기를 세대별로 정리합니다. 위의 접기는 그 위 막대를 숨깁니다.",
+  guideChapterDynastyBody:
+    "이 사람부터 후손이 가문에 속합니다. 표식은 위쪽 모서리에, 그림은 한가운데에 한 번 놓입니다. 배우자는 들어오거나 자기 가문을 만들 수 있습니다. 영역 밖의 사람은 옆으로 밀립니다.",
+  guideChapterTreesBody:
+    "내 가계도에서 나무를 더 만듭니다. 합치기는 기혼 또는 이혼한 부부로 두 가계도를 잇습니다. “이 사람들이 합쳐집니다” 아래의 이름을 읽으세요. 이 부부만 가계도를 잇습니다. 두 원래 가계도는 남습니다.",
+  guideChapterKeepBody:
+    "오른쪽 위 화살표(실행 취소)는 이 자리의 최근 30걸음입니다. 옆 막대의 백업 기록은 저장된 최근 100개를 담습니다. 내보내기 비밀번호가 없으면 파일을 열 수 없습니다. 파일과 따로 적어두세요. 이 컴퓨터의 가계도는 그대로 열려 있습니다.",
+  guideMergeHint:
+    "“이 사람들이 합쳐집니다” 아래의 이름을 읽으세요. 이 부부만 가계도를 잇습니다. 두 원래 가계도는 남습니다.",
+  guideExportHint:
+    "이 비밀번호가 없으면 파일을 열 수 없습니다. 파일과 따로 적어두세요. 이 컴퓨터의 가계도는 그대로 열려 있습니다.",
+  guidePreviewDrag: "끌기",
+  guidePreviewClicks: "누르기, 두 번 누르기, 오른쪽 단추",
+  guidePreviewFamily: "배우자와 자녀",
+  guidePreviewBefore: "이전",
+  guidePreviewAfter: "이후",
+  guidePreviewMenu: "초상을 오른쪽 단추로",
+  guidePreviewUndo: "막대 오른쪽 위",
+  guidePreviewPartner: "설정, 그다음 저장",
+  guideClick: "누르기",
+  guideDoubleClick: "두 번 누르기",
+  guideRightClick: "오른쪽 단추",
+  guideSampleName: "Anna",
+  guideSamplePartner: "Emil",
+  guideSampleChild: "Mia",
+  guideSampleOther: "Karl",
+  guideSampleYears: "1985",
+  guideSampleChildYears: "2012",
+  guideSampleDynasty: "Berg",
+  guideStepAddTitle: "구성원 추가",
+  guideStepAddBody:
+    "막대가 열려 있으면 이 단추는 화면 위에 있습니다. 다음 그림의 창을 엽니다.",
+  guideStepFormTitle: "새 구성원",
+  guideStepFormBody:
+    "창은 바로 수정할 수 있게 열리고, 칸은 비어 있습니다. 필수는 이름에만 있습니다. 사진 선택은 이미 있고 그림을 자릅니다. 아래 단추는 변경 내용 저장입니다. 그 단추만 초상을 놓습니다.",
+  guideStepPortraitTitle: "초상",
+  guideStepPortraitBody:
+    "왼쪽은 그대로이고 오른쪽은 끌리는 중입니다. 끌면 이 초상만 움직입니다. 한 번 누르면 화면 가운데로 옵니다. 두 번 누르거나 Enter는 프로필을 엽니다.",
+  guideStepProfileTitle: "프로필",
+  guideStepProfileBody:
+    "같은 창이고, 보기만 합니다. 칸은 읽기 전용입니다. 연필이 있는 편집이 수정을 켜고, 그다음에 사진 선택이 나타납니다. 아래 힌트가 같은 말을 합니다.",
+  guideStepFamilyTitle: "배우자와 자녀",
+  guideStepFamilyBody:
+    "배우자와 자녀가 생기면 선이 그려집니다. 둘 다 초상의 메뉴에서 추가합니다. 끌어서는 생기지 않습니다.",
+  guideStepMembersTitle: "구성원",
+  guideStepMembersBody:
+    "옆 막대에서 가계도 아래입니다. 한 줄이 한 사람입니다. 한 번 누르면 프로필이 열립니다. 연필은 줄 오른쪽에 있습니다.",
+  guideStepMenuTitle: "초상을 오른쪽 단추로",
+  guideStepMenuBody:
+    "위에 이름이 있습니다. 자녀 추가는 이 사람의 자녀를 만듭니다. 새 배우자 추가는 연결된 사람을 만듭니다. 조상 추가는 다음 그림의 빈 자리를 보여 줍니다. 그 아래는 사망으로 표시, 이름부터 가문, 프로필 열기입니다. 사람 제거는 빨갛게 떨어져 있습니다.",
+  guideStepPartnerMenuTitle: "배우자가 이미 있을 때",
+  guideStepPartnerMenuBody:
+    "Thomas와 Clara는 연결되어 있습니다. 새 배우자 추가는 꺼져 있습니다. Clara Morgenstern와(과) 자녀 추가와 이혼 기록이 더 있습니다.",
+  guideStepAncestorsTitle: "조상 추가",
+  guideStepAncestorsBody:
+    "초상 위에 빈 자리 둘이 있고, 글자는 조상 추가입니다. 자리를 누르면 부모가 생깁니다. 부모가 둘이면 메뉴에 “부모가 이미 모두 있음”이 나오고 자리는 사라집니다.",
+  guideStepDeathTitle: "사망으로 표시",
+  guideStepDeathBody:
+    "초상이 옅어지고, 리본에 출생과 사망 날짜가 나옵니다. Wilhelm Morgenstern이 이렇게 보입니다.",
+  guideStepDivorceTitle: "이혼 기록",
+  guideStepDivorceBody:
+    "두 사람은 남습니다. 선은 이혼으로 그려집니다. Lena는 Thomas와 Clara의 자녀로 남습니다.",
+  guideStepRemoveTitle: "사람 제거",
+  guideStepRemoveBody:
+    "왼쪽 질문이 먼저 옵니다. 확인하면 그 사람과 직접 연결만 빠지고 다른 사람은 남습니다. 후손이 있으면 그 전에 오른쪽 질문이 옵니다. 그 사람만, 또는 이어지는 가계.",
+  guideStepLayoutsTitle: "세 가지 보기",
+  guideStepLayoutsBody:
+    "세 단추는 화면 위 막대에 있습니다. 고전, 가로, 벽걸이는 매번 같은 가계도입니다. 아래는 Thomas, Clara, Lena의 세 그림입니다.",
+  guideStepTidyTitle: "가지런히 모으기",
+  guideStepTidyBody:
+    "화면 오른쪽 아래, 퍼센트와 함께 있는 묶음의 맨 오른쪽입니다. 밝은 테두리가 그것을 표시합니다. 지금 열린 보기만 세대별로 정리합니다. 그 왼쪽에서 축소, 확대, 모두 맞추기를 합니다. 이전에는 세 사람이 떨어져 있고, 이후에는 세대에 놓입니다.",
+  guideStepCollapseTitle: "접기",
+  guideStepCollapseBody:
+    "이 단추는 화면 위에 있습니다. 구성원 추가, 세 가지 보기, 검색을 숨깁니다. 펼치기가 되돌립니다.",
+  guideStepSearchTitle: "구성원 검색",
+  guideStepSearchBody:
+    "같은 막대 오른쪽에 칸이 있습니다. 여기에는 Lena가 들어 있습니다. Thomas와 Clara는 옅어지고 Lena는 선명합니다. 자리는 그대로입니다.",
+  guideStepSlotTitle: "빈 배우자 자리",
+  guideStepSlotBody:
+    "배우자가 없는 초상 옆에는 더하기와 “배우자 추가”가 있는 자리가 있습니다. 설정은 옆 막대에 있습니다. “배우자가 없는 사람 옆에 자리 표시”의 체크를 지우고 저장하면 자리는 사라지고 사람은 남습니다.",
+  guideStepDynastyTitle: "가문",
+  guideStepDynastyBody:
+    "Thomas가 가문을 가지고, Lena는 후손으로 그 안에 있으며, Johanna Weber는 옆에 있습니다. M은 예시 그림일 뿐입니다. 그림이 없으면 모서리의 이름만 남습니다.",
+  guideStepDynastyFormTitle: "가문 정하기",
+  guideStepDynastyFormBody:
+    "오른쪽 단추, 그다음 이름부터 가문이 왼쪽 창을 엽니다. 이름, 왼쪽 위 또는 오른쪽 위, 그림은 선택, 그다음 가문 저장입니다. 오른쪽은 Clara의 메뉴입니다. Thomas가 이미 가문을 가지고 있어서 가문 “Morgenstern”에 들어가기가 있습니다. 같은 항목을 다시 누르면 가문 “Morgenstern”에서 나가기입니다.",
+  guideStepTreesTitle: "내 가계도",
+  guideStepTreesBody:
+    "옆 막대에서 이 창이 열립니다. 연필은 가계도 이름을 바꿉니다. 휴지통은 가계도와 백업을 함께 지웁니다. 아래에서 새 가계도를 만듭니다.",
+  guideStepMergeTitle: "합치기",
+  guideStepMergeBody:
+    "옆 막대에 있습니다. 두 가계도에서 같은 부부를 고르며, 혼인 상태가 기혼 또는 이혼일 때만 됩니다. 그것은 프로필의 관계와 자녀에서 정합니다. 제목 아래의 이름이 짝입니다. 이 부부만 가계도를 잇습니다. 두 원래 가계도는 남습니다. 결과는 새 가계도입니다.",
+  guideStepUndoTitle: "실행 취소와 다시 실행",
+  guideStepUndoBody:
+    "맨 위, 가져오기 왼쪽입니다. 왼쪽 화살표는 실행 취소, 오른쪽 화살표는 다시 실행입니다. 둘 다 이 자리의 최근 30걸음입니다. 실행 취소는 사람 제거도 되돌립니다. 그 사람과 연결이 다시 있습니다. 프로그램을 닫으면 이 목록은 비습니다.",
+  guideStepHistoryTitle: "백업 기록",
+  guideStepHistoryBody:
+    "옆 막대에 있습니다. 한 줄이 저장된 상태 하나이고, 열기는 오른쪽에 있습니다. 누르면 옆의 질문이 나옵니다. 현재 상태는 기록에 남습니다. 저장된 최근 100개이고, 사진이 포함되며, 이 컴퓨터에 있습니다.",
+  guideStepExportTitle: "내보내기와 가져오기",
+  guideStepExportBody:
+    "맨 위입니다. 가져오기는 왼쪽, 내보내기는 오른쪽이고 여기에는 테두리가 있습니다. 내보내기는 비밀번호 칸 둘이 있는 창을 엽니다. 비밀번호가 없으면 파일을 열 수 없습니다. 이 컴퓨터의 가계도는 그대로 열려 있습니다. 브라우저 미리보기에서는 파일 교환이 되지 않고, 설치된 앱에서 됩니다.",
 };
 
 const catalogs: Record<Locale, Catalog> = { de, en, ko };

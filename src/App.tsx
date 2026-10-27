@@ -1,5 +1,12 @@
 import MergeDialog from "./MergeDialog";
 import LibraryDialog from "./LibraryDialog";
+import { GuideBeatCard, GuideBook, type GuideChapter } from "./GuidePanel";
+import {
+  guideBeat,
+  guideStepAfterFamily,
+  nextGuideStep,
+  type GuideStep,
+} from "./guide";
 import PhotoCrop from "./PhotoCrop";
 import DateField from "./DateField";
 import { dateLabel, dateValue } from "./dates";
@@ -29,6 +36,7 @@ import {
   Sparkles,
   ChevronDown,
   ChevronUp,
+  BookOpen,
 } from "lucide-react";
 import {
   type Family,
@@ -139,12 +147,14 @@ export function Modal({
   onClose,
   wide = false,
   dismissOnBackdrop = false,
+  className = "",
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
   dismissOnBackdrop?: boolean;
+  className?: string;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -154,7 +164,7 @@ export function Modal({
   }, []);
   return (
     <dialog
-      className={`modal ${wide ? "wide" : ""}`}
+      className={`modal ${wide ? "wide" : ""} ${className}`}
       ref={ref}
       onCancel={(e) => {
         e.preventDefault();
@@ -201,6 +211,8 @@ export default function App() {
     [settings, setSettings] = useState(false),
     [buildInfo, setBuildInfo] = useState(false),
     [library, setLibrary] = useState(false),
+    [guideOpen, setGuideOpen] = useState(false),
+    [guideChapter, setGuideChapter] = useState<GuideChapter>("person"),
     [merging, setMerging] = useState(false),
     [marriageUnion, setMarriageUnion] = useState<Union | null>(null),
     [dynastyPerson, setDynastyPerson] = useState<Person | null>(null),
@@ -244,6 +256,34 @@ export default function App() {
     setPreferences(next);
     savePreferences(next);
   };
+  const settleGuide = (step: GuideStep) => {
+    updatePreferences({ ...preferences, guideStep: step });
+    document.getElementById("add-member")?.focus();
+  };
+  const guideBlocked = Boolean(
+    editor ||
+      settings ||
+      library ||
+      merging ||
+      transfer ||
+      history ||
+      question ||
+      removePrompt ||
+      deathPersonId ||
+      dynastyPerson ||
+      marriageUnion ||
+      buildInfo ||
+      branch ||
+      guideOpen,
+  );
+  const beat =
+    family && page === "tree" && !guideBlocked
+      ? guideBeat(
+          preferences.guideStep,
+          family.members.length,
+          family.unions.length,
+        )
+      : null;
   useEffect(() => {
     let mounted = true;
     loadFamily()
@@ -269,6 +309,15 @@ export default function App() {
     document.documentElement.lang = preferences.language ?? "de";
     if (preferences.language) document.title = t("documentTitle");
   }, [preferences.language]);
+  useEffect(() => {
+    if (!family) return;
+    const next = guideStepAfterFamily(
+      preferences.guideStep,
+      family.members.length,
+    );
+    if (next === preferences.guideStep) return;
+    updatePreferences({ ...preferences, guideStep: next });
+  }, [family, preferences]);
   async function commit(next: Family, label: string, record = true) {
     if (working.current) return false;
     working.current = true;
@@ -698,6 +747,15 @@ export default function App() {
             <button className="nav" onClick={() => setSettings(true)}>
               <Settings size={17} /> {t("settings")}
             </button>
+            <button
+              className="nav"
+              onClick={() => {
+                setGuideChapter("person");
+                setGuideOpen(true);
+              }}
+            >
+              <BookOpen size={17} /> {t("guide")}
+            </button>
             <div className="side-bottom">
               {lines(t("sideMotto"))}
               <p>
@@ -742,6 +800,7 @@ export default function App() {
                       <p>{t("introBody")}</p>
                     </div>
                     <button
+                      id="add-member"
                       className="primary"
                       disabled={busy}
                       onClick={() => add()}
@@ -838,6 +897,20 @@ export default function App() {
                   if (person) setDynastyPerson(person);
                 }}
                 onJoinDynasty={toggleDynastyJoin}
+                guidePersonId={
+                  beat === "person" ? family.members[0]?.id ?? null : null
+                }
+                guide={
+                  beat && (
+                    <GuideBeatCard
+                      beat={beat}
+                      onNext={() =>
+                        settleGuide(nextGuideStep(preferences.guideStep))
+                      }
+                      onSkip={() => settleGuide(4)}
+                    />
+                  )
+                }
               />
             ) : (
               <div className="member-grid">
@@ -1156,6 +1229,16 @@ export default function App() {
             }
           }}
         />
+      )}
+      {guideOpen && (
+        <Modal
+          title={t("guideTitle")}
+          onClose={() => setGuideOpen(false)}
+          className="guide-modal"
+          wide
+        >
+          <GuideBook chapter={guideChapter} onChapter={setGuideChapter} />
+        </Modal>
       )}
       {settings && family && (
         <NameDialog
@@ -1955,6 +2038,7 @@ function Transfer({
             </label>
           )}
         </div>
+        {mode === "export" && <p className="hint">{t("guideExportHint")}</p>}
         {error && (
           <p className="form-error" role="alert">
             {shown(error)}

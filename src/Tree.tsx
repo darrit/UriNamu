@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Plus, Minus, Maximize, Focus, ArrowUpLeft, Shrink } from "lucide-react";
 import {
   type Family,
@@ -68,6 +68,9 @@ export default function Tree({
   onJoinDynasty,
   onRemove,
   showPartnerSlots = true,
+  guidePersonId = null,
+  guide = null,
+  preview = false,
 }: {
   family: Family;
   layout: Layout;
@@ -88,6 +91,10 @@ export default function Tree({
   onJoinDynasty: (personId: string, founderId: string) => void;
   onRemove: (id: string) => void;
   showPartnerSlots?: boolean;
+  guidePersonId?: string | null;
+  guide?: ReactNode;
+  /** A still of the real canvas for the guide. No controls and no dragging. */
+  preview?: boolean;
 }) {
   const placedFamily = useMemo(() => preserveLayout(null, family), [family]);
   const [moving, setMoving] = useState<Record<string, Point>>({});
@@ -190,9 +197,15 @@ export default function Tree({
   }, []);
   const fit = () => {
     const b = scene.bounds,
+      pad = preview ? 8 : 60,
+      head = preview ? 8 : 140,
       k = Math.max(
         0.08,
-        Math.min(1, (size.w - 60) / b.width, (size.h - 140) / b.height),
+        Math.min(
+          preview ? 1.6 : 1,
+          (size.w - pad) / b.width,
+          (size.h - head) / b.height,
+        ),
       );
     setView({
       k,
@@ -436,9 +449,10 @@ export default function Tree({
   dynasties.sort((a, b) => b.area - a.area);
   return (
     <div
-      className={`canvas ${layout}`}
+      className={`canvas ${layout}${preview ? " preview" : ""}`}
       ref={container}
       onPointerDown={(e) => {
+        if (preview) return;
         if ((e.target as HTMLElement).closest('button,[role="menu"]')) return;
         e.preventDefault();
         drag.current = { x: e.clientX, y: e.clientY, tx: view.x, ty: view.y };
@@ -456,7 +470,7 @@ export default function Tree({
       onPointerUp={() => (drag.current = null)}
       onPointerCancel={() => (drag.current = null)}
     >
-      <div className="canvas-meta">
+      {!preview && <div className="canvas-meta">
         <strong>{family.name}</strong>
         <span>{t("memberCount", { count: family.members.length })}</span>
         {focus && (
@@ -464,12 +478,14 @@ export default function Tree({
             <ArrowUpLeft size={12} /> {t("overview")}
           </button>
         )}
-      </div>
-      <div className="legend">
-        <i /> {t("legendPartnership")} <i className="child" /> {t("legendChildren")}{" "}
-        <span>╫ {t("legendSeparated")}</span>
-      </div>
-      {layout === "tapestry" && (
+      </div>}
+      {!preview && (
+        <div className="legend">
+          <i /> {t("legendPartnership")} <i className="child" />{" "}
+          {t("legendChildren")} <span>╫ {t("legendSeparated")}</span>
+        </div>
+      )}
+      {!preview && layout === "tapestry" && (
         <div className="tapestry-title">
           <span className="wordmark-uri">URI</span>{" "}
           <span className="wordmark-namu">NAMU</span> · {t("ourRoots")}
@@ -632,7 +648,7 @@ export default function Tree({
                 data-person={p.id}
                 className={`person ${focus === p.id ? "selected" : ""}${
                   matchesQuery(p, query) ? "" : " search-miss"
-                }`}
+                }${guidePersonId === p.id ? " guide-target" : ""}`}
                 style={{ left: pos.x, top: pos.y }}
                 title={t("personTitle", { name: displayName(p) })}
                 onPointerDown={(e) => {
@@ -851,7 +867,7 @@ export default function Tree({
             </button>
           ))}
       </div>
-      {family.members.length === 0 && (
+      {!preview && family.members.length === 0 && (
         <div className="empty">
           {t("emptyTree")
             .split("\n")
@@ -867,9 +883,8 @@ export default function Tree({
         !family.members.some((p) => matchesQuery(p, query)) && (
           <div className="empty">{t("noneFound")}</div>
         )}
-      <div className="canvas-hint">
-        {t("canvasHint")}
-      </div>
+      {!preview && <div className="canvas-hint">{t("canvasHint")}</div>}
+      {guide}
       {menu &&
         menuPerson &&
         createPortal(
@@ -908,7 +923,7 @@ export default function Tree({
           </div>,
           document.body,
         )}
-      <div className="zoom">
+      {!preview && <div className="zoom">
         <button aria-label={t("zoomOut")} onClick={() => zoom(1 / 1.2)}>
           <Minus size={16} />
         </button>
@@ -922,7 +937,7 @@ export default function Tree({
         <button aria-label={t("tidy")} title={t("tidy")} onClick={onTidy}>
           <Shrink size={16} />
         </button>
-      </div>
+      </div>}
     </div>
   );
 }
