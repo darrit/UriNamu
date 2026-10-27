@@ -83,6 +83,8 @@ pub struct Union {
     pub ended: bool,
     #[serde(default = "unspecified_marriage")]
     pub marriage: String,
+    #[serde(default, rename = "marriedOn", skip_serializing_if = "String::is_empty")]
+    pub married_on: String,
     #[serde(
         default = "child_prompt_default",
         rename = "childPrompt",
@@ -258,6 +260,7 @@ pub fn validate(f: &Family) -> Result<()> {
             || !keys.insert(u.id.clone())
             || !["active", "separated"].contains(&u.status.as_str())
             || !["unspecified", "married", "divorced"].contains(&u.marriage.as_str())
+            || !valid_date(&u.married_on)
             || (u.marriage == "married" && u.status != "active")
             || (u.marriage == "divorced" && u.status != "separated")
             || (u.ended && children(f, u))
@@ -278,6 +281,15 @@ pub fn validate(f: &Family) -> Result<()> {
             }
             if !dynasty.logo.is_empty() {
                 decode_photo(&dynasty.logo)?;
+            }
+        }
+        if !u.married_on.is_empty() {
+            for person in f.members.iter().filter(|p| p.id == u.a || p.id == u.b) {
+                if (!person.born.is_empty() && u.married_on < person.born)
+                    || (!person.died.is_empty() && u.married_on > person.died)
+                {
+                    return Err("Ungültige Partnerschaft.".into());
+                }
             }
         }
     }
@@ -938,6 +950,19 @@ mod desktop {
         s.revision(id)
     }
     #[tauri::command]
+    fn save_pdf(request: tauri::ipc::Request<'_>) -> Result<()> {
+        let header = request
+            .headers()
+            .get("x-path")
+            .ok_or_else(|| "missing path".to_string())?;
+        let encoded = header.to_str().map_err(err)?;
+        let path = String::from_utf8(B64.decode(encoded).map_err(err)?).map_err(err)?;
+        let tauri::ipc::InvokeBody::Raw(bytes) = request.body() else {
+            return Err("expected bytes".into());
+        };
+        atomic_write(Path::new(&path), bytes)
+    }
+    #[tauri::command]
     async fn export_family(path: String, password: String, family: Family) -> Result<()> {
         tauri::async_runtime::spawn_blocking(move || {
             let password = Zeroizing::new(password);
@@ -984,6 +1009,7 @@ mod desktop {
                 list_revisions,
                 read_revision,
                 export_family,
+                save_pdf,
                 import_family
             ])
             .run(tauri::generate_context!())
@@ -1300,6 +1326,19 @@ mod library_tests {
         assert!(validate(&family).is_err());
         family.unions[0].marriage = "divorced".into();
         assert!(validate(&family).is_ok());
+        family.unions[0].married_on = "1958-06-14".into();
+        let encrypted = encrypt(&family, "langes-passwort").unwrap();
+        assert_eq!(
+            decrypt(&encrypted, "langes-passwort")
+                .unwrap()
+                .unions[0]
+                .married_on,
+            "1958-06-14"
+        );
+        family.unions[0].married_on = "1900-01-01".into();
+        assert!(validate(&family).is_err());
+        family.unions[0].married_on = "2016-01-01".into();
+        assert!(validate(&family).is_err());
     }
 }
 #[cfg(test)]

@@ -38,6 +38,15 @@ const de = {
   redo: "Wiederherstellen",
   import: "Importieren",
   export: "Exportieren",
+  exportChooseTitle: "Exportieren",
+  exportChooseBody: "Was soll exportiert werden?",
+  exportAsPdf: "Als PDF",
+  exportAsUrinamu: "Als UriNamu-Datei",
+  exportChooseHint:
+    "Das PDF ist ein gewöhnliches Bild des offenen Stammbaums und geht auch in der Vorschau. Die UriNamu-Datei ist verschlüsselt. Danach kommen die beiden Passwortfelder. Der Dateiaustausch geht nur in der installierten App.",
+  exportPdfBusy: "PDF {done}/{total}",
+  exportPdfFailed: "Das PDF konnte nicht erstellt werden.",
+  pdfFilter: "PDF",
   dismissError: "Fehlermeldung schließen",
   welcomeEyebrow: "EIN ORT FÜR EURE WURZELN",
   welcomeTitle: "Jede Familie hat\neine Geschichte.",
@@ -151,6 +160,9 @@ const de = {
   childlessClosed: " · Kinderlos abgeschlossen",
   maritalStatus: "Familienstand: {status}",
   married: "Verheiratet",
+  weddingDate: "Heiratsdatum",
+  weddingDateOptional: "Heiratsdatum (optional)",
+  marriedOnShort: "geheiratet {date}",
   unspecified: "Ledig/unbestimmt",
   recordDivorce: "Scheidung eintragen",
   editHint: "Erst Speichern übernimmt deine Änderungen.",
@@ -391,6 +403,7 @@ const de = {
   errAppearance: "Ungültige Darstellung.",
   errTwoParents: "Maximal zwei unterschiedliche Elternteile sind möglich.",
   errDate: "Bitte ein gültiges Datum eingeben.",
+  errMarriageDate: "Das Heiratsdatum passt nicht zu den Lebensdaten der Partner.",
   errDeathBeforeBirth: "Das Sterbedatum liegt vor der Geburt.",
   errPhoto: "Ungültiges Foto.",
   errParent: "Ungültiger Elternteil.",
@@ -486,7 +499,7 @@ const de = {
   guideChapterTreesBody:
     "Meine Stammbäume in der Seitenleiste legt weitere Bäume an. Der Stift benennt, das Mülltonnensymbol löscht den Baum samt Sicherungen. Zusammenführen verbindet zwei Bäume nur über ein verheiratetes oder geschiedenes Paar. Lies die Namen unter „Diese Personen werden zusammengeführt“. Beide bisherigen Bäume bleiben, das Ergebnis ist ein neuer Baum.",
   guideChapterKeepBody:
-    "Ganz oben: der linke Pfeil ist Rückgängig, der rechte Wiederherstellen, für die letzten 30 Schritte dieser Sitzung. Sicherungsverlauf in der Seitenleiste hält die letzten 100 gespeicherten Stände. Exportieren schreibt eine verschlüsselte Datei; ohne das Passwort lässt sie sich nicht öffnen. Der Baum auf diesem Rechner bleibt offen. Importieren öffnet so eine Datei.",
+    "Ganz oben: der linke Pfeil ist Rückgängig, der rechte Wiederherstellen, für die letzten 30 Schritte dieser Sitzung. Sicherungsverlauf in der Seitenleiste hält die letzten 100 gespeicherten Stände. Exportieren fragt zuerst nach PDF oder verschlüsselter UriNamu-Datei. Ohne das Passwort lässt sich die Datei nicht öffnen. Der Baum auf diesem Rechner bleibt offen. Importieren öffnet so eine Datei.",
   guideMergeHint:
     "Lies die Namen unter „Diese Personen werden zusammengeführt“. Nur dieses Paar verbindet die Bäume. Beide bisherigen Bäume bleiben liegen.",
   guideExportHint:
@@ -580,7 +593,7 @@ const de = {
     "In der Seitenleiste. Jede Zeile ist ein gespeicherter Stand, Öffnen steht rechts. Der Klick stellt die Frage rechts daneben. Der aktuelle Stand bleibt im Verlauf erhalten. Es sind die letzten 100 Stände, Fotos eingeschlossen, auf diesem Rechner.",
   guideStepExportTitle: "Exportieren und Importieren",
   guideStepExportBody:
-    "Ganz oben: Importieren links, Exportieren rechts und hier umrandet. Exportieren öffnet das Fenster mit den beiden Passwortfeldern. Ohne das Passwort lässt sich die Datei nicht öffnen. Der Baum auf diesem Rechner bleibt offen. In der Browser-Vorschau geht der Dateiaustausch nicht, nur in der installierten App.",
+    "Ganz oben: Importieren und Exportieren (hier umrandet). Exportieren öffnet die Auswahl. Als PDF speichert den offenen Stammbaum als gewöhnliches PDF. Als UriNamu-Datei öffnet das Fenster mit den beiden Passwortfeldern. Ohne das Passwort lässt sich die Datei nicht öffnen. In der Browser-Vorschau geht der Dateiaustausch nicht, nur in der installierten App. Das PDF geht auch in der Vorschau.",
 } as const;
 
 export type MessageKey = keyof typeof de;
@@ -611,6 +624,15 @@ const en: Catalog = {
   redo: "Redo",
   import: "Import",
   export: "Export",
+  exportChooseTitle: "Export",
+  exportChooseBody: "What should be exported?",
+  exportAsPdf: "As PDF",
+  exportAsUrinamu: "As a UriNamu file",
+  exportChooseHint:
+    "The PDF is an ordinary picture of the open family tree and also works in the preview. The UriNamu file is encrypted. The two password fields come next. File exchange works only in the installed app.",
+  exportPdfBusy: "PDF {done}/{total}",
+  exportPdfFailed: "The PDF could not be created.",
+  pdfFilter: "PDF",
   dismissError: "Dismiss error",
   welcomeEyebrow: "A PLACE FOR YOUR ROOTS",
   welcomeTitle: "Every family has\na story.",
@@ -719,6 +741,9 @@ const en: Catalog = {
   childlessClosed: " · Closed as childless",
   maritalStatus: "Marital status: {status}",
   married: "Married",
+  weddingDate: "Wedding date",
+  weddingDateOptional: "Wedding date (optional)",
+  marriedOnShort: "married on {date}",
   unspecified: "Single / unspecified",
   recordDivorce: "Record divorce",
   editHint: "Changes apply only after you save.",
@@ -952,6 +977,7 @@ const en: Catalog = {
   errAppearance: "Invalid appearance.",
   errTwoParents: "At most two different parents are possible.",
   errDate: "Please enter a valid date.",
+  errMarriageDate: "The wedding date does not fit the partners' life dates.",
   errDeathBeforeBirth: "The date of death is before the birth.",
   errPhoto: "Invalid photo.",
   errParent: "Invalid parent.",
@@ -1045,7 +1071,7 @@ const en: Catalog = {
   guideChapterTreesBody:
     "My trees creates further trees. Merge joins two trees through a married or divorced couple. Read the names under “These people will be merged”. Only that couple joins the trees. Both existing trees stay.",
   guideChapterKeepBody:
-    "The arrow at the top right (Undo) covers the last 30 steps of this session. Backup history in the sidebar keeps the last 100 saved states. Without the export password the file cannot be opened. Write it down apart from the file. The tree on this computer stays open.",
+    "The arrow at the top right (Undo) covers the last 30 steps of this session. Backup history in the sidebar keeps the last 100 saved states. Export asks first: a PDF, or an encrypted UriNamu file. Without the password the file cannot be opened. Write it down apart from the file. The tree on this computer stays open.",
   guideMergeHint:
     "Read the names under “These people will be merged”. Only that couple joins the trees. Both existing trees stay.",
   guideExportHint:
@@ -1139,7 +1165,7 @@ const en: Catalog = {
     "In the sidebar. Each row is a saved state, and Open sits on the right. The click asks the question beside it. The current state stays in the history. These are the last 100 states, photos included, on this computer.",
   guideStepExportTitle: "Export and Import",
   guideStepExportBody:
-    "At the very top: Import on the left, Export on the right and outlined here. Export opens the window with the two password fields. Without the password the file cannot be opened. The tree on this computer stays open. In the browser preview the file exchange is unavailable; it works in the installed app.",
+    "At the very top: Import and Export (outlined here). Export opens the choice. As PDF saves the open family tree as an ordinary PDF. As a UriNamu file opens the window with the two password fields. Without the password the file cannot be opened. In the browser preview the file exchange is unavailable; it works in the installed app. The PDF works in the preview as well.",
 };
 
 const ko: Catalog = {
@@ -1167,6 +1193,15 @@ const ko: Catalog = {
   redo: "다시 실행",
   import: "가져오기",
   export: "내보내기",
+  exportChooseTitle: "내보내기",
+  exportChooseBody: "무엇을 내보낼까요?",
+  exportAsPdf: "PDF로",
+  exportAsUrinamu: "UriNamu 파일로",
+  exportChooseHint:
+    "PDF는 열린 가계도의 보통 그림이고 미리보기에서도 됩니다. UriNamu 파일은 암호화됩니다. 이어서 비밀번호 칸이 둘 나옵니다. 파일 교환은 설치된 앱에서만 됩니다.",
+  exportPdfBusy: "PDF {done}/{total}",
+  exportPdfFailed: "PDF를 만들지 못했습니다.",
+  pdfFilter: "PDF",
   dismissError: "오류 메시지 닫기",
   welcomeEyebrow: "뿌리를 두는 자리",
   welcomeTitle: "모든 가족에게는\n이야기가 있습니다.",
@@ -1274,6 +1309,9 @@ const ko: Catalog = {
   childlessClosed: " · 자녀 없음으로 닫힘",
   maritalStatus: "혼인 상태: {status}",
   married: "기혼",
+  weddingDate: "결혼일",
+  weddingDateOptional: "결혼일 (선택)",
+  marriedOnShort: "{date}에 결혼",
   unspecified: "미혼/미정",
   recordDivorce: "이혼 기록",
   editHint: "저장해야 변경 내용이 반영됩니다.",
@@ -1505,6 +1543,7 @@ const ko: Catalog = {
   errAppearance: "올바르지 않은 표시입니다.",
   errTwoParents: "서로 다른 부모는 최대 두 명입니다.",
   errDate: "올바른 날짜를 입력하세요.",
+  errMarriageDate: "결혼일이 두 사람의 생몰일과 맞지 않습니다.",
   errDeathBeforeBirth: "사망일이 출생일보다 앞섭니다.",
   errPhoto: "올바르지 않은 사진입니다.",
   errParent: "올바르지 않은 부모입니다.",
@@ -1592,7 +1631,7 @@ const ko: Catalog = {
   guideChapterTreesBody:
     "내 가계도에서 나무를 더 만듭니다. 합치기는 기혼 또는 이혼한 부부로 두 가계도를 잇습니다. “이 사람들이 합쳐집니다” 아래의 이름을 읽으세요. 이 부부만 가계도를 잇습니다. 두 원래 가계도는 남습니다.",
   guideChapterKeepBody:
-    "오른쪽 위 화살표(실행 취소)는 이 자리의 최근 30걸음입니다. 옆 막대의 백업 기록은 저장된 최근 100개를 담습니다. 내보내기 비밀번호가 없으면 파일을 열 수 없습니다. 파일과 따로 적어두세요. 이 컴퓨터의 가계도는 그대로 열려 있습니다.",
+    "오른쪽 위 화살표(실행 취소)는 이 자리의 최근 30걸음입니다. 옆 막대의 백업 기록은 저장된 최근 100개를 담습니다. 내보내기는 먼저 PDF인지 암호화된 UriNamu 파일인지 묻습니다. 비밀번호가 없으면 파일을 열 수 없습니다. 파일과 따로 적어두세요. 이 컴퓨터의 가계도는 그대로 열려 있습니다.",
   guideMergeHint:
     "“이 사람들이 합쳐집니다” 아래의 이름을 읽으세요. 이 부부만 가계도를 잇습니다. 두 원래 가계도는 남습니다.",
   guideExportHint:
@@ -1686,7 +1725,7 @@ const ko: Catalog = {
     "옆 막대에 있습니다. 한 줄이 저장된 상태 하나이고, 열기는 오른쪽에 있습니다. 누르면 옆의 질문이 나옵니다. 현재 상태는 기록에 남습니다. 저장된 최근 100개이고, 사진이 포함되며, 이 컴퓨터에 있습니다.",
   guideStepExportTitle: "내보내기와 가져오기",
   guideStepExportBody:
-    "맨 위입니다. 가져오기는 왼쪽, 내보내기는 오른쪽이고 여기에는 테두리가 있습니다. 내보내기는 비밀번호 칸 둘이 있는 창을 엽니다. 비밀번호가 없으면 파일을 열 수 없습니다. 이 컴퓨터의 가계도는 그대로 열려 있습니다. 브라우저 미리보기에서는 파일 교환이 되지 않고, 설치된 앱에서 됩니다.",
+    "맨 위입니다. 가져오기와 내보내기(여기 테두리). 내보내기는 선택을 엽니다. PDF로는 열린 가계도를 보통 PDF로 저장합니다. UriNamu 파일로는 비밀번호 칸 둘이 있는 창이 열립니다. 비밀번호가 없으면 파일을 열 수 없습니다. 브라우저 미리보기에서는 파일 교환이 되지 않고, 설치된 앱에서 됩니다. PDF는 미리보기에서도 됩니다.",
 };
 
 const catalogs: Record<Locale, Catalog> = { de, en, ko };

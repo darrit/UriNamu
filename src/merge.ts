@@ -126,12 +126,15 @@ export function mergeFamilies(
     }
     const original = unions[index];
     if (incoming.id === lu.id) {
+      const marriedOn = original.marriedOn || incoming.marriedOn;
       unions[index] = {
         ...original,
         marriage: o.marriage as "married" | "divorced",
         status: o.marriage === "married" ? "active" : "separated",
         ended: original.ended && incoming.ended,
+        ...(marriedOn ? { marriedOn } : {}),
       };
+      if (!marriedOn) delete unions[index].marriedOn;
       continue;
     }
     const conflict =

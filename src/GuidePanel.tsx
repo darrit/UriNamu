@@ -9,6 +9,7 @@ import {
   GuideDivorce,
   GuideDynasty,
   GuideDynastyForm,
+  GuideExportChoice,
   GuideExportForm,
   GuideFamily,
   GuideHistoryList,
@@ -315,6 +316,7 @@ export function GuideBook({
             >
               <div className="guide-shots">
                 <GuideTransfer />
+                <GuideExportChoice />
                 <GuideExportForm />
               </div>
             </Step>

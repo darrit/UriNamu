@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.6.2 — 2026-10-27
+
+- The PDF libraries load only when a PDF is exported, so the built application stays under Vite's chunk-size warning.
+
+## 0.6.1 — 2026-10-27
+
+- Export asks whether to write an ordinary PDF or an encrypted UriNamu file. The PDF is a normal picture of the open tree, no longer a large high-resolution poster.
+
+## 0.6.0 — 2026-10-27
+
+- A partnership can store a wedding date. It is entered with the marital status, shown in the profile, and drawn on the tree beside the couple.
+
+## 0.5.0 — 2026-10-27
+
+- A PDF export writes the open family tree as a large, sharp picture for printing. The sheet is twice the on-screen layout at 300 DPI, and a very large tree continues across pages instead of being squeezed onto A4.
+
 ## 0.4.52 — 2026-10-27
 
 - Every guide explanation that describes a window or a control now shows that window: the member form, the profile, the menu states, search, dynasty, the library, merge, history and export.

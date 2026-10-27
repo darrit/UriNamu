@@ -1,6 +1,8 @@
 import MergeDialog from "./MergeDialog";
 import LibraryDialog from "./LibraryDialog";
 import { GuideBeatCard, GuideBook, type GuideChapter } from "./GuidePanel";
+import { PdfJob } from "./PdfJob";
+import { pdfFileName, savePdfFile } from "./savePdf";
 import {
   guideBeat,
   guideStepAfterFamily,
@@ -17,6 +19,7 @@ import {
   Users,
   Network,
   Download,
+  FileImage,
   Upload,
   History,
   Undo2,
@@ -208,6 +211,10 @@ export default function App() {
     [editor, setEditor] = useState<EditorState | null>(null),
     [branch, setBranch] = useState<Union | null>(null),
     [transfer, setTransfer] = useState<"export" | "import" | null>(null),
+    [pdfFamily, setPdfFamily] = useState<Family | null>(null),
+    [pdfStep, setPdfStep] = useState<{ done: number; total: number } | null>(
+      null,
+    ),
     [settings, setSettings] = useState(false),
     [buildInfo, setBuildInfo] = useState(false),
     [library, setLibrary] = useState(false),
@@ -652,10 +659,13 @@ export default function App() {
           </button>
           <button
             className="primary"
-            disabled={!family || busy}
+            disabled={!family || busy || !!pdfFamily}
             onClick={() => setTransfer("export")}
           >
-            <Download size={15} /> {t("export")}
+            <Download size={15} />{" "}
+            {pdfFamily && pdfStep
+              ? t("exportPdfBusy", pdfStep)
+              : t("export")}
           </button>
         </div>
       </header>
@@ -1148,6 +1158,33 @@ export default function App() {
           ask={ask}
           onImport={(f) => newTree(f, "logImported")}
           onNotice={setNotice}
+          onPdf={() => {
+            if (!family?.members.length) return;
+            setPdfStep(null);
+            setPdfFamily(structuredClone(family));
+          }}
+        />
+      )}
+      {pdfFamily && (
+        <PdfJob
+          family={pdfFamily}
+          layout={layout}
+          onProgress={(done, total) => setPdfStep({ done, total })}
+          onDone={(bytes) => {
+            const name = pdfFileName(pdfFamily.name);
+            void savePdfFile(name, bytes)
+              .catch((error) => setError(String(error)))
+              .finally(() => {
+                setPdfFamily(null);
+                setPdfStep(null);
+              });
+          }}
+          onError={(error) => {
+            if (error instanceof Error && error.message === "cancelled") return;
+            setError(t("exportPdfFailed"));
+            setPdfFamily(null);
+            setPdfStep(null);
+          }}
         />
       )}
       {library && (
@@ -1209,12 +1246,14 @@ export default function App() {
           union={marriageUnion}
           busy={busy}
           onClose={() => !busy && setMarriageUnion(null)}
-          onSave={async (marriage) => {
+          onSave={async (marriage, marriedOn) => {
             const next = structuredClone(family),
               u = next.unions.find((u) => u.id === marriageUnion.id)!;
             u.marriage = marriage;
             if (marriage === "married") u.status = "active";
             if (marriage === "divorced") u.status = "separated";
+            if (marriedOn) u.marriedOn = marriedOn;
+            else delete u.marriedOn;
             assignMarriage(u);
             try {
               validate(next);
@@ -1781,6 +1820,9 @@ function PersonEditor({
                         : t("separated")}{" "}
                     · {t("sharedChildren", { count: childrenOf(family, u).length })}
                     {u.ended ? t("childlessClosed") : ""}
+                    {u.marriedOn
+                      ? ` · ${t("marriedOnShort", { date: dateLabel(u.marriedOn) })}`
+                      : ""}
                   </small>
                 </p>
                 {other?.dynasty && (
@@ -1945,6 +1987,7 @@ function Transfer({
   onClose,
   onImport,
   onNotice,
+  onPdf,
 }: {
   mode: "export" | "import";
   family: Family;
@@ -1952,11 +1995,38 @@ function Transfer({
   onClose: () => void;
   onImport: (f: Family) => Promise<boolean>;
   onNotice: (s: string) => void;
+  onPdf: () => void;
 }) {
   const [password, setPassword] = useState(""),
     [repeat, setRepeat] = useState(""),
     [busy, setBusy] = useState(false),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [kind, setKind] = useState<"choose" | "file">(
+      mode === "export" ? "choose" : "file",
+    );
+  if (kind === "choose")
+    return (
+      <Modal title={t("exportChooseTitle")} onClose={onClose}>
+        <p>{t("exportChooseBody")}</p>
+        <div className="actions export-choices">
+          <button
+            type="button"
+            className="primary"
+            disabled={!family.members.length}
+            onClick={() => {
+              onPdf();
+              onClose();
+            }}
+          >
+            <FileImage size={16} /> {t("exportAsPdf")}
+          </button>
+          <button type="button" onClick={() => setKind("file")}>
+            <Download size={16} /> {t("exportAsUrinamu")}
+          </button>
+        </div>
+        <p className="hint">{t("exportChooseHint")}</p>
+      </Modal>
+    );
   return (
     <Modal
       title={
@@ -2262,11 +2332,12 @@ function MarriageDialog({
   union: Union;
   busy: boolean;
   onClose: () => void;
-  onSave: (value: Marriage) => Promise<string>;
+  onSave: (value: Marriage, marriedOn: string) => Promise<string>;
 }) {
   const [value, setValue] = useState<Marriage>(
       union.status === "active" ? "married" : union.marriage || "unspecified",
     ),
+    [marriedOn, setMarriedOn] = useState(union.marriedOn || ""),
     [error, setError] = useState("");
   return (
     <Modal title={t("marriageTitle")} onClose={onClose}>
@@ -2274,7 +2345,7 @@ function MarriageDialog({
       <form
         onSubmit={async (e) => {
           e.preventDefault();
-          setError(await onSave(value));
+          setError(await onSave(value, marriedOn));
         }}
       >
         <div className="fields">
@@ -2293,6 +2364,13 @@ function MarriageDialog({
               <option value="divorced">{t("divorced")}</option>
             </select>
           </label>
+          <DateField
+            label={t("weddingDateOptional")}
+            value={marriedOn}
+            example="18.06.1984"
+            disabled={busy}
+            onChange={setMarriedOn}
+          />
         </div>
         <p className="hint">
           {t("marriageHint")}
