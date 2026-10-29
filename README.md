@@ -4,11 +4,17 @@ A local family tree application built with Tauri 2, React, TypeScript and SQLite
 
 **License:** [PolyForm Noncommercial 1.0.0](LICENSE.md). Personal and other noncommercial use is allowed. Commercial use needs a written license from Darrit first. See [Commercial license](COMMERCIAL.md).
 
-**Set up development:** [Developer guide](docs/ENTWICKLUNG.md) · [Setup reference](docs/SETUP.md)
+**Set up development:** [Developer guide](docs/DEVELOPMENT.md) · [Setup reference](docs/SETUP.md)
 
 **Create an installer:** [Build commands and output folders](#build-installers)
 
 **App version and build details:** the badge beside the logo shows the actual version and opens build details, including the timestamp. Release notes: [CHANGELOG.md](CHANGELOG.md).
+
+## Status and roadmap
+
+Refactoring and cleanup are still outstanding.
+
+- Import a descendant chart from a PDF as a new family tree. Children follow the lines on the sheet.
 
 ## Automatic setup
 
@@ -37,7 +43,7 @@ Native setup supports Windows x64, Debian/Ubuntu on x64/ARM64, and macOS on Inte
 
 The setup only installs or updates Node/npm when they are missing or older than the selected eligible release. Existing equal or newer stable versions are retained, even if they are less than seven days old. This exception applies only to existing Node/npm. All new downloads, Rust, system tools and project dependencies must satisfy the release-age policy: strictly older than seven days at the time setup runs.
 
-The verified baseline is **Node 24.22.0 · npm 12.2.1 · Rust 1.99.1**. Historical release evidence: [Version report](docs/VERSIONEN.md).
+The verified baseline is **Node 24.22.0 · npm 12.2.1 · Rust 1.99.1**. Historical release evidence: [Version report](docs/VERSIONS.md).
 
 ## Develop after setup
 
@@ -77,9 +83,9 @@ Output: `.deb` in `src-tauri/target/release/bundle/deb/` and `.AppImage` in `src
 npm run desktop:build -- --bundles app,dmg -- --locked
 ```
 
-Output: `UriNamu.app` in `src-tauri/target/release/bundle/macos/` and `.dmg` in `src-tauri/target/release/bundle/dmg/`. This builds for the current Mac's architecture. See [Build installers](docs/ENTWICKLUNG.md#7-build-installers) for universal builds, signing and notarization.
+Output: `UriNamu.app` in `src-tauri/target/release/bundle/macos/` and `.dmg` in `src-tauri/target/release/bundle/dmg/`. This builds for the current Mac's architecture. See [Build installers](docs/DEVELOPMENT.md#7-build-installers) for universal builds, signing and notarization.
 
-A successful setup verifies the developer environment. Native app builds, installer installation and graphical acceptance still require separate checks. See the [verification report](docs/PRUEFSTATUS.md).
+A successful setup verifies the developer environment. Native app builds, installer installation and graphical acceptance still require separate checks. See the [verification report](docs/VERIFICATION.md).
 
 Pushing a tag named `v` plus the committed application version, for example `v0.4.47`, runs the same build and publishes the installers on that GitHub release. The tag has to match `package.json`. Starting `.github/workflows/desktop.yml` manually still uploads build artifacts only. The macOS image from this workflow is not signed or notarized. The Windows installer from that release installs WebView2 when it is missing.
 
@@ -89,10 +95,13 @@ Pushing a tag named `v` plus the committed application version, for example `v0.
 - Merge trees by selecting a married/divorced couple in both trees. The result is a new tree; both originals remain available. Match additional duplicate people and resolve conflicts explicitly.
 - People, photos, gender and memories.
 - Classic, horizontal and tapestry tree layouts.
+- A sidebar guide walks through the controls and shows the real windows. The first hints can be skipped.
+- A partnership can store a wedding date. It is entered with the marital status and drawn beside the couple.
+- Export asks for an ordinary PDF of the open tree or an encrypted UriNamu file. The PDF also works in the browser preview.
 - Click to center the selected person; double-click to open the profile; use the pen to edit.
 - Open partner slots, shared child origins, and closing/reopening childless branches.
-- Birth names appear between given name and surname, for example `Anna (Müller) Berg`. Photos have an interactive crop dialog before saving.
-- Right-click to record or correct a death date. Deceased portraits receive a subtle transparent cross and light desaturation; the full death date is shown. The stored photo and relationships remain unchanged.
+- Birth names appear between given name and surname, for example `Anna (Miller) Berg`. Photos have an interactive crop dialog before saving.
+- Right-click to record or correct a death date. Deceased portraits are grayscale under a dark veil, and the full death date is shown with a dagger. The stored photo and relationships remain unchanged.
 - Childless branch badges are centered on their line in all three layouts.
 - Divorced partnerships remain visible with a double-slashed connection, including couples without children. Right-click a former partner to add a new partner.
 - Clicking a person pans the viewport without rearranging cards, paths or zoom. Connections attach to card/portrait boundaries.
@@ -101,7 +110,7 @@ Pushing a tag named `v` plus the committed application version, for example `v0.
 - Local SQLite storage, separate photo files, 100 backups and 30 undo/redo steps per session.
 - Encrypted `.urinamu` exchange using AES-256-GCM and Argon2id; import of older `.wurzeln` prototype exports.
 
-[User guide](docs/BEDIENUNG.md) · [Data format and architecture](docs/ARCHITEKTUR.md). The user guide is English and quotes the German UI labels. The application UI and existing architecture/audit reports retain their current language.
+[User guide](docs/USER-GUIDE.md) · [Data format and architecture](docs/ARCHITECTURE.md). The user guide uses English names for the controls. The installed application still shows those controls in German.
 
 ## License
 
@@ -113,7 +122,7 @@ Do not include real family trees, photos, or other personal data in issues or pu
 
 ## Dependency policy and CI
 
-The application version advances automatically when you start the app or build an installer after application source changed and the version was not already raised. Use `npm run version:bump -- patch` for an explicit fix bump, `-- minor` for new compatible features, or `-- major` for incompatible changes. The command synchronizes npm, Tauri and Rust versions without updating dependencies. Tests/builds reject mismatched versions. A rebuild of unchanged source does not bump again; builds of the same version are distinguished by their timestamp. See [Application versioning](docs/ENTWICKLUNG.md#application-versioning).
+The application version advances automatically when you start the app or build an installer after application source changed and the version was not already raised. Use `npm run version:bump -- patch` for an explicit fix bump, `-- minor` for new compatible features, or `-- major` for incompatible changes. The command synchronizes npm, Tauri and Rust versions without updating dependencies. Tests/builds reject mismatched versions. A rebuild of unchanged source does not bump again; builds of the same version are distinguished by their timestamp. See [Application versioning](docs/DEVELOPMENT.md#application-versioning).
 
 The locked dependency baseline was audited against **2026-10-18 04:52:05 UTC**. Direct npm/Rust versions are pinned, and transitive versions are frozen in `package-lock.json` and `src-tauri/Cargo.lock`. `.npmrc` limits additional npm resolution to the recorded cutoff. Setup separately computes its current UTC cutoff on every run. Audit evidence is stored in `docs/*release-audit.json`.
 
