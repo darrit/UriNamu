@@ -79,7 +79,7 @@ Managed tools, downloads, activation scripts and reports live in ignored `.setup
 
 Run setup again after a new checkout. You can repeat it in an existing checkout. Before developing or building in each new terminal, load `. .\.setup\env.ps1` on Windows or `. ./.setup/env.sh` on Linux/macOS. This also activates the selected compiler and Rust. Individual installation and manual PATH steps are no longer the standard workflow.
 
-Selection details, downgrade behavior and platform limits: [Setup reference](SETUP.md). Verified results: [Verification report](PRUEFSTATUS.md).
+Selection details, downgrade behavior and platform limits: [Setup reference](SETUP.md). Verified results: [Verification report](VERIFICATION.md).
 
 ## 5. Plan mode and browser preview
 
@@ -231,9 +231,9 @@ End users receive the built package and do not need Node/npm, Rust or developer 
 
 On 2026-10-25, full setup succeeded in the Windows project: Node 24.22.0/npm 12.2.1 retained, existing Build Tools 17.14.37806.7 and WebView2 155.0.4283.62 reused without UAC, Rust 1.99.1 installed locally, and `cargo fetch --locked` plus `npm ci` completed. The activated environment finds MSVC 14.44.35207 and Windows SDK 10.0.26100.0. All eleven setup tests passed. The previously run 24 frontend tests and frontend production build also passed.
 
-Setup on a completely fresh Windows machine, the new native setup paths on Linux/macOS, Windows/macOS app builds and graphical acceptance remain open. Earlier successful Linux builds do not verify the new Linux setup script. See [PRUEFSTATUS.md](PRUEFSTATUS.md) for detailed historical evidence.
+Setup on a completely fresh Windows machine, the new native setup paths on Linux/macOS, Windows/macOS app builds and graphical acceptance remain open. Earlier successful Linux builds do not verify the new Linux setup script. See [VERIFICATION.md](VERIFICATION.md) for detailed historical evidence.
 
-Historical release dates for the locked dependency baseline are in [VERSIONEN.md](VERSIONEN.md) and the JSON audits. Use setup plan mode to repeat current metadata checks. The Python tools below are optional maintenance tools, not normal setup prerequisites.
+Historical release dates for the locked dependency baseline are in [VERSIONS.md](VERSIONS.md) and the JSON audits. Use setup plan mode to repeat current metadata checks. The Python tools below are optional maintenance tools, not normal setup prerequisites.
 
 ## 10. Family tree and merge compatibility tests
 

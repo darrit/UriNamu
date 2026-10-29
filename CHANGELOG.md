@@ -70,15 +70,15 @@
 
 ## 0.4.39 — 2026-10-26
 
-- Rename a family tree from Meine Stammbäume. The open tree updates immediately; other trees keep their own backup history.
+- Rename a family tree from My family trees. The open tree updates immediately; other trees keep their own backup history.
 
 ## 0.4.38 — 2026-10-26
 
-- Zusammenrücken keeps siblings of a merged couple at the normal gap. The in-law ancestor line no longer pushes the birth family a full couple-width away.
+- Tidy keeps siblings of a merged couple at the normal gap. The in-law ancestor line no longer pushes the birth family a full couple-width away.
 
 ## 0.4.37 — 2026-10-26
 
-- Zusammenrücken puts an in-law ancestor line beside that partner and keeps cousins under their own parents. The partners switch sides so each one stands toward their own family.
+- Tidy puts an in-law ancestor line beside that partner and keeps cousins under their own parents. The partners switch sides so each one stands toward their own family.
 
 ## 0.4.36 — 2026-10-26
 
@@ -107,7 +107,7 @@
 
 ## 0.4.30 — 2026-10-25
 
-- Zusammenrücken places a couple between both parents' branches instead of past the right edge. Each partner stands on the side of their own parents.
+- Tidy places a couple between both parents' branches instead of past the right edge. Each partner stands on the side of their own parents.
 
 ## 0.4.29 — 2026-10-25
 
@@ -116,13 +116,13 @@
 
 ## 0.4.28 — 2026-10-25
 
-- Delete a tree from **Meine Stammbäume** with the trash icon, including its history. Deleting the open tree switches to another saved tree.
+- Delete a tree from **My family trees** with the trash icon, including its history. Deleting the open tree switches to another saved tree.
 - Keep relatives from both trees when a matched couple is merged, even if a conflict source is selected, and lay the combined tree out again.
 - Draw the tapestry wordmark behind portraits, deceased portraits and connection lines.
 
 ## 0.4.26 — 2026-10-25
 
-- Close an open profile by clicking outside it while editing. Unsaved changes ask **Änderungen verwerfen?** with **Verwerfen** and **Zurückkehren**.
+- Close an open profile by clicking outside it while editing. Unsaved changes ask **Discard changes?** with **Discard** and **Go back**.
 
 ## 0.4.25 — 2026-10-25
 
@@ -144,7 +144,7 @@
 
 ## 0.4.21 — 2026-10-25
 
-- Show **Vorfahre hinzufügen** only for the person who asked, not automatically for their partner.
+- Show **Add ancestor** only for the person who asked, not automatically for their partner.
 
 ## 0.4.20 — 2026-10-25
 
@@ -164,12 +164,12 @@
 
 ## 0.4.16 — 2026-10-25
 
-- Rebuild **Zusammenrücken** by generations so partners, children and ancestors stay in separate rows without covering one another.
+- Rebuild **Tidy** by generations so partners, children and ancestors stay in separate rows without covering one another.
 
 ## 0.4.15 — 2026-10-25
 
-- Remove the child plus from divorced partnerships, and indent **Kind mit … hinzufügen** for a divorced partner under **Kind hinzufügen**.
-- Show a deceased portrait like **Optisch zurücknehmen**, without a cross.
+- Remove the child plus from divorced partnerships, and indent **Add a child with …** for a divorced partner under **Add child**.
+- Show a deceased portrait toned down, without a cross.
 
 ## 0.4.14 — 2026-10-25
 
@@ -187,14 +187,14 @@
 
 ## 0.4.11 — 2026-10-25
 
-- Keep **Person entfernen** at the bottom of the context menu, separated by a horizontal line.
-- Keep the collapse control fixed, and move **Zusammenrücken** to the bottom-right zoom controls.
+- Keep **Remove person** at the bottom of the context menu, separated by a horizontal line.
+- Keep the collapse control fixed, and move **Tidy** to the bottom-right zoom controls.
 - Drag a married or divorced partnership line to move both people together.
 
 ## 0.4.10 — 2026-10-25
 
 - Darken deceased portraits further so the cross reads clearly above the image.
-- Add a child of one person from the context menu, and hide a partnership plus with “Keine Angabe”.
+- Add a child of one person from the context menu, and hide a partnership plus with “No answer”.
 
 ## 0.4.9 — 2026-10-25
 
@@ -262,4 +262,4 @@
 - Center childless labels on their branch and add context-menu removal with confirmation and undo.
 - Add automatic cross-platform setup with the seven-day third-party release-age policy and retain newer existing Node/npm.
 
-Earlier 0.2.1 verification and release audits remain recorded in docs/PRUEFSTATUS.md and docs/VERSIONEN.md.
+Earlier 0.2.1 verification and release audits remain recorded in docs/VERIFICATION.md and docs/VERSIONS.md.

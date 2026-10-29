@@ -119,7 +119,7 @@ test("automatic bump runs once for unversioned application edits and skips docs 
     false,
   );
   assert.equal(
-    needsAutomaticBump("0.4.11", "0.4.11", ["README.md", "docs/BEDIENUNG.md"]),
+    needsAutomaticBump("0.4.11", "0.4.11", ["README.md", "docs/USER-GUIDE.md"]),
     false,
   );
   assert.deepEqual(

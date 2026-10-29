@@ -2,7 +2,7 @@
 
 Run one entry point from the project folder after checkout. Preinstalled Python, rustup, npm, Homebrew or Winget is not required. Linux/macOS need `curl`, `tar` and a SHA-256 tool as their bootstrap base. Windows uses PowerShell 5.1 and the `tar` supplied with Windows 10/11.
 
-After setup: [Build installers for Windows, Linux and macOS](ENTWICKLUNG.md#7-build-installers). Developer setup prepares the tools; the application installer is created by the build command.
+After setup: [Build installers for Windows, Linux and macOS](DEVELOPMENT.md#7-build-installers). Developer setup prepares the tools; the application installer is created by the build command.
 
 ## Windows 10/11 x64
 
@@ -91,8 +91,8 @@ npm run build
 
 The setup tests cover age boundaries, release selection, retaining newer Node/npm, engine compatibility, fixed Microsoft sources, hashes, Apple catalog data and Linux snapshot pins that keep newer installed libraries. Four Windows tests also cover paths with spaces/parentheses, batch exit codes, PowerShell 5.1 enumeration of vswhere JSON, and conditional elevation. Those four tests are skipped on other platforms.
 
-On **2026-10-25**, complete setup succeeded on Windows x64: Node 24.22.0/npm 12.2.1 retained, existing Build Tools 17.14.37806.7 and WebView2 155.0.4283.62 reused without UAC, Rust 1.99.1 installed locally, Rust dependencies fetched with `--locked`, and `npm ci` completed. The activated environment finds MSVC 14.44.35207 and Windows SDK 10.0.26100.0. All eleven setup tests passed. Further evidence and open target-system checks: [Verification report](PRUEFSTATUS.md).
+On **2026-10-25**, complete setup succeeded on Windows x64: Node 24.22.0/npm 12.2.1 retained, existing Build Tools 17.14.37806.7 and WebView2 155.0.4283.62 reused without UAC, Rust 1.99.1 installed locally, Rust dependencies fetched with `--locked`, and `npm ci` completed. The activated environment finds MSVC 14.44.35207 and Windows SDK 10.0.26100.0. All eleven setup tests passed. Further evidence and open target-system checks: [Verification report](VERIFICATION.md).
 
 A successful plan only validates metadata. First-time setup on a completely fresh Windows machine, and the new native setup paths on macOS/Linux, still require separate checks. The successful setup does not prove a Windows/macOS app installer build or graphical app launch. OS or WebView updates outside this script remain outside its control; subsequent setup runs recheck or restore the required tool versions.
 
-The [developer guide](ENTWICKLUNG.md) covers the standard setup, environment activation, testing and desktop builds. This reference provides additional selection rules and platform limits.
+The [developer guide](DEVELOPMENT.md) covers the standard setup, environment activation, testing and desktop builds. This reference provides additional selection rules and platform limits.
