@@ -609,6 +609,7 @@ export interface Scene {
     separated: boolean;
     ended: boolean;
     partnerPath?: string;
+    tangentAngle?: number;
   }[];
   singles: { a: Point; b: Point }[];
   bounds: { x: number; y: number; width: number; height: number };
@@ -1594,6 +1595,7 @@ export function layoutFamily(
       a: link.a,
       b: link.b,
       joint: link.mid,
+      tangentAngle: link.angle,
       branch: link.mid,
       marker,
       children: kids.map((point) =>
@@ -1783,17 +1785,33 @@ export function smoothLink(from: Point, to: Point, mode: Layout) {
   const handle = Math.max(36, along * 0.5, span * 0.22);
   const c1 = { x: port.x + port.dx * handle, y: port.y + port.dy * handle },
     c2 = { x: into.x + into.dx * handle, y: into.y + into.dy * handle };
+  return cubicPartnership(port, c1, c2, into);
+}
+
+/** Half the arc length, with the local tangent (also for asymmetric curves). */
+function cubicPartnership(a: Point, c1: Point, c2: Point, b: Point) {
   const n = pathNumber;
-  const mid = {
-    x: 0.125 * port.x + 0.375 * c1.x + 0.375 * c2.x + 0.125 * into.x,
-    y: 0.125 * port.y + 0.375 * c1.y + 0.375 * c2.y + 0.125 * into.y,
+  const at = (t: number): Point => {
+    const s = 1 - t;
+    return {
+      x: s ** 3 * a.x + 3 * s * s * t * c1.x + 3 * s * t * t * c2.x + t ** 3 * b.x,
+      y: s ** 3 * a.y + 3 * s * s * t * c1.y + 3 * s * t * t * c2.y + t ** 3 * b.y,
+    };
   };
+  const route = Array.from({ length: 201 }, (_, i) => at(i / 200));
+  const lengths = [0];
+  for (let i = 1; i < route.length; i++)
+    lengths.push(lengths[i - 1] + Math.hypot(route[i].x - route[i - 1].x, route[i].y - route[i - 1].y));
+  const half = lengths[lengths.length - 1] / 2;
+  const index = Math.max(1, lengths.findIndex((length) => length >= half));
+  const t = (index - 1 + (half - lengths[index - 1]) / (lengths[index] - lengths[index - 1] || 1)) / 200;
+  const s = 1 - t;
+  const dx = 3 * s * s * (c1.x - a.x) + 6 * s * t * (c2.x - c1.x) + 3 * t * t * (b.x - c2.x);
+  const dy = 3 * s * s * (c1.y - a.y) + 6 * s * t * (c2.y - c1.y) + 3 * t * t * (b.y - c2.y);
   return {
-    d: `M${n(port.x)},${n(port.y)}C${n(c1.x)},${n(c1.y)} ${n(c2.x)},${n(c2.y)} ${n(into.x)},${n(into.y)}`,
-    a: { x: port.x, y: port.y },
-    b: { x: into.x, y: into.y },
-    mid,
-    route: [port, mid, into],
+    d: `M${n(a.x)},${n(a.y)}C${n(c1.x)},${n(c1.y)} ${n(c2.x)},${n(c2.y)} ${n(b.x)},${n(b.y)}`,
+    a: { x: a.x, y: a.y }, b: { x: b.x, y: b.y },
+    mid: at(t), angle: Math.atan2(dy, dx) * 180 / Math.PI, route,
   };
 }
 
@@ -1888,8 +1906,8 @@ export function tidyLayout(
   const next = structuredClone(family);
   const seated = next.members.every((person) => person.positions?.[mode]);
   const arranged =
-    seated && mode === "chart"
-      ? compactChartRows(next)
+    seated && (mode === "chart" || next.members.every(person => person.positions?.chart))
+      ? compactChartRows(next, mode)
       : seated && rowsAreUsable(next, mode)
       ? compactHierarchy(next, mode)
       : arrangeFromSeats(next, mode, partnerSlots);
@@ -1905,42 +1923,45 @@ export function tidyLayout(
 }
 
 /** Compress shared columns without changing printed generations or branch order. */
-function compactChartRows(family: Family): Record<string, Point> {
+function compactChartRows(family: Family, mode: Layout = "chart"): Record<string, Point> {
+  const along = mode === "horizontal" ? "y" : "x";
+  const cross = mode === "horizontal" ? "x" : "y";
   const rows = new Map<number, Person[]>();
   for (const person of family.members) {
-    const y = person.positions!.chart!.y;
+    const y = person.positions![mode]![cross];
     rows.set(y, [...(rows.get(y) ?? []), person]);
   }
   const before = new Map<string, Person>();
   for (const row of rows.values()) {
-    row.sort((a, b) => a.positions!.chart!.x - b.positions!.chart!.x);
+    row.sort((a, b) => a.positions![mode]![along] - b.positions![mode]![along]);
     row.slice(1).forEach((person, i) => before.set(person.id, row[i]));
   }
   const points: Record<string, Point> = {};
   const columns = new Map<number, Person[]>();
   for (const person of family.members) {
-    const x = person.positions!.chart!.x;
+    const x = person.positions![mode]![along];
     columns.set(x, [...(columns.get(x) ?? []), person]);
   }
   let previous: number | undefined;
   let cursor = Math.min(...columns.keys());
   for (const [x, people] of [...columns].sort((a, b) => a[0] - b[0])) {
-    if (previous !== undefined) cursor += Math.min(x - previous, cardSeparation("chart").x);
+    if (previous !== undefined) cursor += Math.min(x - previous, cardSeparation(mode)[along]);
     for (const person of people) {
       const left = before.get(person.id);
-      if (left && points[left.id]) cursor = Math.max(cursor, points[left.id].x + anchorSeparation("chart", gapKind(family, left.id, person.id)).x);
+      if (left && points[left.id]) cursor = Math.max(cursor, points[left.id].x + anchorSeparation(mode, gapKind(family, left.id, person.id))[along] + 0.01);
     }
     const columnStart = cursor;
     for (const person of people) {
       const left = before.get(person.id);
       const at = left && points[left.id]
-        ? Math.max(columnStart, points[left.id].x + anchorSeparation("chart", gapKind(family, left.id, person.id)).x)
+        ? Math.max(columnStart, points[left.id].x + anchorSeparation(mode, gapKind(family, left.id, person.id))[along] + 0.01)
         : columnStart;
-      points[person.id] = { x: at, y: person.positions!.chart!.y };
+      points[person.id] = { x: at, y: person.positions![mode]![cross] };
       cursor = Math.max(cursor, at);
     }
     previous = x;
   }
+  if (mode === "horizontal") for (const point of Object.values(points)) { const x = point.x; point.x = point.y; point.y = x; }
   return points;
 }
 

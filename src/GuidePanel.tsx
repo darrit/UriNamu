@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { t, type MessageKey } from "./i18n";
+import type { Layout } from "./layout";
 import type { GuideBeat } from "./guide";
 import {
   GuideAddButton,
@@ -53,10 +54,12 @@ type Chapter = (typeof chapters)[number];
 
 export function GuideBeatCard({
   beat,
+  layout,
   onNext,
   onSkip,
 }: {
   beat: GuideBeat;
+  layout: Layout;
   onNext: () => void;
   onSkip: () => void;
 }) {
@@ -82,7 +85,7 @@ export function GuideBeatCard({
     >
       <h2 id="guide-beat-title">{t(beatTitle[beat])}</h2>
       {beat === "empty" && <GuideAddButton />}
-      {beat === "person" && <GuideStillCard />}
+      {beat === "person" && <GuideStillCard layout={layout} />}
       {beat === "menu" && <GuideMenu />}
       {beat === "layouts" && <GuideLayouts />}
       <p>{t(beatBody[beat])}</p>

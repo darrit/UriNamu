@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.8.0 — 2026-11-01
+
+- Add a view-only partner accordion in every layout for people with a divorce and multiple partnerships. Keep the current partner visible, preserve shared children, and reveal additional partners on expansion or search/focus without changing stored positions. Independent ancestry and other family branches remain visible; print views show all people.
+- Place separation and divorce strokes at the midpoint of the rendered SVG connection and rotate them with its tangent, including after tidying. Keep wedding dates beside the strokes rather than covering them.
+
+## 0.7.19 — 2026-11-01
+
+- Revert the experimental multi-partner placement rules for PDF import and tidying. Restore the prior layout behavior while retaining centered, direction-aligned separation strokes.
+
+## 0.7.18 — 2026-11-01
+
+- Limit partner-column placement to direct partners of people with multiple relationships. Keep central people and unrelated neighbours fixed during this placement, and move partner columns outward to respect the existing minimum distances.
+- Exclude partner columns from generation compaction and place multiple groups consistently so repeated tidying does not rearrange them.
+
+## 0.7.17 — 2026-11-01
+
+- Remove the staggered partnership arcs. PDF import and tidying place the first two partners beside the central person and further partners in a column beneath the second, using direct connections and reserving space around other people.
+- Retain centered separation strokes aligned with the connection direction.
+
+## 0.7.16 — 2026-10-31
+
+- Center unmarried separation strokes by connection arc length and rotate them with the local line direction in tapestry view.
+- Route successive partnerships on separate staggered curves, with active partnerships on the innermost lanes, including after PDF import and tidying in every layout.
+
+## 0.7.15 — 2026-10-31
+
+- In tapestry view, draw separated unmarried partnerships with diagonal double strokes directly on the connection. Current unmarried partnerships use the normal connection; neither shows a symbol label, wedding date or badge.
+
+## 0.7.14 — 2026-10-31
+
+- Match the first-run portrait preview to the selected layout and isolate nested tree styles.
+- Preserve imported generation rows when tidying in every layout, including people without recorded parents. Repeated tidying is stable and respects card spacing.
+- Offer separated unmarried partnerships directly in the relationship selector and display partnership signs without a badge background.
+
 ## 0.7.13 — 2026-10-31
 
 - Preserve the selected layout on PDF import. Recognize partner strokes touching frame edges and associate successive partners with the descendant when the chart identifies a unique central person.

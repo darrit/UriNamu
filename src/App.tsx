@@ -932,6 +932,7 @@ export default function App() {
                   beat && (
                     <GuideBeatCard
                       beat={beat}
+                      layout={layout}
                       onNext={() =>
                         settleGuide(nextGuideStep(preferences.guideStep))
                       }
@@ -1299,10 +1300,12 @@ export default function App() {
           onSave={async (marriage, marriedOn) => {
             const next = structuredClone(family),
               u = next.unions.find((u) => u.id === marriageUnion.id)!;
-            u.marriage = marriage;
+            u.marriage = marriage === "separated" ? "unspecified" : marriage;
+            if (marriage === "separated") u.status = "separated";
+            if (marriage === "unspecified") u.status = "active";
             if (marriage === "married") u.status = "active";
             if (marriage === "divorced") u.status = "separated";
-            if (marriedOn && marriage !== "unspecified") u.marriedOn = marriedOn;
+            if (marriedOn && (marriage === "married" || marriage === "divorced")) u.marriedOn = marriedOn;
             else delete u.marriedOn;
             assignMarriage(u);
             try {
@@ -2432,10 +2435,10 @@ function MarriageDialog({
   union: Union;
   busy: boolean;
   onClose: () => void;
-  onSave: (value: Marriage, marriedOn: string) => Promise<string>;
+  onSave: (value: Marriage | "separated", marriedOn: string) => Promise<string>;
 }) {
-  const [value, setValue] = useState<Marriage>(
-      union.marriage || "unspecified",
+  const [value, setValue] = useState<Marriage | "separated">(
+      union.status === "separated" && union.marriage === "unspecified" ? "separated" : union.marriage || "unspecified",
     ),
     [marriedOn, setMarriedOn] = useState(union.marriedOn || ""),
     [error, setError] = useState("");
@@ -2455,14 +2458,15 @@ function MarriageDialog({
               aria-label={t("maritalLabel")}
               value={value}
               disabled={busy}
-              onChange={(e) => setValue(e.target.value as Marriage)}
+              onChange={(e) => setValue(e.target.value as Marriage | "separated")}
             >
+              <option value="separated">{t("separated")}</option>
               <option value="unspecified">{t("unspecified")}</option>
               <option value="married">{t("married")}</option>
               <option value="divorced">{t("divorced")}</option>
             </select>
           </label>
-          {value !== "unspecified" && <DateField
+          {(value === "married" || value === "divorced") && <DateField
             label={t("weddingDateOptional")}
             value={marriedOn}
             example="18.06.1984"

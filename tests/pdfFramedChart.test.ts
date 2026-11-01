@@ -188,3 +188,10 @@ it.each(["text", "strokes"])(
   },
 );
 
+
+it.each(['classic','horizontal','tapestry','chart'] as const)('tidies imported rows without moving unrelated people to another generation: %s',mode=>{
+ const {items,lines,boxes}=fixture(); const f=parseFramedChart(items,lines,boxes,'Example')!;
+ const tidy=tidyLayout(f,mode); expect(tidyLayout(tidy,mode)).toEqual(tidy);
+ const cross=mode==='horizontal'?'x':'y';
+ for(const p of tidy.members){expect(p.positions![mode]![cross]).toBe(f.members.find(q=>q.id===p.id)!.positions![mode]![cross]);for(const q of tidy.members)if(p.id!==q.id)expect(positionsOverlap(p.positions![mode]!,q.positions![mode]!,mode,gapKind(tidy,p.id,q.id))).toBe(false);}
+});

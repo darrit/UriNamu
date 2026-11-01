@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { useEffect, useMemo, useRef, useState, Fragment, type ReactNode, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, Fragment, type ReactNode, type PointerEvent as ReactPointerEvent } from "react";
 import { Plus, Minus, Maximize, Focus, ArrowUpLeft, Shrink } from "lucide-react";
 import {
   type Family,
@@ -28,6 +28,27 @@ import {
 import { dateLabel } from "./dates";
 import { getLocale, localeTag, t } from "./i18n";
 import { type PosterFrame } from "./poster";
+import { accordionFamily, partnerGroups } from "./partnerAccordion";
+
+function SeparationMark({ path, fallback, angle }: { path: string; fallback: Point; angle: number }) {
+  const ref = useRef<SVGPathElement>(null);
+  const [at, setAt] = useState({ ...fallback, angle });
+  useLayoutEffect(() => {
+    const line = ref.current;
+    if (!line) return;
+    const length = line.getTotalLength();
+    const mid = line.getPointAtLength(length / 2);
+    const a = line.getPointAtLength(Math.max(0, length / 2 - 0.5));
+    const b = line.getPointAtLength(Math.min(length, length / 2 + 0.5));
+    setAt({ x: mid.x, y: mid.y, angle: Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI });
+  }, [path]);
+  return <g pointerEvents="none">
+    <path ref={ref} d={path} visibility="hidden" />
+    <g transform={`translate(${at.x}, ${at.y}) rotate(${at.angle})`}>
+      <path className="strike" d="M-9 -9l9 18M0 -9l9 18" fill="none" strokeLinecap="round" />
+    </g>
+  </g>;
+}
 
 function overlaps(
   a: { x: number; y: number; w: number; h: number },
@@ -151,12 +172,21 @@ export default function Tree({
 }) {
   const placedFamily = useMemo(() => preserveLayout(null, family), [family]);
   const [moving, setMoving] = useState<Record<string, Point>>({});
+  const [expandedPartners, setExpandedPartners] = useState<Set<string>>(new Set());
+  const groups = useMemo(() => partnerGroups(placedFamily), [placedFamily]);
+  const openGroups = useMemo(() => {
+    const open = new Set(expandedPartners);
+    for (const group of groups) if (poster || preview || query || group.foldable.includes(focus ?? "")) open.add(group.personId);
+    return open;
+  }, [expandedPartners, groups, poster, preview, query, focus]);
+  const visibleFamily = useMemo(() => accordionFamily(placedFamily, groups, openGroups), [placedFamily, groups, openGroups]);
+  const allPositions = useMemo(() => layoutFamily(placedFamily, layout, null, moving, { partnerSlots: false }).positions, [placedFamily, layout, moving]);
   const scene = useMemo(
     () =>
-      layoutFamily(placedFamily, layout, null, moving, {
+      layoutFamily(visibleFamily, layout, null, allPositions, {
         partnerSlots: showPartnerSlots !== false,
       }),
-    [placedFamily, layout, moving, showPartnerSlots],
+    [visibleFamily, layout, allPositions, showPartnerSlots],
   );
   const personDrag = useRef<{
     id: string;
@@ -501,9 +531,9 @@ export default function Tree({
         (item.group === "other" && ordered[index - 1]?.group === "add"),
     }));
   })();
-  const dynasties = family.members.flatMap((person) => {
+  const dynasties = visibleFamily.members.flatMap((person) => {
     if (!person.dynasty) return [];
-    const region = dynastyRegion(family, person, scene.positions, layout);
+    const region = dynastyRegion(visibleFamily, person, scene.positions, layout);
     if (!region) return [];
     return [
       {
@@ -743,9 +773,9 @@ export default function Tree({
                   const placed = freePair(
                     d.pointA,
                     d.pointB,
-                    blockersAround(family, scene.positions, d.a, layout, [d.b]),
+                    blockersAround(family, allPositions, d.a, layout, [d.b]),
                     layout,
-                    blockersAround(family, scene.positions, d.b, layout, [d.a]),
+                    blockersAround(family, allPositions, d.b, layout, [d.a]),
                   );
                   setMoving({ [d.a]: placed.a, [d.b]: placed.b });
                   savingMove.current = true;
@@ -765,6 +795,7 @@ export default function Tree({
                 }}
               />
               )}
+              {u.separated && <SeparationMark path={u.partnerPath || curve(u.a, u.b)} fallback={u.joint} angle={u.tangentAngle ?? 0} />}
               {u.children.map((p, i) => (
                 <path
                   key={i}
@@ -825,13 +856,20 @@ export default function Tree({
           const stored = family.unions.find((item) => item.id === drawn.id);
           if (!stored) return null;
           const married = stored.marriage === "married" || stored.marriage === "divorced";
+          if (!married && (layout === "tapestry" || stored.status === "separated")) return null;
           const originA = scene.positions[stored.a];
           const originB = scene.positions[stored.b];
           if (!originA || !originB) return null;
+          const divorced = stored.marriage === "divorced";
+          const radians = (drawn.tangentAngle ?? 0) * Math.PI / 180;
+          const labelJoint = divorced ? {
+            x: drawn.joint.x + Math.sin(radians) * 26,
+            y: drawn.joint.y - Math.cos(radians) * 26,
+          } : drawn.joint;
           const at = weddingAnchor(
             originA,
             originB,
-            drawn.joint,
+            labelJoint,
             drawn.children,
             drawn.a,
             drawn.b,
@@ -843,27 +881,54 @@ export default function Tree({
               const person = family.members.find((item) => item.id === id);
               return !person || !matchesQuery(person, query);
             });
-          const divorced = stored.marriage === "divorced";
           const former = !married && stored.status === "separated";
           const wedding = stored.marriedOn ? dateLabel(stored.marriedOn) : t("dateUnknown");
-          const mark = married ? `${divorced ? "= " : ""}${layout === "chart" ? "oo " : ""}${wedding}` : former ? "=" : "–";
+          const mark = married ? `${layout === "chart" ? "oo " : ""}${wedding}` : former ? "=" : "–";
           return (
             <span
               key={stored.id}
               className={`wedding-date${divorced ? " is-divorced" : ""}${faded ? " search-miss" : ""}${!married ? " is-minus" : ""}`}
               style={{ left: at.x, top: at.y }}
-              title={married ? t("weddingDate") : former ? t("formerUnmarried") : t("currentUnmarried")}
+              title={divorced ? `${t("divorced")} · ${t("weddingDate")}` : married ? t("weddingDate") : former ? t("formerUnmarried") : t("currentUnmarried")}
             >
               {mark}
-              {divorced && (
-                <svg className="wedding-strike" viewBox="0 0 28 20" aria-hidden="true">
-                  <path d="M4 1.5l9 17M13 1.5l9 17" />
-                </svg>
-              )}
             </span>
           );
         })}
-        {family.members
+        {!poster && !preview && groups.map(group => {
+          const origin = scene.positions[group.personId];
+          if (!origin) return null;
+          const box = personFootprint(origin, layout);
+          const open = openGroups.has(group.personId);
+          return <div key={group.personId} className="partner-accordion"
+            style={{ left: box.x, top: box.y + box.h + 6 }}
+            onPointerDown={event => event.stopPropagation()}
+            onDoubleClick={event => event.stopPropagation()}>
+            <button type="button" aria-expanded={open} aria-controls={`partners-${group.personId}`}
+              onClick={() => {
+                if (open && group.foldable.includes(focus ?? "")) onFocus(group.personId);
+                setExpandedPartners(previous => {
+                  const next = new Set(previous);
+                  if (open) next.delete(group.personId); else next.add(group.personId);
+                  return next;
+                });
+              }}>
+              <span aria-hidden="true">{open ? "▾" : "▸"}</span> {t("morePartners", { count: group.additional.length })}
+            </button>
+            {open && <div id={`partners-${group.personId}`} className="partner-accordion-list">
+              {[group.primary, ...group.additional].map(union => {
+                const partner = family.members.find(p => p.id === (union.a === group.personId ? union.b : union.a));
+                if (!partner) return null;
+                const status = union.marriage === "divorced" ? t("divorced") : union.status === "separated" ? t("separated") : t("currentPartner");
+                return <button type="button" key={union.id} onClick={() => onFocus(partner.id)}>
+                  <strong>{displayName(partner)}</strong>
+                  <span>{status}{union.marriedOn ? ` · ${dateLabel(union.marriedOn)}` : ""}</span>
+                </button>;
+              })}
+            </div>}
+          </div>;
+        })}
+        {family.members.filter(person => !!scene.positions[person.id])
           .map((p) => {
             const pos = scene.positions[p.id];
             const box = personFootprint(pos, layout);
@@ -916,7 +981,7 @@ export default function Tree({
                   suppressClick.current = p.id;
                   const point = freePosition(
                     d.point,
-                    blockersAround(family, scene.positions, p.id, layout),
+                    blockersAround(family, allPositions, p.id, layout),
                     layout,
                   );
                   setMoving({ [p.id]: point });

@@ -523,8 +523,8 @@ export function GuideDeceased() {
   return <GuideTree family={testcg} layout="tapestry" variant="card" />;
 }
 
-export function GuideStillCard() {
-  return <GuideTree family={testav} layout="tapestry" variant="card" />;
+export function GuideStillCard({ layout = "tapestry" }: { layout?: Layout } = {}) {
+  return <GuideTree family={testav} layout={layout} variant="card" />;
 }
 
 function GuidePersonForm({

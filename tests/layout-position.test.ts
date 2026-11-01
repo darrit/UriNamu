@@ -30,6 +30,25 @@ import {
 } from "../src/layout";
 
 const modes: Layout[] = ["classic", "horizontal", "tapestry"];
+
+describe("partnership route markers", () => {
+  it("centers the marker along the curve and follows its tangent", () => {
+    for (const to of [{ x: 25, y: 400 }, { x: 480, y: 130 }, { x: -360, y: 270 }]) {
+      const link = smoothLink({ x: 0, y: 0 }, to, "tapestry");
+      const lengths = link.route.slice(1).map((p, i) => Math.hypot(p.x - link.route[i].x, p.y - link.route[i].y));
+      const total = lengths.reduce((sum, n) => sum + n, 0);
+      let before = 0;
+      let i = 0;
+      while (before + lengths[i] < total / 2) before += lengths[i++];
+      const a = link.route[i], b = link.route[i + 1];
+      expect(Math.hypot(link.mid.x - a.x, link.mid.y - a.y)).toBeLessThan(lengths[i] + 0.01);
+      const tangent = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+      expect(Math.abs(link.angle - tangent)).toBeLessThan(2);
+    }
+  });
+
+});
+
 function couple(): Family {
   return {
     version: 2,

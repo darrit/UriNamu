@@ -758,7 +758,7 @@ footer {
   opacity: 1;
 }
 .canvas.preview .link-port { pointer-events: none; }
-.canvas.chart .person {
+.canvas.chart > .world > .person {
   width: 168px;
   height: 108px;
   display: block;
@@ -918,7 +918,7 @@ footer {
   pointer-events: none;
   z-index: 0;
 }
-.tapestry .person {
+.canvas.tapestry > .world .person {
   align-items: center;
   background: transparent;
   border: 0;
@@ -931,7 +931,7 @@ footer {
   border-radius: 0;
   overflow: visible;
 }
-.tapestry .portrait {
+.canvas.tapestry > .world .portrait {
   width: 60px;
   height: 70px;
   border: 2px solid #ad9563;
@@ -942,15 +942,15 @@ footer {
   color: #342e21;
   font: 24px Georgia;
 }
-.tapestry .portrait img {
+.canvas.tapestry > .world .portrait img {
   filter: sepia(0.22) saturate(0.8);
 }
 .portrait.portrait--deceased,
-.tapestry .portrait.portrait--deceased {
+.canvas.tapestry > .world .portrait.portrait--deceased {
   filter: grayscale(1);
 }
 .portrait.portrait--deceased::after,
-.tapestry .portrait.portrait--deceased::after {
+.canvas.tapestry > .world .portrait.portrait--deceased::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -958,11 +958,11 @@ footer {
   opacity: 0.45;
   pointer-events: none;
 }
-.tapestry .person.selected .portrait {
+.canvas.tapestry > .world .person.selected .portrait {
   outline: 2px solid #eee0b4;
   outline-offset: 5px;
 }
-.tapestry .person-text {
+.canvas.tapestry > .world .person-text {
   display: none;
 }
 .ribbon {
@@ -985,32 +985,32 @@ footer {
   font-style: italic;
   font-weight: 400;
 }
-.tapestry .partner-slot {
+.canvas.tapestry > .world .partner-slot {
   width: 60px;
   height: 54px;
   border-radius: 50% 50% 12px 12px;
   color: #c5bb94;
 }
-.tapestry .partner-slot.ancestor-slot {
+.canvas.tapestry > .world .partner-slot.ancestor-slot {
   width: 180px;
   height: 120px;
   font-size: 10px;
 }
-.tapestry .edges path {
+.canvas.tapestry > .world .edges path {
   stroke: #baa474;
   stroke-width: 2;
 }
-.tapestry .edges .partnership-hit {
+.canvas.tapestry > .world .edges .partnership-hit {
   stroke: transparent;
   stroke-width: 22;
 }
-.tapestry .edges .child {
+.canvas.tapestry > .world .edges .child {
   stroke: #dcd0ae;
 }
-.tapestry .edges .separated {
+.canvas.tapestry > .world .edges .separated {
   stroke: #a5968a;
 }
-.tapestry .canvas-hint {
+.canvas.tapestry > .canvas-hint {
   color: #a4ad92;
 }
 .empty {
@@ -1834,7 +1834,7 @@ aside .nav {
   padding-bottom: 11px;
 }
 .person.guide-target .portrait,
-.tapestry .person.guide-target .portrait {
+.canvas.tapestry > .world .person.guide-target .portrait {
   outline: 2px solid #eee0b4;
   outline-offset: 6px;
 }
@@ -2100,3 +2100,31 @@ aside .nav {
 @media (prefers-reduced-motion: reduce) {
   .guide-live.drag .person { animation: none; }
 }
+
+.wedding-date.is-minus { background: transparent; border: 0; box-shadow: none; border-radius: 0; padding: 0; min-width: 0; }
+
+.partner-accordion {
+  position: absolute;
+  z-index: 12;
+  width: 220px;
+  font-size: 12px;
+}
+.partner-accordion > button { padding: 4px 9px; font: inherit; }
+.partner-accordion-list {
+  display: grid;
+  margin-top: 4px;
+  padding: 5px;
+  border: 1px solid #baa474;
+  border-radius: 8px;
+  background: #192a22;
+  box-shadow: 0 6px 20px #0006;
+}
+.partner-accordion-list button {
+  display: grid;
+  gap: 3px;
+  text-align: left;
+  padding: 8px;
+  font: inherit;
+  color: #e8d9b5;
+}
+.partner-accordion-list span { font-size: 11px; }
