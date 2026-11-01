@@ -5,9 +5,13 @@
 - `src/domain.ts`: people, partnerships, validation, migration of older structures, and data changes.
 - `src/merge.ts`: deterministic couple and person matching, new IDs, and parent or relationship conflicts. People are not merged by name alone.
 - `src/MergeDialog.tsx` and `src/LibraryDialog.tsx`: the merge assistant and the local family-tree library.
-- `src/layout.ts`: generation and neighbourhood placement, and scene geometry.
-- `src/Tree.tsx`: SVG/D3 connections, people, and input for pan, zoom and centering.
-- `src/App.tsx`: the React interface, dialogs, undo, and the person context menu for ancestors.
+- `src/layout.ts`: stable public layout API. `src/layout/` separates geometry, spacing, connection routes, partner slots, generation ranking, arrangement, dynasty boundaries, scene building, ancestor slots and tidying. Implementation modules import their dependencies directly; they do not import the public facade.
+- `src/Tree.tsx`: composes the canvas, people, drag/link input and partner accordions. `src/tree/` contains viewport controls, context-menu state and actions, connection rendering and wedding-label geometry.
+- `src/App.tsx`: composes the React interface and wires dialog callbacks. `src/useAppController.ts` owns application state, loading, persistence commands, undo/redo and confirmation requests. `src/TreeToolbar.tsx` contains layout selection, search and the collapsible toolbar.
+- `src/PersonEditor.tsx`, `NameDialog.tsx`, `Transfer.tsx`, `DeathDialog.tsx`, `DynastyDialog.tsx`, `MarriageDialog.tsx`: independent profile, settings, exchange and relationship dialogs. Callbacks connect their local form state to the application controller.
+- `src/Modal.tsx`: shared native-dialog lifecycle and dismissal. Dialogs import it directly rather than importing the application entry component.
+- `src/Logo.tsx`, `LanguageScreen.tsx`, `Portrait.tsx`: shared presentation components; portraits do not depend on the interactive tree canvas.
+- `src/i18n.ts`: locale selection, substitution and translation of stored messages. `src/locales/` holds the three catalogs and their shared message types; German keys define the required catalog coverage.
 - `src/guide.ts`, `GuidePanel.tsx`, `GuideScenes.tsx`: the guide beside the real controls.
 - `src/PdfJob.tsx`, `poster.ts`, `savePdf.ts`: an ordinary PDF of the open tree. The PDF libraries load only for that export.
 - `src/storage.ts`: native Tauri calls, and a separate IndexedDB preview for browser checks.

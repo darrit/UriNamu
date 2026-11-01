@@ -15,12 +15,9 @@ jobs:
           - os: windows-2022
             name: windows-x64
             args: --bundles nsis
-          - os: macos-14
+          - os: macos-15
             name: macos-universal
             args: --target universal-apple-darwin --bundles app,dmg
-          - os: ubuntu-22.04
-            name: linux-x64
-            args: --bundles deb,appimage
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -31,14 +28,6 @@ jobs:
       - name: Release tag matches the application version
         if: github.ref_type == 'tag'
         run: node scripts/release-tag.mjs
-      - name: Linux build libraries (dated repository)
-        if: runner.os == 'Linux'
-        run: |
-          mkdir -p /tmp/urinamu-apt/lists/partial
-          echo 'deb [check-valid-until=no] https://snapshot.ubuntu.com/ubuntu/20261016T000000Z jammy main universe' > /tmp/urinamu-apt/snapshot.list
-          echo 'deb [check-valid-until=no] https://snapshot.ubuntu.com/ubuntu/20261016T000000Z jammy-updates main universe' >> /tmp/urinamu-apt/snapshot.list
-          sudo apt-get -o Dir::Etc::sourcelist=/tmp/urinamu-apt/snapshot.list -o Dir::Etc::sourceparts=- -o Dir::State::lists=/tmp/urinamu-apt/lists update
-          sudo apt-get -o Dir::Etc::sourcelist=/tmp/urinamu-apt/snapshot.list -o Dir::Etc::sourceparts=- -o Dir::State::lists=/tmp/urinamu-apt/lists install -y --no-install-recommends libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf
       - name: Pinned Rust toolchain
         run: python scripts/install-ci-rust.py
       - name: macOS targets
@@ -57,9 +46,70 @@ jobs:
             src-tauri/target/release/bundle/
             src-tauri/target/universal-apple-darwin/release/bundle/
           if-no-files-found: error
+  build-linux:
+    name: Linux packages (isolated snapshot)
+    runs-on: ubuntu-22.04
+    # This base predates the apt snapshot. Host runner upgrades cannot leak into it.
+    # Image publication/digest evidence is recorded in docs/ci-release-audit.json.
+    container:
+      image: ubuntu:jammy-20240911.1@sha256:3d1556a8a18cf5307b121e0a98e93f1ddf1f3f8e092f1fddfd941254785b95d7
+      volumes:
+        - /etc/ssl/certs/ca-certificates.crt:/run/host-ca-bundle.crt:ro
+    defaults:
+      run:
+        shell: bash
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      APPIMAGE_EXTRACT_AND_RUN: "1"
+    steps:
+      # Bootstrap before checkout: the minimal image has neither git nor CA certificates.
+      # Only the host's CA bundle is reused to authenticate the initial HTTPS download.
+      - name: Linux build libraries (dated repository)
+        run: |
+          set -euo pipefail
+          mkdir -p /etc/ssl/certs
+          cp /run/host-ca-bundle.crt /etc/ssl/certs/ca-certificates.crt
+          mkdir -p /tmp/urinamu-apt/lists/partial
+          for suite in jammy jammy-updates jammy-security; do
+            echo "deb [check-valid-until=no] https://snapshot.ubuntu.com/ubuntu/20261016T000000Z $suite main universe"
+          done > /tmp/urinamu-apt/snapshot.list
+          apt_options=(
+            -o Dir::Etc::sourcelist=/tmp/urinamu-apt/snapshot.list
+            -o Dir::Etc::sourceparts=-
+            -o Dir::State::lists=/tmp/urinamu-apt/lists
+            -o APT::Update::Error-Mode=any
+            -o Acquire::Retries=3
+          )
+          apt-get "${apt_options[@]}" update
+          apt-get "${apt_options[@]}" install -y --no-remove --no-install-recommends \
+            ca-certificates git curl python3 python-is-python3 build-essential pkg-config \
+            libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev \
+            librsvg2-dev libssl-dev libxdo-dev patchelf file xdg-utils
+          pkg-config --exists gtk+-3.0 webkit2gtk-4.1 openssl
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.22.0
+          cache: npm
+      - name: Release tag matches the application version
+        if: github.ref_type == 'tag'
+        run: node scripts/release-tag.mjs
+      - name: Pinned Rust toolchain
+        run: python scripts/install-ci-rust.py
+      - name: Pinned npm
+        run: npm install --global npm@12.2.1 --before=2026-10-18T04:52:05Z
+      - run: npm ci
+      - run: npm test
+      - run: cargo test --manifest-path src-tauri/Cargo.toml --locked --no-default-features --lib
+      - run: npm run desktop:build -- --bundles deb,appimage -- --locked
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: UriNamu-linux-x64
+          path: src-tauri/target/release/bundle/
+          if-no-files-found: error
   publish:
     name: GitHub release
-    needs: build
+    needs: [build, build-linux]
     if: github.ref_type == 'tag'
     runs-on: ubuntu-22.04
     permissions:

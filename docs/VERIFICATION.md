@@ -1,5 +1,15 @@
 # Verification status
 
+## CI pipeline repair, 2026-11-01
+
+- Workflow validation passed with actionlint 1.7.7 (official release archive checksum verified; ShellCheck was not available).
+- Docker Hub metadata confirms the pinned Linux/amd64 Ubuntu manifest digest and its publication on September 11, 2024. The image and October 16, 2026 package snapshot predate the existing release-age cutoff.
+- In that container, signed APT indexes loaded for `jammy`, `jammy-updates` and `jammy-security`. A simulation of the exact workflow package request completed with exit code 0, resolving all dependencies without the reported `libxtst` mismatch. The subsequent package download was stopped after this separate dependency-resolution check; full package installation and native installer builds were not completed locally.
+- Passed: 159 frontend/model tests, nine version/release tests, application version consistency and `git diff --check`. No application version change is required for this CI-only repair.
+- GitHub execution, including the macOS 15 universal build and Linux installer packaging, still needs a new workflow run with the updated configuration.
+
+## Historical application checks
+
 This document separates checks that were run from builds that are only prepared. The entries below go through version 0.4.2 and stay as evidence. Changes through 0.6.2 are in the [changelog](../CHANGELOG.md). No new verification run is recorded here for them.
 
 ## Application version 0.4.2, 2026-10-25

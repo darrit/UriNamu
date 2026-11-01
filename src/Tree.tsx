@@ -1,6 +1,27 @@
+import { TreeConnections } from "./tree/TreeConnections";
+import { usePersonMenu } from "./tree/usePersonMenu";
+import { useTreeViewport } from "./tree/useTreeViewport";
+import { personMenuItems } from "./tree/personMenuItems";
+import { Portrait } from "./Portrait";
+export { Portrait } from "./Portrait";
 import { createPortal } from "react-dom";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, Fragment, type ReactNode, type PointerEvent as ReactPointerEvent } from "react";
-import { Plus, Minus, Maximize, Focus, ArrowUpLeft, Shrink } from "lucide-react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  Fragment,
+  type ReactNode,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
+import {
+  Plus,
+  Minus,
+  Maximize,
+  Focus,
+  ArrowUpLeft,
+  Shrink,
+} from "lucide-react";
 import {
   type Family,
   type Person,
@@ -13,12 +34,10 @@ import {
   childBranchControl,
 } from "./domain";
 import {
-  flowingConnector,
   ancestorSlotsFor,
   layoutFamily,
   preserveLayout,
   freePosition,
-  freePair,
   blockersAround,
   dynastyRegion,
   personFootprint,
@@ -26,94 +45,14 @@ import {
   type Point,
 } from "./layout";
 import { dateLabel } from "./dates";
-import { getLocale, localeTag, t } from "./i18n";
+import { t } from "./i18n";
 import { type PosterFrame } from "./poster";
-import { accordionFamily, partnerGroups, expandedPartnerPositions } from "./partnerAccordion";
+import {
+  accordionFamily,
+  partnerGroups,
+  expandedPartnerPositions,
+} from "./partnerAccordion";
 
-function SeparationMark({ path, fallback, angle }: { path: string; fallback: Point; angle: number }) {
-  const ref = useRef<SVGPathElement>(null);
-  const [at, setAt] = useState({ ...fallback, angle });
-  useLayoutEffect(() => {
-    const line = ref.current;
-    if (!line) return;
-    const length = line.getTotalLength();
-    const mid = line.getPointAtLength(length / 2);
-    const a = line.getPointAtLength(Math.max(0, length / 2 - 0.5));
-    const b = line.getPointAtLength(Math.min(length, length / 2 + 0.5));
-    setAt({ x: mid.x, y: mid.y, angle: Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI });
-  }, [path]);
-  return <g pointerEvents="none">
-    <path ref={ref} d={path} visibility="hidden" />
-    <g transform={`translate(${at.x}, ${at.y}) rotate(${at.angle})`}>
-      <path className="strike" d="M-9 -9l9 18M0 -9l9 18" fill="none" strokeLinecap="round" />
-    </g>
-  </g>;
-}
-
-function overlaps(
-  a: { x: number; y: number; w: number; h: number },
-  b: { x: number; y: number; w: number; h: number },
-) {
-  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
-}
-
-/** Puts the wedding date in the gap, or just beyond the two cards when the gap is too narrow. */
-function weddingAnchor(
-  originA: Point,
-  originB: Point,
-  joint: Point,
-  children: Point[],
-  endA: Point,
-  endB: Point,
-  mode: Layout,
-): Point {
-  let dx = 0;
-  let dy = 1;
-  if (children.length) {
-    const cx = children.reduce((sum, point) => sum + point.x, 0) / children.length;
-    const cy = children.reduce((sum, point) => sum + point.y, 0) / children.length;
-    dx = cx - joint.x;
-    dy = cy - joint.y;
-  } else if (Math.abs(endB.y - endA.y) > Math.abs(endB.x - endA.x)) {
-    dx = 1;
-    dy = 0;
-  }
-  const len = Math.hypot(dx, dy) || 1;
-  const stepX = (dx / len) * 4;
-  const stepY = (dy / len) * 4;
-  const boxes = [personFootprint(originA, mode), personFootprint(originB, mode)];
-  let point = { ...joint };
-  for (let i = 0; i < 80; i++) {
-    const label = { x: point.x - 40, y: point.y - 10, w: 80, h: 20 };
-    if (!boxes.some((box) => overlaps(label, box))) return point;
-    point = { x: point.x + stepX, y: point.y + stepY };
-  }
-  return point;
-}
-export function Portrait({ p }: { p: Person }) {
-  return (
-    <span
-      className={`portrait${p.died || p.deceased ? " portrait--deceased" : ""}`}
-      title={p.died ? t("diedOn", { date: dateLabel(p.died) }) : undefined}
-    >
-      {p.photo ? (
-        <img
-          src={p.photo}
-          alt={`${displayName(p)}${p.died ? ` – ${t("diedOn", { date: dateLabel(p.died) })}` : ""}`}
-          draggable={false}
-        />
-      ) : (
-        <span className="portrait-initials">
-          {p.name
-            .split(" ")
-            .slice(0, 2)
-            .map((n) => n[0])
-            .join("")}
-        </span>
-      )}
-    </span>
-  );
-}
 export default function Tree({
   family,
   layout,
@@ -147,7 +86,10 @@ export default function Tree({
   focus: string | null;
   onFocus: (id: string | null) => void;
   onMove: (id: string, point: Point) => Promise<boolean>;
-  onMovePair: (ids: [string, string], points: Record<string, Point>) => Promise<boolean>;
+  onMovePair: (
+    ids: [string, string],
+    points: Record<string, Point>,
+  ) => Promise<boolean>;
   onTidy: () => void;
   onEdit: (p: Person) => void;
   onPartner: (id: string) => void;
@@ -172,17 +114,39 @@ export default function Tree({
 }) {
   const placedFamily = useMemo(() => preserveLayout(null, family), [family]);
   const [moving, setMoving] = useState<Record<string, Point>>({});
-  const [expandedPartners, setExpandedPartners] = useState<Set<string>>(new Set());
+  const [expandedPartners, setExpandedPartners] = useState<Set<string>>(
+    new Set(),
+  );
   const groups = useMemo(() => partnerGroups(placedFamily), [placedFamily]);
   const openGroups = useMemo(() => {
     const open = new Set(expandedPartners);
-    for (const group of groups) if (poster || preview || query || group.foldable.includes(focus ?? "")) open.add(group.personId);
+    for (const group of groups)
+      if (poster || preview || query || group.foldable.includes(focus ?? ""))
+        open.add(group.personId);
     return open;
   }, [expandedPartners, groups, poster, preview, query, focus]);
-  const visibleFamily = useMemo(() => accordionFamily(placedFamily, groups, openGroups), [placedFamily, groups, openGroups]);
+  const visibleFamily = useMemo(
+    () => accordionFamily(placedFamily, groups, openGroups),
+    [placedFamily, groups, openGroups],
+  );
   const allPositions = useMemo(() => {
-    const saved = layoutFamily(placedFamily, layout, null, {}, { partnerSlots: false }).positions;
-    const expanded = poster || preview ? saved : expandedPartnerPositions(placedFamily, groups, openGroups, saved, layout);
+    const saved = layoutFamily(
+      placedFamily,
+      layout,
+      null,
+      {},
+      { partnerSlots: false },
+    ).positions;
+    const expanded =
+      poster || preview
+        ? saved
+        : expandedPartnerPositions(
+            placedFamily,
+            groups,
+            openGroups,
+            saved,
+            layout,
+          );
     return { ...expanded, ...moving };
   }, [placedFamily, layout, moving, groups, openGroups, poster, preview]);
   const [hoveredPort, setHoveredPort] = useState<string | null>(null);
@@ -200,20 +164,9 @@ export default function Tree({
     point: Point;
     moved: boolean;
   } | null>(null);
-  const coupleDrag = useRef<{
-    a: string;
-    b: string;
-    client: Point;
-    startA: Point;
-    startB: Point;
-    pointA: Point;
-    pointB: Point;
-    moved: boolean;
-  } | null>(null);
   const suppressClick = useRef<string | null>(null);
   const savingMove = useRef(false);
-  const container = useRef<HTMLDivElement>(null),
-    timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const drag = useRef<{ x: number; y: number; tx: number; ty: number } | null>(
     null,
   );
@@ -226,140 +179,16 @@ export default function Tree({
     clientX: number;
     clientY: number;
   } | null>(null);
-  const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(
-    null,
-  );
-  const menuRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!menu) return;
-    menuRef.current
-      ?.querySelector<HTMLButtonElement>("button:not(:disabled)")
-      ?.focus();
-    const outside = (e: PointerEvent) => {
-      if (!menuRef.current?.contains(e.target as Node)) setMenu(null);
-    };
-    const close = () => setMenu(null);
-    const key = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        setMenu(null);
-        document
-          .querySelector<HTMLButtonElement>(
-            `[data-person="${CSS.escape(menu.id)}"]`,
-          )
-          ?.focus();
-      }
-      if (e.key === "Tab") setMenu(null);
-      if (["ArrowDown", "ArrowUp"].includes(e.key)) {
-        e.preventDefault();
-        const buttons = Array.from(
-          menuRef.current?.querySelectorAll<HTMLButtonElement>(
-            "button:not(:disabled)",
-          ) || [],
-        );
-        const index = buttons.indexOf(
-          document.activeElement as HTMLButtonElement,
-        );
-        buttons[
-          (index + (e.key === "ArrowDown" ? 1 : buttons.length - 1)) %
-            buttons.length
-        ]?.focus();
-      }
-    };
-    document.addEventListener("pointerdown", outside, true);
-    document.addEventListener("keydown", key);
-    window.addEventListener("resize", close);
-    window.addEventListener("wheel", close, true);
-    return () => {
-      document.removeEventListener("pointerdown", outside, true);
-      document.removeEventListener("keydown", key);
-      window.removeEventListener("resize", close);
-      window.removeEventListener("wheel", close, true);
-    };
-  }, [menu]);
-  const [view, setView] = useState({ x: 0, y: 0, k: 1 });
-  const [size, setSize] = useState({ w: 900, h: 600 });
-  useEffect(() => {
-    const ro = new ResizeObserver((entries) => {
-      const r = entries[0].contentRect;
-      setSize((size) =>
-        size.w === r.width && size.h === r.height
-          ? size
-          : { w: r.width, h: r.height },
-      );
-    });
-    if (container.current) ro.observe(container.current);
-    return () => ro.disconnect();
-  }, []);
-  const fit = () => {
-    const b = scene.bounds,
-      pad = preview ? 8 : 60,
-      head = preview ? 8 : 140,
-      k = Math.max(
-        0.02,
-        Math.min(
-          preview ? 1.6 : 1,
-          (size.w - pad) / Math.max(b.width, 1),
-          (size.h - head) / Math.max(b.height, 1),
-        ),
-      );
-    setView({
-      k,
-      x: (size.w - b.width * k) / 2 - b.x * k,
-      y: (size.h - b.height * k) / 2 - b.y * k + 10,
-    });
-  };
-  useEffect(() => {
-    if (poster) return;
-    if (focus && scene.positions[focus]) {
-      const p = scene.positions[focus];
-      setView((v) => {
-        const k = v.k;
-        return {
-          k,
-          x: size.w / 2 - (p.x + 90) * k,
-          y: size.h / 2 - (p.y + 60) * k,
-        };
-      });
-    } else fit();
-  }, [layout, size.w, size.h, focus, poster]);
+  const { menu, setMenu, menuRef } = usePersonMenu();
+  const { container, view, setView, fit, focusPerson, zoom } = useTreeViewport({
+    scene,
+    layout,
+    focus,
+    onFocus,
+    poster,
+    preview,
+  });
   useEffect(() => () => clearTimeout(timer.current), []);
-  const focusPerson = (id: string) => {
-    if (focus === id) {
-      const p = scene.positions[id];
-      setView((v) => ({
-        ...v,
-        x: size.w / 2 - (p.x + 90) * v.k,
-        y: size.h / 2 - (p.y + 60) * v.k,
-      }));
-    } else onFocus(id);
-  };
-  const zoom = (factor: number, anchor = { x: size.w / 2, y: size.h / 2 }) =>
-    setView((v) => {
-      const k = Math.max(0.02, Math.min(2.5, v.k * factor));
-      return {
-        k,
-        x: anchor.x - ((anchor.x - v.x) * k) / v.k,
-        y: anchor.y - ((anchor.y - v.y) * k) / v.k,
-      };
-    });
-  useEffect(() => {
-    const el = container.current;
-    if (!el || poster || preview) return;
-    const wheel = (e: WheelEvent) => {
-      if (e.target instanceof Element && e.target.closest(".guide-beat")) return;
-      e.preventDefault();
-      const rect = el.getBoundingClientRect();
-      const delta =
-        e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? size.h : 1);
-      zoom(Math.exp(-Math.max(-300, Math.min(300, delta)) * 0.0015), {
-        x: e.clientX - rect.left - el.clientLeft,
-        y: e.clientY - rect.top - el.clientTop,
-      });
-    };
-    el.addEventListener("wheel", wheel, { passive: false });
-    return () => el.removeEventListener("wheel", wheel);
-  }, [size, poster, preview]);
   useEffect(() => {
     if (!draft) return;
     const key = (e: KeyboardEvent) => {
@@ -374,172 +203,46 @@ export default function Tree({
       setAncestorFor(null);
   }, [ancestorFor, ancestorChild]);
   const ancestorSlots = ancestorFor
-    ? ancestorSlotsFor(family, scene.positions, ancestorFor, layout, scene.slots)
+    ? ancestorSlotsFor(
+        family,
+        scene.positions,
+        ancestorFor,
+        layout,
+        scene.slots,
+      )
     : [];
-  const curve = (a: Point, b: Point) => flowingConnector(a, b);
   const menuPerson = menu
     ? family.members.find((person) => person.id === menu.id)
     : undefined;
-  const menuItems = (() => {
-    if (!menu || !menuPerson) return [];
-    const close = (run: () => void) => {
-      run();
-      setMenu(null);
-    };
-    const active = family.unions.filter(
-      (union) =>
-        union.status === "active" &&
-        (union.a === menuPerson.id || union.b === menuPerson.id),
-    );
-    const items = [
-      {
-        key: "death",
-        group: "other" as const,
-        label: menuPerson.died || menuPerson.deceased ? t("changeDeathShort") : t("markDeceased"),
-        nested: false,
-        onClick: () => close(() => onDeath(menuPerson.id)),
-      },
-      {
-        key: "partner",
-        group: "add" as const,
-        plus: true,
-        label: t("addNewPartner"),
-        nested: false,
-        disabled: active.length > 0,
-        onClick: () => close(() => onPartner(menuPerson.id)),
-      },
-      {
-        key: "single-child",
-        group: "add" as const,
-        plus: true,
-        danger: false,
-        disabled: false,
-        label: t("addChild"),
-        nested: false,
-        onClick: () => close(() => onChild(menuPerson.id)),
-      },
-      ...family.unions
-        .filter(
-          (union) => union.a === menuPerson.id || union.b === menuPerson.id,
-        )
-        .map((union) => {
-          const other = family.members.find(
-            (person) =>
-              person.id === (union.a === menuPerson.id ? union.b : union.a),
-          );
-          return {
-            key: "child-" + union.id,
-            group: "add" as const,
-            plus: union.marriage !== "divorced",
-            nested: union.marriage === "divorced",
-            danger: false,
-            disabled: false,
-            label: t("childWith", { name: displayName(other) }),
-            onClick: () => close(() => onBranch(union.id)),
-          };
-        }),
-      ...active.map((union) => ({
-        key: union.id,
-        group: "other" as const,
-        label: t(union.marriage === "married" ? "recordDivorce" : "recordSeparation"),
-        nested: false,
-        onClick: () => close(() => onSeparate(union.id)),
-      })),
-      {
-        key: "dynasty",
-        group: "other" as const,
-        label: menuPerson.dynasty
-          ? t("editDynasty", { name: menuPerson.dynasty.name })
-          : t("setDynasty", { name: displayName(menuPerson) }),
-        nested: false,
-        onClick: () => close(() => onDynasty(menuPerson.id)),
-      },
-      ...family.unions
-        .filter(
-          (union) => union.a === menuPerson.id || union.b === menuPerson.id,
-        )
-        .flatMap((union) => {
-          const other = family.members.find(
-            (person) =>
-              person.id === (union.a === menuPerson.id ? union.b : union.a),
-          );
-          if (!other?.dynasty) return [];
-          const joined = menuPerson.dynastyWith?.includes(other.id);
-          return [
-            {
-              key: "join-" + other.id,
-              group: "other" as const,
-              label: joined
-                ? t("leaveDynasty", { name: other.dynasty.name })
-                : t("joinDynasty", { name: other.dynasty.name }),
-              nested: false,
-              onClick: () => close(() => onJoinDynasty(menuPerson.id, other.id)),
-            },
-          ];
-        }),
-      {
-        key: "ancestor",
-        group: "add" as const,
-        plus: true,
-        label:
-          menuPerson.parents.length >= 2
-            ? t("parentsComplete")
-            : ancestorFor === menuPerson.id
-              ? t("stopAncestors")
-              : t("addAncestors"),
-        nested: false,
-        disabled: menuPerson.parents.length >= 2,
-        onClick: () =>
-          close(() => {
-            setDraft(null);
-            setAncestorFor(ancestorFor === menuPerson.id ? null : menuPerson.id);
-            focusPerson(menuPerson.id);
-          }),
-      },
-      {
-        key: "profile",
-        group: "other" as const,
-        label: t("openProfile"),
-        nested: false,
-        onClick: () => close(() => onEdit(menuPerson)),
-      },
-      {
-        key: "remove",
-        group: "other" as const,
-        danger: true,
-        label: t("removePerson"),
-        nested: false,
-        onClick: () => close(() => onRemove(menuPerson.id)),
-      },
-    ].sort((a, b) => {
-      if (a.key === "remove") return 1;
-      if (b.key === "remove") return -1;
-      return a.group === b.group
-        ? a.label.localeCompare(b.label, localeTag[getLocale()])
-        : a.group === "add"
-          ? -1
-          : 1;
-    });
-    const nested = items.filter((item) => item.nested);
-    const ordered = items.filter((item) => !item.nested);
-    const childAt = ordered.findIndex((item) => item.key === "single-child");
-    ordered.splice(
-      childAt < 0 ? ordered.length : childAt + 1,
-      0,
-      ...nested.sort((a, b) =>
-        a.label.localeCompare(b.label, localeTag[getLocale()]),
-      ),
-    );
-    return ordered.map((item, index) => ({
-      ...item,
-      split:
-        item.key === "remove" ||
-        (item.group === "other" && ordered[index - 1]?.group === "add"),
-    }));
-  })();
+  const menuItems = personMenuItems({
+    menu,
+    menuPerson,
+    family,
+    setMenu,
+    ancestorFor,
+    onDeath,
+    onPartner,
+    onChild,
+    onBranch,
+    onSeparate,
+    onDynasty,
+    onJoinDynasty,
+    onAncestors: (id) => {
+      setDraft(null);
+      setAncestorFor(ancestorFor === id ? null : id);
+      focusPerson(id);
+    },
+    onEdit,
+    onRemove,
+  });
   const dynasties = visibleFamily.members.flatMap((person) => {
     if (!person.dynasty) return [];
-    const region = dynastyRegion(visibleFamily, person, scene.positions, layout);
+    const region = dynastyRegion(
+      visibleFamily,
+      person,
+      scene.positions,
+      layout,
+    );
     if (!region) return [];
     return [
       {
@@ -556,19 +259,36 @@ export default function Tree({
   dynasties.sort((a, b) => b.area - a.area);
   const draftRef = useRef(draft);
   draftRef.current = draft;
-  useEffect(() => { if (!draft) setHoveredPort(null); }, [draft]);
-  const portAt = (x: number, y: number, source: string) => document.elementsFromPoint(x, y)
-    .map(node => node.closest<HTMLElement>("[data-link-person]"))
-    .find(node => node && node.dataset.linkPerson !== source);
-  const beginLink = (event: ReactPointerEvent, id: string, toward: "parent" | "child", pos: Point) => {
+  useEffect(() => {
+    if (!draft) setHoveredPort(null);
+  }, [draft]);
+  const portAt = (x: number, y: number, source: string) =>
+    document
+      .elementsFromPoint(x, y)
+      .map((node) => node.closest<HTMLElement>("[data-link-person]"))
+      .find((node) => node && node.dataset.linkPerson !== source);
+  const beginLink = (
+    event: ReactPointerEvent,
+    id: string,
+    toward: "parent" | "child",
+    pos: Point,
+  ) => {
     if (event.button !== 0 || preview || savingMove.current) return;
     event.preventDefault();
     event.stopPropagation();
     const box = personFootprint(pos, layout);
-    const from = toward === "parent"
-      ? { x: box.x + box.w / 2, y: box.y }
-      : { x: box.x + box.w / 2, y: box.y + box.h };
-    const next = { id, toward, from, to: from, clientX: event.clientX, clientY: event.clientY };
+    const from =
+      toward === "parent"
+        ? { x: box.x + box.w / 2, y: box.y }
+        : { x: box.x + box.w / 2, y: box.y + box.h };
+    const next = {
+      id,
+      toward,
+      from,
+      to: from,
+      clientX: event.clientX,
+      clientY: event.clientY,
+    };
     draftRef.current = next;
     setDraft(next);
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -578,7 +298,9 @@ export default function Tree({
     if (!current) return;
     event.stopPropagation();
     const port = portAt(event.clientX, event.clientY, current.id);
-    setHoveredPort(port ? `${port.dataset.linkPerson}:${port.dataset.linkDirection}` : null);
+    setHoveredPort(
+      port ? `${port.dataset.linkPerson}:${port.dataset.linkDirection}` : null,
+    );
     const next = {
       ...current,
       to: {
@@ -597,17 +319,20 @@ export default function Tree({
     const port = portAt(event.clientX, event.clientY, current.id);
     const target = document
       .elementsFromPoint(event.clientX, event.clientY)
-      .map((node) => (node instanceof Element ? node.closest("[data-person]") : null))
-      .find((node): node is HTMLElement => node instanceof HTMLElement && !!node.dataset.person && node.dataset.person !== current.id);
+      .map((node) =>
+        node instanceof Element ? node.closest("[data-person]") : null,
+      )
+      .find(
+        (node): node is HTMLElement =>
+          node instanceof HTMLElement &&
+          !!node.dataset.person &&
+          node.dataset.person !== current.id,
+      );
     const targetId = port?.dataset.linkPerson ?? target?.dataset.person;
     if (!targetId) return;
     if (current.toward === "child") onLink(targetId, current.id);
     else onLink(current.id, targetId);
   };
-  const ink =
-    layout === "tapestry"
-      ? { partner: "#baa474", child: "#dcd0ae", separated: "#a5968a", width: 2 }
-      : { partner: "#b49183", child: "#8ca79a", separated: "#9d8992", width: 1.7 };
   return (
     <div
       className={`canvas ${layout}${preview ? " preview" : ""}${poster ? " poster" : ""}${draft ? " linking" : ""}${showLinkPorts ? " ports-shown" : ""}`}
@@ -637,15 +362,17 @@ export default function Tree({
       onPointerUp={() => (drag.current = null)}
       onPointerCancel={() => (drag.current = null)}
     >
-      {!preview && <div className="canvas-meta">
-        <strong>{family.name}</strong>
-        <span>{t("memberCount", { count: family.members.length })}</span>
-        {focus && (
-          <button onClick={() => onFocus(null)}>
-            <ArrowUpLeft size={12} /> {t("overview")}
-          </button>
-        )}
-      </div>}
+      {!preview && (
+        <div className="canvas-meta">
+          <strong>{family.name}</strong>
+          <span>{t("memberCount", { count: family.members.length })}</span>
+          {focus && (
+            <button onClick={() => onFocus(null)}>
+              <ArrowUpLeft size={12} /> {t("overview")}
+            </button>
+          )}
+        </div>
+      )}
       {!preview && (
         <div className="legend">
           <i /> {t("legendPartnership")} <i className="child" />{" "}
@@ -720,447 +447,337 @@ export default function Tree({
                 region.dynasty.logo ? "" : " plain"
               }`}
             >
-              {region.dynasty.logo && (
-                <img src={region.dynasty.logo} alt="" />
-              )}
+              {region.dynasty.logo && <img src={region.dynasty.logo} alt="" />}
               <span>{region.dynasty.name}</span>
             </div>
           </div>
         ))}
-        <svg className="edges" width="1" height="1" fill="none" overflow="visible" aria-hidden="true">
-          {scene.unions.map((u) => (
-            <g key={u.id} data-relationship={u.id}>
-              <path
-                className={u.separated ? "separated" : "partnership"}
-                d={u.partnerPath || curve(u.a, u.b)}
-                fill="none"
-                stroke={u.separated ? ink.separated : ink.partner}
-                strokeWidth={ink.width}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              {!poster && (
-              <path
-                className="partnership-hit"
-                d={u.partnerPath || curve(u.a, u.b)}
-                aria-label={t("movePair")}
-                onPointerDown={(e) => {
-                  if (e.button !== 0 || savingMove.current) return;
-                  const stored = family.unions.find((item) => item.id === u.id);
-                  if (!stored) return;
-                  e.preventDefault();
-                  e.stopPropagation();
-                  const startA = scene.positions[stored.a],
-                    startB = scene.positions[stored.b];
-                  coupleDrag.current = {
-                    a: stored.a,
-                    b: stored.b,
-                    client: { x: e.clientX, y: e.clientY },
-                    startA,
-                    startB,
-                    pointA: startA,
-                    pointB: startB,
-                    moved: false,
-                  };
-                  e.currentTarget.setPointerCapture(e.pointerId);
-                }}
-                onPointerMove={(e) => {
-                  const d = coupleDrag.current;
-                  const stored = family.unions.find((item) => item.id === u.id);
-                  if (!d || !stored || d.a !== stored.a) return;
-                  e.stopPropagation();
-                  const dx = (e.clientX - d.client.x) / view.k,
-                    dy = (e.clientY - d.client.y) / view.k;
-                  if (!d.moved && Math.hypot(dx, dy) < 4) return;
-                  d.moved = true;
-                  d.pointA = { x: d.startA.x + dx, y: d.startA.y + dy };
-                  d.pointB = { x: d.startB.x + dx, y: d.startB.y + dy };
-                  setMoving({ [d.a]: d.pointA, [d.b]: d.pointB });
-                }}
-                onPointerUp={async (e) => {
-                  const d = coupleDrag.current;
-                  const stored = family.unions.find((item) => item.id === u.id);
-                  if (!d || !stored || d.a !== stored.a) return;
-                  e.stopPropagation();
-                  coupleDrag.current = null;
-                  if (!d.moved) return;
-                  const placed = freePair(
-                    d.pointA,
-                    d.pointB,
-                    blockersAround(family, allPositions, d.a, layout, [d.b]),
-                    layout,
-                    blockersAround(family, allPositions, d.b, layout, [d.a]),
-                  );
-                  setMoving({ [d.a]: placed.a, [d.b]: placed.b });
-                  savingMove.current = true;
-                  try {
-                    await onMovePair([d.a, d.b], {
-                      [d.a]: placed.a,
-                      [d.b]: placed.b,
+        <TreeConnections
+          scene={scene}
+          family={family}
+          layout={layout}
+          poster={poster}
+          savingMove={savingMove}
+          setMoving={setMoving}
+          allPositions={allPositions}
+          onMovePair={onMovePair}
+          view={view}
+          ancestorSlots={ancestorSlots}
+          draft={draft}
+          query={query}
+        />
+        {!poster &&
+          !preview &&
+          groups.map((group) => {
+            const origin = scene.positions[group.personId];
+            if (!origin) return null;
+            const box = personFootprint(origin, layout);
+            const open = openGroups.has(group.personId);
+            return (
+              <div
+                key={group.personId}
+                className="partner-accordion"
+                style={{ left: box.x, top: box.y + box.h + 6 }}
+                onPointerDown={(event) => event.stopPropagation()}
+                onDoubleClick={(event) => event.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  aria-expanded={open}
+                  aria-controls={`partners-${group.personId}`}
+                  onClick={() => {
+                    if (open && group.foldable.includes(focus ?? ""))
+                      onFocus(group.personId);
+                    setExpandedPartners((previous) => {
+                      const next = new Set(previous);
+                      if (open) next.delete(group.personId);
+                      else next.add(group.personId);
+                      return next;
                     });
-                  } finally {
-                    savingMove.current = false;
-                    setMoving({});
-                  }
-                }}
-                onPointerCancel={() => {
-                  coupleDrag.current = null;
-                  setMoving({});
-                }}
-              />
-              )}
-              {u.separated && <SeparationMark path={u.partnerPath || curve(u.a, u.b)} fallback={u.joint} angle={u.tangentAngle ?? 0} />}
-              {u.children.map((p, i) => (
-                <path
-                  key={i}
-                  className="child"
-                  d={u.childPaths?.[i] || curve(u.joint, p)}
-                  fill="none"
-                  stroke={ink.child}
-                  strokeWidth={ink.width}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              ))}
-            </g>
-          ))}
-          {ancestorSlots.map((s) => (
-            <path
-              key={"ancestor" + s.personId + s.index}
-              className="ancestor-edge"
-              fill="none"
-              stroke="#a9a37c"
-              strokeWidth={ink.width}
-              strokeLinecap="round"
-              strokeDasharray="4 6"
-              opacity="0.6"
-              d={curve(
-                { x: s.x + 90, y: s.y + 60 },
-                {
-                  x: scene.positions[s.personId].x + 90,
-                  y: scene.positions[s.personId].y,
-                },
-              )}
-            />
-          ))}
-          {scene.singles.map((s, i) => (
-            <path
-              key={"s" + i}
-              className="child"
-              d={curve(s.a, s.b)}
-              fill="none"
-              stroke={ink.child}
-              strokeWidth={ink.width}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          ))}
-          {draft && (
-            <path
-              className="link-draft"
-              d={`M${draft.from.x},${draft.from.y}L${draft.to.x},${draft.to.y}`}
-              fill="none"
-              stroke="#cbb98a"
-              strokeWidth="1.6"
-              strokeDasharray="5 4"
-            />
-          )}
-        </svg>
-        {scene.unions.map((drawn) => {
-          const stored = family.unions.find((item) => item.id === drawn.id);
-          if (!stored) return null;
-          const married = stored.marriage === "married" || stored.marriage === "divorced";
-          if (!married && (layout === "tapestry" || stored.status === "separated")) return null;
-          const originA = scene.positions[stored.a];
-          const originB = scene.positions[stored.b];
-          if (!originA || !originB) return null;
-          const divorced = stored.marriage === "divorced";
-          const radians = (drawn.tangentAngle ?? 0) * Math.PI / 180;
-          const labelJoint = divorced ? {
-            x: drawn.joint.x + Math.sin(radians) * 26,
-            y: drawn.joint.y - Math.cos(radians) * 26,
-          } : drawn.joint;
-          const at = weddingAnchor(
-            originA,
-            originB,
-            labelJoint,
-            drawn.children,
-            drawn.a,
-            drawn.b,
-            layout,
-          );
-          const faded =
-            !!query &&
-            [stored.a, stored.b].every((id) => {
-              const person = family.members.find((item) => item.id === id);
-              return !person || !matchesQuery(person, query);
-            });
-          const former = !married && stored.status === "separated";
-          const wedding = stored.marriedOn ? dateLabel(stored.marriedOn) : t("dateUnknown");
-          const mark = married ? `${layout === "chart" ? "oo " : ""}${wedding}` : former ? "=" : "–";
-          return (
-            <span
-              key={stored.id}
-              className={`wedding-date${divorced ? " is-divorced" : ""}${faded ? " search-miss" : ""}${!married ? " is-minus" : ""}`}
-              style={{ left: at.x, top: at.y }}
-              title={divorced ? `${t("divorced")} · ${t("weddingDate")}` : married ? t("weddingDate") : former ? t("formerUnmarried") : t("currentUnmarried")}
-            >
-              {mark}
-            </span>
-          );
-        })}
-        {!poster && !preview && groups.map(group => {
-          const origin = scene.positions[group.personId];
-          if (!origin) return null;
-          const box = personFootprint(origin, layout);
-          const open = openGroups.has(group.personId);
-          return <div key={group.personId} className="partner-accordion"
-            style={{ left: box.x, top: box.y + box.h + 6 }}
-            onPointerDown={event => event.stopPropagation()}
-            onDoubleClick={event => event.stopPropagation()}>
-            <button type="button" aria-expanded={open} aria-controls={`partners-${group.personId}`}
-              onClick={() => {
-                if (open && group.foldable.includes(focus ?? "")) onFocus(group.personId);
-                setExpandedPartners(previous => {
-                  const next = new Set(previous);
-                  if (open) next.delete(group.personId); else next.add(group.personId);
-                  return next;
-                });
-              }}>
-              <span aria-hidden="true">{open ? "▾" : "▸"}</span> {t("morePartners", { count: group.additional.length })}
-            </button>
-            {open && <div id={`partners-${group.personId}`} className="partner-accordion-list">
-              {group.additional.map(union => {
-                const partner = family.members.find(p => p.id === (union.a === group.personId ? union.b : union.a));
-                if (!partner) return null;
-                const status = union.marriage === "divorced" ? t("divorced") : union.status === "separated" ? t("separated") : t("currentPartner");
-                return <button type="button" key={union.id} onClick={() => onFocus(partner.id)}>
-                  <strong>{displayName(partner)}</strong>
-                  <span>{status}{union.marriedOn ? ` · ${dateLabel(union.marriedOn)}` : ""}</span>
-                </button>;
-              })}
-            </div>}
-          </div>;
-        })}
-        {family.members.filter(person => !!scene.positions[person.id])
+                  }}
+                >
+                  <span aria-hidden="true">{open ? "▾" : "▸"}</span>{" "}
+                  {t("morePartners", { count: group.additional.length })}
+                </button>
+                {open && (
+                  <div
+                    id={`partners-${group.personId}`}
+                    className="partner-accordion-list"
+                  >
+                    {group.additional.map((union) => {
+                      const partner = family.members.find(
+                        (p) =>
+                          p.id ===
+                          (union.a === group.personId ? union.b : union.a),
+                      );
+                      if (!partner) return null;
+                      const status =
+                        union.marriage === "divorced"
+                          ? t("divorced")
+                          : union.status === "separated"
+                            ? t("separated")
+                            : t("currentPartner");
+                      return (
+                        <button
+                          type="button"
+                          key={union.id}
+                          onClick={() => onFocus(partner.id)}
+                        >
+                          <strong>{displayName(partner)}</strong>
+                          <span>
+                            {status}
+                            {union.marriedOn
+                              ? ` · ${dateLabel(union.marriedOn)}`
+                              : ""}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        {family.members
+          .filter((person) => !!scene.positions[person.id])
           .map((p) => {
             const pos = scene.positions[p.id];
             const box = personFootprint(pos, layout);
             const names = nameParts(p);
             return (
               <Fragment key={p.id}>
-              <button
-                data-person={p.id}
-                className={`person ${focus === p.id ? "selected" : ""}${
-                  matchesQuery(p, query) ? "" : " search-miss"
-                }${guidePersonId === p.id ? " guide-target" : ""}${
-                  draft?.id === p.id ? " link-source" : ""
-                }`}
-                style={{ left: pos.x, top: pos.y }}
-                title={t("personTitle", { name: displayName(p) })}
-                onPointerDown={(e) => {
-                  if (e.button !== 0 || savingMove.current) return;
-                  e.stopPropagation();
-                  clearTimeout(timer.current);
-                  suppressClick.current = null;
-                  personDrag.current = {
-                    id: p.id,
-                    client: { x: e.clientX, y: e.clientY },
-                    start: pos,
-                    point: pos,
-                    moved: false,
-                  };
-                  e.currentTarget.setPointerCapture(e.pointerId);
-                }}
-                onPointerMove={(e) => {
-                  const d = personDrag.current;
-                  if (!d || d.id !== p.id) return;
-                  e.stopPropagation();
-                  const dx = e.clientX - d.client.x,
-                    dy = e.clientY - d.client.y;
-                  if (!d.moved && Math.hypot(dx, dy) < 4) return;
-                  d.moved = true;
-                  d.point = {
-                    x: d.start.x + dx / view.k,
-                    y: d.start.y + dy / view.k,
-                  };
-                  setMoving({ [p.id]: d.point });
-                }}
-                onPointerUp={async (e) => {
-                  const d = personDrag.current;
-                  if (!d || d.id !== p.id) return;
-                  e.stopPropagation();
-                  personDrag.current = null;
-                  if (!d.moved) return;
-                  suppressClick.current = p.id;
-                  const point = freePosition(
-                    d.point,
-                    blockersAround(family, allPositions, p.id, layout),
-                    layout,
-                  );
-                  setMoving({ [p.id]: point });
-                  savingMove.current = true;
-                  try {
-                    await onMove(p.id, point);
-                  } finally {
-                    savingMove.current = false;
-                    setMoving({});
-                  }
-                }}
-                onPointerCancel={() => {
-                  personDrag.current = null;
-                  setMoving({});
-                }}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  clearTimeout(timer.current);
-                  setMenu({ id: p.id, x: e.clientX, y: e.clientY });
-                }}
-                onClick={(e) => {
-                  clearTimeout(timer.current);
-                  if (suppressClick.current === p.id) {
+                <button
+                  data-person={p.id}
+                  className={`person ${focus === p.id ? "selected" : ""}${
+                    matchesQuery(p, query) ? "" : " search-miss"
+                  }${guidePersonId === p.id ? " guide-target" : ""}${
+                    draft?.id === p.id ? " link-source" : ""
+                  }`}
+                  style={{ left: pos.x, top: pos.y }}
+                  title={t("personTitle", { name: displayName(p) })}
+                  onPointerDown={(e) => {
+                    if (e.button !== 0 || savingMove.current) return;
+                    e.stopPropagation();
+                    clearTimeout(timer.current);
                     suppressClick.current = null;
-                    return;
-                  }
-                  if (e.detail < 2)
-                    timer.current = setTimeout(() => focusPerson(p.id), 220);
-                }}
-                onDoubleClick={() => {
-                  clearTimeout(timer.current);
-                  onEdit(p);
-                }}
-                onKeyDown={(e) => {
-                  if (
-                    e.key === "ContextMenu" ||
-                    (e.shiftKey && e.key === "F10")
-                  ) {
-                    e.preventDefault();
-                    clearTimeout(timer.current);
-                    const r = e.currentTarget.getBoundingClientRect();
-                    setMenu({
+                    personDrag.current = {
                       id: p.id,
-                      x: r.x + r.width / 2,
-                      y: r.y + r.height / 2,
-                    });
-                    return;
-                  }
-                  if (e.key === "Enter") {
+                      client: { x: e.clientX, y: e.clientY },
+                      start: pos,
+                      point: pos,
+                      moved: false,
+                    };
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                  }}
+                  onPointerMove={(e) => {
+                    const d = personDrag.current;
+                    if (!d || d.id !== p.id) return;
+                    e.stopPropagation();
+                    const dx = e.clientX - d.client.x,
+                      dy = e.clientY - d.client.y;
+                    if (!d.moved && Math.hypot(dx, dy) < 4) return;
+                    d.moved = true;
+                    d.point = {
+                      x: d.start.x + dx / view.k,
+                      y: d.start.y + dy / view.k,
+                    };
+                    setMoving({ [p.id]: d.point });
+                  }}
+                  onPointerUp={async (e) => {
+                    const d = personDrag.current;
+                    if (!d || d.id !== p.id) return;
+                    e.stopPropagation();
+                    personDrag.current = null;
+                    if (!d.moved) return;
+                    suppressClick.current = p.id;
+                    const point = freePosition(
+                      d.point,
+                      blockersAround(family, allPositions, p.id, layout),
+                      layout,
+                    );
+                    setMoving({ [p.id]: point });
+                    savingMove.current = true;
+                    try {
+                      await onMove(p.id, point);
+                    } finally {
+                      savingMove.current = false;
+                      setMoving({});
+                    }
+                  }}
+                  onPointerCancel={() => {
+                    personDrag.current = null;
+                    setMoving({});
+                  }}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     clearTimeout(timer.current);
-                    e.preventDefault();
+                    setMenu({ id: p.id, x: e.clientX, y: e.clientY });
+                  }}
+                  onClick={(e) => {
+                    clearTimeout(timer.current);
+                    if (suppressClick.current === p.id) {
+                      suppressClick.current = null;
+                      return;
+                    }
+                    if (e.detail < 2)
+                      timer.current = setTimeout(() => focusPerson(p.id), 220);
+                  }}
+                  onDoubleClick={() => {
+                    clearTimeout(timer.current);
                     onEdit(p);
-                  }
-                  if (e.key === " ") {
-                    e.preventDefault();
-                    focusPerson(p.id);
-                  }
-                }}
-              >
-                {focus === p.id && (
-                  <span className="focus-label">
-                    <Focus size={11} /> {t("inFocus")}
-                  </span>
-                )}
-                {layout === "chart" ? (
-                  <span className="chart-card">
-                    <strong>{names.firstName || "..."}</strong>
-                    <span className="chart-names">{chartSurnames(p) || "..."}</span>
-                    <span>* {p.born ? dateLabel(p.born) : t("dateUnknown")}</span>
-                    {(p.died || p.deceased) && (
-                      <span>+ {p.died ? dateLabel(p.died) : t("deathUnknown")}</span>
-                    )}
-                  </span>
-                ) : (
-                  <>
-                <Portrait p={p} />
-                <span className="person-text">
-                  <strong>
-                    <span>{symbol(p)}</span> {displayName(p)}
-                  </strong>
-                  <small>{years(p)}</small>
-                </span>
-                {layout === "tapestry" && (
-                  <svg
-                    className="ribbon"
-                    viewBox="0 0 240 78"
-                    aria-hidden="true"
-                  >
-                    <defs>
-                      <linearGradient id={"paper" + p.id}>
-                        <stop stopColor="#a88d60" />
-                        <stop offset=".5" stopColor="#eddbb1" />
-                        <stop offset="1" stopColor="#b79b6c" />
-                      </linearGradient>
-                      <path id={"curve" + p.id} d="M29 37 Q120 64 211 37" />
-                    </defs>
-                    <path
-                      d="M3 7Q23 21 47 17L51 57Q27 56 5 42L17 29ZM237 7Q217 21 193 17L189 57Q213 56 235 42L223 29Z"
-                      fill="#a88d60"
-                    />
-                    <path
-                      d="M28 22L44 19L46 60L28 52ZM212 22L196 19L194 60L212 52Z"
-                      fill="#715a3c"
-                    />
-                    <path
-                      d="M25 16Q120 50 215 16L211 54Q120 87 29 54Z"
-                      fill={`url(#paper${p.id})`}
-                      stroke="#7a6240"
-                    />
-                    <text
-                      fill="#4b3324"
-                      fontFamily="Georgia, serif"
-                      fontWeight="bold"
-                      fontSize={displayName(p).length > 24 ? 10 : 12}
-                      style={{ fontVariant: "small-caps" }}
-                      textAnchor="middle"
-                    >
-                      <textPath href={"#curve" + p.id} startOffset="50%">
-                        {symbol(p)} {displayName(p)}
-                      </textPath>
-                    </text>
-                    <text
-                      x="120"
-                      y="62"
-                      fill="#4b3324"
-                      fontFamily="Georgia, serif"
-                      fontStyle="italic"
-                      fontWeight="400"
-                      textAnchor="middle"
-                      fontSize="9"
-                    >
-                      {years(p)}
-                    </text>
-                  </svg>
-                )}
-                  </>
-                )}
-              </button>
-              {!poster && (showLinkPorts || !preview) && (
-                <span
-                  className="link-ports"
-                  style={{ left: box.x, top: box.y, width: box.w, height: box.h }}
+                  }}
+                  onKeyDown={(e) => {
+                    if (
+                      e.key === "ContextMenu" ||
+                      (e.shiftKey && e.key === "F10")
+                    ) {
+                      e.preventDefault();
+                      clearTimeout(timer.current);
+                      const r = e.currentTarget.getBoundingClientRect();
+                      setMenu({
+                        id: p.id,
+                        x: r.x + r.width / 2,
+                        y: r.y + r.height / 2,
+                      });
+                      return;
+                    }
+                    if (e.key === "Enter") {
+                      clearTimeout(timer.current);
+                      e.preventDefault();
+                      onEdit(p);
+                    }
+                    if (e.key === " ") {
+                      e.preventDefault();
+                      focusPerson(p.id);
+                    }
+                  }}
                 >
-                  {(["parent", "child"] as const).map((toward) => (
-                    <span
-                      key={toward}
-                      role="button"
-                      tabIndex={-1}
-                      data-link-person={p.id}
-                      data-link-direction={toward}
-                      className={`link-port ${toward === "parent" ? "up" : "down"}${hoveredPort === `${p.id}:${toward}` ? " is-link-target" : ""}`}
-                      aria-label={t(toward === "parent" ? "linkToParent" : "linkToChild")}
-                      title={t(toward === "parent" ? "linkToParent" : "linkToChild")}
-                      onPointerDown={(event) => beginLink(event, p.id, toward, pos)}
-                      onPointerMove={moveLink}
-                      onPointerUp={endLink}
-                      onPointerCancel={() => {
-                        draftRef.current = null;
-                        setDraft(null);
-                      }}
-                    />
-                  ))}
-                </span>
-              )}
+                  {focus === p.id && (
+                    <span className="focus-label">
+                      <Focus size={11} /> {t("inFocus")}
+                    </span>
+                  )}
+                  {layout === "chart" ? (
+                    <span className="chart-card">
+                      <strong>{names.firstName || "..."}</strong>
+                      <span className="chart-names">
+                        {chartSurnames(p) || "..."}
+                      </span>
+                      <span>
+                        * {p.born ? dateLabel(p.born) : t("dateUnknown")}
+                      </span>
+                      {(p.died || p.deceased) && (
+                        <span>
+                          + {p.died ? dateLabel(p.died) : t("deathUnknown")}
+                        </span>
+                      )}
+                    </span>
+                  ) : (
+                    <>
+                      <Portrait p={p} />
+                      <span className="person-text">
+                        <strong>
+                          <span>{symbol(p)}</span> {displayName(p)}
+                        </strong>
+                        <small>{years(p)}</small>
+                      </span>
+                      {layout === "tapestry" && (
+                        <svg
+                          className="ribbon"
+                          viewBox="0 0 240 78"
+                          aria-hidden="true"
+                        >
+                          <defs>
+                            <linearGradient id={"paper" + p.id}>
+                              <stop stopColor="#a88d60" />
+                              <stop offset=".5" stopColor="#eddbb1" />
+                              <stop offset="1" stopColor="#b79b6c" />
+                            </linearGradient>
+                            <path
+                              id={"curve" + p.id}
+                              d="M29 37 Q120 64 211 37"
+                            />
+                          </defs>
+                          <path
+                            d="M3 7Q23 21 47 17L51 57Q27 56 5 42L17 29ZM237 7Q217 21 193 17L189 57Q213 56 235 42L223 29Z"
+                            fill="#a88d60"
+                          />
+                          <path
+                            d="M28 22L44 19L46 60L28 52ZM212 22L196 19L194 60L212 52Z"
+                            fill="#715a3c"
+                          />
+                          <path
+                            d="M25 16Q120 50 215 16L211 54Q120 87 29 54Z"
+                            fill={`url(#paper${p.id})`}
+                            stroke="#7a6240"
+                          />
+                          <text
+                            fill="#4b3324"
+                            fontFamily="Georgia, serif"
+                            fontWeight="bold"
+                            fontSize={displayName(p).length > 24 ? 10 : 12}
+                            style={{ fontVariant: "small-caps" }}
+                            textAnchor="middle"
+                          >
+                            <textPath href={"#curve" + p.id} startOffset="50%">
+                              {symbol(p)} {displayName(p)}
+                            </textPath>
+                          </text>
+                          <text
+                            x="120"
+                            y="62"
+                            fill="#4b3324"
+                            fontFamily="Georgia, serif"
+                            fontStyle="italic"
+                            fontWeight="400"
+                            textAnchor="middle"
+                            fontSize="9"
+                          >
+                            {years(p)}
+                          </text>
+                        </svg>
+                      )}
+                    </>
+                  )}
+                </button>
+                {!poster && (showLinkPorts || !preview) && (
+                  <span
+                    className="link-ports"
+                    style={{
+                      left: box.x,
+                      top: box.y,
+                      width: box.w,
+                      height: box.h,
+                    }}
+                  >
+                    {(["parent", "child"] as const).map((toward) => (
+                      <span
+                        key={toward}
+                        role="button"
+                        tabIndex={-1}
+                        data-link-person={p.id}
+                        data-link-direction={toward}
+                        className={`link-port ${toward === "parent" ? "up" : "down"}${hoveredPort === `${p.id}:${toward}` ? " is-link-target" : ""}`}
+                        aria-label={t(
+                          toward === "parent" ? "linkToParent" : "linkToChild",
+                        )}
+                        title={t(
+                          toward === "parent" ? "linkToParent" : "linkToChild",
+                        )}
+                        onPointerDown={(event) =>
+                          beginLink(event, p.id, toward, pos)
+                        }
+                        onPointerMove={moveLink}
+                        onPointerUp={endLink}
+                        onPointerCancel={() => {
+                          draftRef.current = null;
+                          setDraft(null);
+                        }}
+                      />
+                    ))}
+                  </span>
+                )}
               </Fragment>
             );
           })}
@@ -1176,58 +793,67 @@ export default function Tree({
             </button>
           ))}
         {!query &&
-          scene.slots.filter(s => !family.unions.some(union =>
-            union.status === "active" && (union.a === s.id || union.b === s.id),
-          )).map((s) => (
-            <button
-              className="partner-slot"
-              key={s.id}
-              style={{ left: s.x, top: s.y }}
-              aria-label={t("addPartner")}
-              title={t("addPartner")}
-              onClick={() => {
-                // A single entered ancestor supplies the one remaining parent
-                // through their partner slot, not through a duplicate placeholder.
-                if (
+          scene.slots
+            .filter(
+              (s) =>
+                !family.unions.some(
+                  (union) =>
+                    union.status === "active" &&
+                    (union.a === s.id || union.b === s.id),
+                ),
+            )
+            .map((s) => (
+              <button
+                className="partner-slot"
+                key={s.id}
+                style={{ left: s.x, top: s.y }}
+                aria-label={t("addPartner")}
+                title={t("addPartner")}
+                onClick={() => {
+                  // A single entered ancestor supplies the one remaining parent
+                  // through their partner slot, not through a duplicate placeholder.
+                  if (
+                    ancestorChild?.parents.length === 1 &&
+                    ancestorChild.parents[0] === s.id
+                  )
+                    onAncestor(ancestorChild.id, 1);
+                  else onPartner(s.id);
+                }}
+                data-partner-for={s.id}
+                data-ancestor-for={
                   ancestorChild?.parents.length === 1 &&
                   ancestorChild.parents[0] === s.id
-                )
-                  onAncestor(ancestorChild.id, 1);
-                else onPartner(s.id);
-              }}
-              data-partner-for={s.id}
-              data-ancestor-for={
-                ancestorChild?.parents.length === 1 &&
-                ancestorChild.parents[0] === s.id
-                  ? ancestorChild.id
-                  : undefined
-              }
-            >
-              <Plus size={18} aria-hidden="true" />
-              <span className="slot-label">{t("addPartner")}</span>
-            </button>
-          ))}
+                    ? ancestorChild.id
+                    : undefined
+                }
+              >
+                <Plus size={18} aria-hidden="true" />
+                <span className="slot-label">{t("addPartner")}</span>
+              </button>
+            ))}
         {!query &&
           scene.unions
             .filter((drawn) => {
               const stored = family.unions.find((item) => item.id === drawn.id);
-              return !!stored && childBranchControl(family, stored) !== "hidden";
+              return (
+                !!stored && childBranchControl(family, stored) !== "hidden"
+              );
             })
             .map((u) => (
-            <button
-              key={u.id}
-              data-union={u.id}
-              className={u.ended ? "branch-end" : "branch-add"}
-              style={{
-                left: u.marker.x,
-                top: u.marker.y,
-              }}
-              onClick={() => onBranch(u.id)}
-              title={t("childOrClose")}
-            >
-              {u.ended ? t("noChildren") : <Plus size={15} />}
-            </button>
-          ))}
+              <button
+                key={u.id}
+                data-union={u.id}
+                className={u.ended ? "branch-end" : "branch-add"}
+                style={{
+                  left: u.marker.x,
+                  top: u.marker.y,
+                }}
+                onClick={() => onBranch(u.id)}
+                title={t("childOrClose")}
+              >
+                {u.ended ? t("noChildren") : <Plus size={15} />}
+              </button>
+            ))}
       </div>
       {!preview && family.members.length === 0 && (
         <div className="empty">
@@ -1241,14 +867,15 @@ export default function Tree({
             ))}
         </div>
       )}
-      {query &&
-        !family.members.some((p) => matchesQuery(p, query)) && (
-          <div className="empty">{t("noneFound")}</div>
-        )}
+      {query && !family.members.some((p) => matchesQuery(p, query)) && (
+        <div className="empty">{t("noneFound")}</div>
+      )}
       {!preview && draft && (
         <div className="link-hint" role="status">
           <span>
-            {draft.toward === "child" ? t("linkDragChild") : t("linkDragParent")}
+            {draft.toward === "child"
+              ? t("linkDragChild")
+              : t("linkDragParent")}
           </span>
           <button
             type="button"
@@ -1301,21 +928,23 @@ export default function Tree({
           </div>,
           document.body,
         )}
-      {!preview && <div className="zoom">
-        <button aria-label={t("zoomOut")} onClick={() => zoom(1 / 1.2)}>
-          <Minus size={16} />
-        </button>
-        <output>{Math.round(view.k * 100)}%</output>
-        <button aria-label={t("zoomIn")} onClick={() => zoom(1.2)}>
-          <Plus size={16} />
-        </button>
-        <button aria-label={t("fitAll")} onClick={fit}>
-          <Maximize size={16} />
-        </button>
-        <button aria-label={t("tidy")} title={t("tidy")} onClick={onTidy}>
-          <Shrink size={16} />
-        </button>
-      </div>}
+      {!preview && (
+        <div className="zoom">
+          <button aria-label={t("zoomOut")} onClick={() => zoom(1 / 1.2)}>
+            <Minus size={16} />
+          </button>
+          <output>{Math.round(view.k * 100)}%</output>
+          <button aria-label={t("zoomIn")} onClick={() => zoom(1.2)}>
+            <Plus size={16} />
+          </button>
+          <button aria-label={t("fitAll")} onClick={fit}>
+            <Maximize size={16} />
+          </button>
+          <button aria-label={t("tidy")} title={t("tidy")} onClick={onTidy}>
+            <Shrink size={16} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

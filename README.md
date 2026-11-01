@@ -12,7 +12,7 @@ A local family tree application built with Tauri 2, React, TypeScript and SQLite
 
 ## Status and roadmap
 
-Refactoring and cleanup are still outstanding.
+- [x] Initial refactoring and cleanup: modularize application dialogs, state and commands, tree controls, layout calculations and translation catalogs; verify existing behavior with tests and builds.
 
 - Import a descendant chart from a PDF as a new family tree. Children follow the lines on the sheet.
 

@@ -257,6 +257,8 @@ Keep `tests/fixtures` unchanged: they verify older exports and independently pro
 
 ### Pinned CI tools
 
+The macOS build uses `macos-15`; GitHub retires `macos-14` on November 2, 2026. Linux runs in its own job with the immutable Ubuntu image recorded in `docs/ci-release-audit.json`. Its base predates the dated APT snapshot. The job installs build dependencies from `jammy`, `jammy-updates` and `jammy-security` at that snapshot, preventing newer host-runner libraries from conflicting with older development headers. Only the host CA trust bundle is mounted for initial HTTPS access. AppImage tools run with `APPIMAGE_EXTRACT_AND_RUN=1`, since the container does not provide FUSE. Publishing waits for both the Windows/macOS matrix and the Linux job.
+
 `.github/workflows/desktop.yml` builds the Windows installer, Linux DEB and AppImage, and the universal macOS disk image. Pushing a tag named `v` plus the committed application version, such as `v0.4.47`, starts that build and publishes the installers on the GitHub release for the tag. The tag must match `package.json`, and the changelog section for that version becomes the release text. A manual run still uploads build artifacts only and does not publish a release. One failed platform build skips the release. The macOS image is not signed or notarized. The Windows installer installs WebView2 when it is missing. Actions are pinned by commit SHA. `scripts/install-ci-rust.py` checks the archived rustup bootstrapper and installs the configured Rust toolchain into an isolated CI directory. Node/npm are explicitly selected too. This CI environment is separate from local `.setup`; Windows/macOS CI execution has not been verified here.
 
 ### Persistent tree positions

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.8 — 2026-11-01
+
+- Split layout implementation into geometry, spacing, routes, partner slots, generation ranking, arrangement, dynasty boundaries, scene building, ancestor slots and tidying modules. Preserve the public `layout.ts` API and existing calculations.
+- Extract tree viewport controls, context-menu state and actions, and connection rendering from the canvas component. Separate application state and commands into `useAppController` and move the tree toolbar into its own component.
+- Add regression tests for context-menu availability, former-partner child actions, ancestor callbacks and menu dismissal. Verify layout results and rendered views against the pre-refactor implementation without changing dependencies or storage formats.
+
+## 0.9.7 — 2026-11-01
+
+- Split the application dialogs, shared modal, branding, language screen and portrait into independent components. Remove dialog imports back into the application entry component while preserving their controls and save logic.
+- Separate the German, English and Korean catalogs from the translation runtime, keeping typed message coverage and all existing translations.
+- Remove unused layout calculations and simplify a constant spacing expression without changing placement behavior. No dependency or storage-format changes.
+
 ## 0.9.6 — 2026-11-01
 
 - Revert the automatic imported-generation reassignment introduced in 0.9.5 after reported layout regressions. Restore the 0.9.4 tidying behavior; partner accordion and import changes remain intact.

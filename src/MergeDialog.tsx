@@ -18,7 +18,7 @@ import {
   desktop,
   type TreeInfo,
 } from "./storage";
-import { Modal } from "./App";
+import { Modal } from "./Modal";
 import { shown, t } from "./i18n";
 const label = (f: Family, u: Union) =>
   `${displayName(f.members.find((p) => p.id === u.a))} & ${displayName(f.members.find((p) => p.id === u.b))} · ${u.marriage === "married" ? t("marriedShort") : t("divorcedShort")}`;

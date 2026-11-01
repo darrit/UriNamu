@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { type Family } from "./domain";
 import { listTrees, type TreeInfo } from "./storage";
-import { Modal } from "./App";
+import { Modal } from "./Modal";
 import { shown, t } from "./i18n";
 export default function LibraryDialog({
   busy,

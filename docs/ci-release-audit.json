@@ -22,5 +22,16 @@
       "sha": "cf430e030ddbb5b0abf93d22962f4752f3646cd9",
       "source": "https://github.com/actions/upload-artifact/releases/tag/v7.0.2"
     }
-  ]
+  ],
+  "linuxBuildEnvironment": {
+    "verifiedAt": "2026-11-01",
+    "image": "ubuntu:jammy-20240911.1",
+    "platform": "linux/amd64",
+    "digest": "sha256:3d1556a8a18cf5307b121e0a98e93f1ddf1f3f8e092f1fddfd941254785b95d7",
+    "published": "2024-09-11T17:24:44Z",
+    "source": "https://hub.docker.com/v2/repositories/library/ubuntu/tags/jammy-20240911.1",
+    "snapshot": "20261016T000000Z",
+    "suites": ["jammy", "jammy-updates", "jammy-security"],
+    "notes": "The fixed base predates the signed package snapshot and the existing release-age cutoff. The host runner contributes its CA trust bundle only; its installed libraries are not part of the container package state."
+  }
 }
