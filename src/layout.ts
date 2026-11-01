@@ -1905,12 +1905,15 @@ export function tidyLayout(
 ): Family {
   const next = structuredClone(family);
   const seated = next.members.every((person) => person.positions?.[mode]);
+  const imported = seated && (mode === "chart" || next.members.every(person => person.positions?.chart));
+  const usableRows = seated && rowsAreUsable(next, mode);
   const arranged =
-    seated && (mode === "chart" || next.members.every(person => person.positions?.chart))
+    imported
       ? compactChartRows(next, mode)
-      : seated && rowsAreUsable(next, mode)
+      : usableRows
       ? compactHierarchy(next, mode)
       : arrangeFromSeats(next, mode, partnerSlots);
+  compactEmptyBands(arranged, mode);
   for (const person of next.members) {
     const point = arranged[person.id];
     if (!point) continue;
@@ -1920,6 +1923,33 @@ export function tidyLayout(
     };
   }
   return next;
+}
+
+/** Close empty space on both axes, including displaced imported generations.
+ * Keep shared coordinates and ordering; each closed gap still fits the widest
+ * required separation, so this cannot introduce a new card collision.
+ */
+function compactEmptyBands(points: Record<string, Point>, mode: Layout) {
+  const values = Object.values(points);
+  if (!values.length) return;
+  const separation = anchorSeparation(mode, "pair");
+  for (const axis of ["x", "y"] as const) {
+    const generationAxis = axis === (mode === "horizontal" ? "x" : "y");
+    const limit = Math.max(separation[axis] + 0.01, generationAxis ? (mode === "horizontal" ? 340 : 250) : 0);
+    const coordinates = [...new Set(values.map(point => point[axis]))].sort((a, b) => a - b);
+    const mapped = new Map<number, number>();
+    let at = coordinates[0];
+    mapped.set(at, at);
+    for (let i = 1; i < coordinates.length; i++) {
+      at += Math.min(coordinates[i] - coordinates[i - 1], limit);
+      mapped.set(coordinates[i], at);
+    }
+    const min = coordinates[0], span = at - min;
+    // The canvas includes the origin in its bounds. Do not leave a compact
+    // tree millions of pixels away from it after dragging an extreme outlier.
+    const offset = min > span + limit || at < -span - limit ? min : 0;
+    for (const point of values) point[axis] = mapped.get(point[axis])! - offset;
+  }
 }
 
 /** Compress shared columns without changing printed generations or branch order. */

@@ -63,7 +63,7 @@ describe("framed descendant charts", () => {
       family.unions.find(
         (u) => u.a === byName("C").id || u.b === byName("C").id,
       )?.marriage,
-    ).toBe("unspecified");
+    ).toBe("married");
     expect(byName("A").positions?.chart?.x).toBe(
       byName("E").positions?.chart?.x,
     );

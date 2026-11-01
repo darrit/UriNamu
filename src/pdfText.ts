@@ -1,4 +1,5 @@
 import { newPerson, normalize, unionKey, type Family, type Union } from "./domain";
+import { validDate, definitelyBefore, dateBounds } from "./dates";
 
 const PERSON_CAP = 500;
 const particles = new Set([
@@ -149,10 +150,10 @@ export function parseGenericFamily(
 
   if (!people.length) return { family: null, truncated };
   for (const person of people) {
-    if (person.born && person.died && person.died < person.born) person.died = "";
+    if (definitelyBefore(person.died, person.born)) person.died = "";
     if (person.parents.length !== 2) continue;
     const elders = person.parents.map((id) => people.find((item) => item.id === id));
-    if (elders.some((elder) => elder?.born && person.born && elder.born >= person.born))
+    if (elders.some((elder) => elder?.born && person.born && dateBounds(elder.born)[0] >= dateBounds(person.born)[1]))
       person.parents = [];
   }
   for (const union of unions) {
@@ -162,8 +163,8 @@ export function parseGenericFamily(
       pair.some(
         (person) =>
           person &&
-          ((person.born && union.marriedOn! < person.born) ||
-            (person.died && union.marriedOn! > person.died)),
+          (definitelyBefore(union.marriedOn!, person.born) ||
+            definitelyBefore(person.died, union.marriedOn!)),
       )
     )
       delete union.marriedOn;
@@ -436,6 +437,5 @@ function isoDate(value: string) {
   const iso = dotted
     ? `${dotted[3]}-${dotted[2].padStart(2, "0")}-${dotted[1].padStart(2, "0")}`
     : value;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
-  return new Date(`${iso}T00:00:00Z`).toISOString().slice(0, 10) === iso ? iso : null;
+  return validDate(iso) ? iso : null;
 }

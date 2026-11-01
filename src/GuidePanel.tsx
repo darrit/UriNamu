@@ -64,8 +64,10 @@ export function GuideBeatCard({
   onSkip: () => void;
 }) {
   const ref = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     ref.current?.focus();
+    if (contentRef.current) contentRef.current.scrollTop = 0;
   }, [beat]);
   return (
     <aside
@@ -84,11 +86,13 @@ export function GuideBeatCard({
       }}
     >
       <h2 id="guide-beat-title">{t(beatTitle[beat])}</h2>
+      <div ref={contentRef} className="guide-beat-content" tabIndex={0} role="region" aria-labelledby="guide-beat-title">
       {beat === "empty" && <GuideAddButton />}
       {beat === "person" && <GuideStillCard layout={layout} />}
       {beat === "menu" && <GuideMenu />}
       {beat === "layouts" && <GuideLayouts />}
       <p>{t(beatBody[beat])}</p>
+      </div>
       <div className="actions">
         <button type="button" onClick={onSkip}>
           {t("guideSkip")}

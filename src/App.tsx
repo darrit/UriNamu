@@ -372,7 +372,7 @@ export default function App() {
     else delete person.dynastyWith;
     void commit(next, "logDynasty");
   }
-  async function newTree(next: Family, label: string) {
+  async function newTree(next: Family, label: string, propagateError = false) {
     if (working.current) return false;
     working.current = true;
     setBusy(true);
@@ -389,6 +389,7 @@ export default function App() {
       setNotice(text(label));
       return true;
     } catch (e) {
+      if (propagateError) throw e;
       setError(String(e));
       return false;
     } finally {
@@ -1210,7 +1211,7 @@ export default function App() {
           <PdfImport
             onClose={() => setPdfImportOpen(false)}
             onCreate={(next) => {
-              return newTree(next, "logImported");
+              return newTree(next, "logImported", true);
             }}
           />
         </Suspense>

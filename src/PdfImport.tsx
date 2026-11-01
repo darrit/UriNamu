@@ -19,6 +19,10 @@ export function PdfImport({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const dialog = useRef<HTMLDialogElement>(null);
+  const errorRef = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    if (error) errorRef.current?.scrollIntoView({ block: "nearest" });
+  }, [error]);
   const selected = source === "embedded" ? reading?.embedded : reading?.generic;
   useEffect(() => {
     const node = dialog.current;
@@ -102,8 +106,9 @@ export function PdfImport({
             const next = structuredClone(selected);
             next.name = trimmed;
             if (await onCreate(normalize(next))) onClose();
-          } catch {
-            setError(t("pdfInvalid"));
+            else setError(t("pdfInvalid"));
+          } catch (caught) {
+            setError(caught instanceof Error ? caught.message : typeof caught === "string" ? caught : t("pdfInvalid"));
           } finally {
             setBusy(false);
           }
@@ -181,7 +186,7 @@ export function PdfImport({
           <p>{reading.hasText ? t("pdfGenericEmpty") : t("pdfNoText")}</p>
         )}
         {error && (
-          <p className="form-error" role="alert">
+          <p ref={errorRef} className="form-error" role="alert">
             {error}
           </p>
         )}

@@ -62,7 +62,7 @@ const de = {
   pdfTooBig: "Die PDF ist größer als 80 MB.",
   pdfEmbeddedNote: "Die beigelegten UriNamu-Daten wurden gelesen.",
   pdfChartNote:
-    "Die Tafel wird nach den Zeilen gelesen. * ist die Geburt, + der Tod. Die neueste Ehe ist der aktuelle Partner, außer sie ist geschieden. Ein Minus ist der aktuelle Partner ohne Ehe. Ein Gleichheitszeichen ist ein früherer Partner ohne Ehe. Steht ein Minus neben einer Ehe, wird es ebenfalls als früherer Partner ohne Ehe gelesen. Ein Strich nach unten sind die Kinder, unabhängig vom Nachnamen. Nachnamen mit Schrägstrich sind Geburtsname und die Nachnamen der Ehen, der letzte ist der aktuelle. Ein unbekannter Name bleibt ... Ein unbekanntes Sterbedatum lässt das Datum leer und heißt unbekannt.",
+    "Die Tafel wird anhand ihrer Personenrahmen und Verbindungslinien gelesen. * bezeichnet Geburt, + Tod und oo eine Ehe. oo LAG mit Jahreszahl bleibt eine Ehe mit bekanntem Jahr. = kennzeichnet mit Ehe eine Scheidung, ohne Ehe eine Trennung; - ohne Ehe eine aktuelle Partnerschaft. Vollständige Daten und reine Jahreszahlen werden übernommen. Unvollständige Angaben wie 26.02.... bleiben unbekannt.",
   pdfGenericNote:
     "Der Text der PDF wurde gelesen. Verbindungen gibt es nur, wo der Text sie nennt.",
   pdfEmbeddedBroken:
@@ -209,6 +209,9 @@ const de = {
   logSeparated: "Trennung eingetragen",
   formerUnmarried: "Frühere Partnerschaft ohne Ehe",
   morePartners: "Weitere Partner ({count})",
+  datePrecision: "Datumsangabe",
+  dateFull: "Vollständiges Datum",
+  dateYearOnly: "Nur Jahr",
   currentUnmarried: "Aktuelle Partnerschaft ohne Ehe",
   recordDivorce: "Scheidung eintragen",
   editHint: "Erst Speichern übernimmt deine Änderungen.",
@@ -706,7 +709,7 @@ const en: Catalog = {
   pdfTooBig: "The PDF is larger than 80 MB.",
   pdfEmbeddedNote: "The included UriNamu data was read.",
   pdfChartNote:
-    "The chart is read by its rows. * is a birth, + a death. The newest marriage is the current partner, unless it is a divorce. A minus is the current partner without a marriage. An equals sign is an earlier partner without a marriage. A minus beside a marriage is read as an earlier partner without a marriage too. A line downward marks the children, whatever the surname. Surnames separated by slashes are the birth name and the surnames from marriages; the last one is current. An unknown name stays .... An unknown date of death leaves the date empty and reads unknown.",
+    "The chart is read from person frames and connections. * marks birth, + death and oo marriage. oo LAG with a year remains a marriage with a known year. = means divorce with a marriage or separation without one; - without a marriage means a current partnership. Complete dates and years are preserved; incomplete dates such as 26.02.... remain unknown.",
   pdfGenericNote:
     "The text of the PDF was read. Connections are made only where the text states them.",
   pdfEmbeddedBroken:
@@ -847,6 +850,9 @@ const en: Catalog = {
   logSeparated: "Separation recorded",
   formerUnmarried: "Former unmarried partnership",
   morePartners: "More partners ({count})",
+  datePrecision: "Date precision",
+  dateFull: "Full date",
+  dateYearOnly: "Year only",
   currentUnmarried: "Current unmarried partnership",
   recordDivorce: "Record divorce",
   editHint: "Changes apply only after you save.",
@@ -1330,7 +1336,7 @@ const ko: Catalog = {
   pdfTooBig: "PDF가 80 MB보다 큽니다.",
   pdfEmbeddedNote: "들어 있는 UriNamu 데이터를 읽었습니다.",
   pdfChartNote:
-    "도표는 줄로 읽습니다. *는 출생, +는 사망입니다. 가장 최근 결혼이 현재 배우자이고, 이혼이면 아닙니다. 빼기 표시는 결혼하지 않은 현재 배우자입니다. 등호는 결혼하지 않은 이전 배우자입니다. 빼기 표시가 결혼 옆에 있으면 역시 결혼하지 않은 이전 배우자로 읽습니다. 아래로 가는 선은 성과 상관없이 자녀입니다. 빗금으로 나뉜 성은 출생 성과 혼인 성이고, 마지막이 현재 성입니다. 모르는 이름은 ...입니다. 모르는 사망일은 날짜가 비고 미상으로 씁니다.",
+    "인물 틀과 연결선을 바탕으로 읽습니다. *는 출생, +는 사망, oo는 혼인입니다. oo LAG와 연도는 해당 연도의 혼인으로 읽습니다. =는 혼인이 있으면 이혼, 없으면 결별이고, 혼인 없이 -는 현재 관계입니다. 완전한 날짜와 연도만 있는 날짜를 보존하며 불완전한 날짜는 미상으로 표시합니다.",
   pdfGenericNote: "PDF의 글을 읽었습니다. 글이 말한 연결만 만들어집니다.",
   pdfEmbeddedBroken: "들어 있는 UriNamu 데이터를 읽지 못했습니다. 대신 글을 읽었습니다.",
   pdfGenericEmpty: "글에서 사람을 찾지 못했습니다.",
@@ -1468,6 +1474,9 @@ const ko: Catalog = {
   logSeparated: "결별 기록됨",
   formerUnmarried: "혼인하지 않은 이전 관계",
   morePartners: "다른 배우자 및 파트너 ({count})",
+  datePrecision: "날짜 정확도",
+  dateFull: "전체 날짜",
+  dateYearOnly: "연도만",
   currentUnmarried: "혼인하지 않은 현재 관계",
   recordDivorce: "이혼 기록",
   editHint: "저장해야 변경 내용이 반영됩니다.",

@@ -1,4 +1,5 @@
 import { t } from "./i18n";
+import { validDate, definitelyBefore, dateBounds } from "./dates";
 
 export type Gender = "male" | "female" | "";
 export interface Person {
@@ -208,11 +209,10 @@ export function validate(f: Family): void {
     for (const date of [p.born, p.died])
       if (
         date &&
-        (!/^\d{4}-\d{2}-\d{2}$/.test(date) ||
-          new Date(date).toISOString().slice(0, 10) !== date)
+        !validDate(date)
       )
         throw Error(t("errDate"));
-    if (p.born && p.died && p.died < p.born)
+    if (definitelyBefore(p.died, p.born))
       throw Error(t("errDeathBeforeBirth"));
     if (
       p.photo &&
@@ -234,7 +234,7 @@ export function validate(f: Family): void {
     for (const id of p.parents) {
       if (!ids.has(id) || id === p.id) throw Error(t("errParent"));
       const parent = map.get(id)!;
-      if (parent.born && p.born && parent.born >= p.born)
+      if (parent.born && p.born && dateBounds(parent.born)[0] >= dateBounds(p.born)[1])
         throw Error(t("errParentBorn"));
     }
   const visiting = new Set<string>(),
@@ -271,16 +271,15 @@ export function validate(f: Family): void {
     if (u.marriedOn) {
       if (
         typeof u.marriedOn !== "string" ||
-        !/^\d{4}-\d{2}-\d{2}$/.test(u.marriedOn) ||
-        new Date(u.marriedOn).toISOString().slice(0, 10) !== u.marriedOn
+        !validDate(u.marriedOn)
       )
         throw Error(t("errDate"));
       for (const id of [u.a, u.b]) {
         const partner = map.get(id);
         if (!partner) continue;
         if (
-          (partner.born && u.marriedOn < partner.born) ||
-          (partner.died && u.marriedOn > partner.died)
+          definitelyBefore(u.marriedOn, partner.born) ||
+          definitelyBefore(partner.died, u.marriedOn)
         )
           throw Error(t("errMarriageDate"));
       }

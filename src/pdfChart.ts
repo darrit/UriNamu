@@ -647,13 +647,14 @@ function kindOf(text: string) {
   if (/^\+\s*/.test(text)) return "death";
   if (/^o\|o\b/i.test(text) || /^geschieden\b/i.test(text)) return "divorce";
   if (/^=+/.test(text)) return "equals";
-  if (/^oo\s+LAG\b/i.test(text)) return "minus";
   if (/^o-o$/i.test(text) || /^[-–—]+(?:\s+\.\.\.)?$/.test(text)) return "minus";
   if (/^oo\b/i.test(text)) return "marriage";
   return "name";
 }
 
 function readDate(value: string) {
+  const year = value.trim().match(/^(?:LAG\s+)?(\d{4})$/i);
+  if (year && year[1] !== "0000") return { iso: year[1] };
   const full = value.match(/(\d{1,2})[.](\d{1,2})[.](\d{4})/);
   if (full) {
     const iso = `${full[3]}-${full[2].padStart(2, "0")}-${full[1].padStart(2, "0")}`;

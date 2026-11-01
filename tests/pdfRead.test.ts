@@ -35,7 +35,7 @@ describe("PDF text", () => {
     const testar = parsed?.members.find((item) => item.name === "Testar Testfamilie");
     const testbx = parsed?.members.find((item) => item.name === "Testbx Testfamilie");
     expect(testaa).toMatchObject({ born: "1963-01-01", place: "Testort" });
-    expect(testar).toMatchObject({ born: "1960-05-01", died: "", bio: "† 2015" });
+    expect(testar).toMatchObject({ born: "1960-05-01", died: "2015", bio: "" });
     expect(testbx?.parents).toEqual([testaa?.id, testar?.id]);
     expect(parsed?.unions[0]).toMatchObject({
       status: "active",
@@ -48,7 +48,7 @@ describe("PDF text", () => {
   it("does not invent a day for a year and ignores a picture label", () => {
     const parsed = parseGenericFamily("UriNamu  1/1\nTestbk Testhaus * 1970", "Testhaus").family;
     expect(parsed?.members).toHaveLength(1);
-    expect(parsed?.members[0]).toMatchObject({ born: "", bio: "* 1970", firstName: "Testbk" });
+    expect(parsed?.members[0]).toMatchObject({ born: "1970", bio: "", firstName: "Testbk" });
   });
 
   it("keeps an actual-text run and a hex string", () => {

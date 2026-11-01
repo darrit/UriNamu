@@ -125,6 +125,9 @@ fn valid_date(s: &str) -> bool {
         return true;
     }
     let b = s.as_bytes();
+    if b.len() == 4 && b.iter().all(u8::is_ascii_digit) {
+        return s != "0000";
+    }
     if b.len() != 10
         || b[4] != b'-'
         || b[7] != b'-'
@@ -158,6 +161,15 @@ fn valid_date(s: &str) -> bool {
     ];
     y > 0 && (1..=12).contains(&m) && d > 0 && d <= days[m.saturating_sub(1).min(11)]
 }
+fn date_lower(s: &str) -> String {
+    if s.len() == 4 { format!("{s}-01-01") } else { s.to_owned() }
+}
+fn date_upper(s: &str) -> String {
+    if s.len() == 4 { format!("{s}-12-31") } else { s.to_owned() }
+}
+fn definitely_before(a: &str, b: &str) -> bool {
+    !a.is_empty() && !b.is_empty() && date_upper(a) < date_lower(b)
+}
 pub fn validate(f: &Family) -> Result<()> {
     if f.version != 2 || f.name.trim().is_empty() || f.name.len() > 400 || f.members.len() > 5000 {
         return Err("Ungültige Familie.".into());
@@ -183,7 +195,7 @@ pub fn validate(f: &Family) -> Result<()> {
             || !["normal", "dimmed", "struck"].contains(&p.appearance.as_str())
             || !valid_date(&p.born)
             || !valid_date(&p.died)
-            || (!p.born.is_empty() && !p.died.is_empty() && p.died < p.born)
+            || definitely_before(&p.died, &p.born)
             || p.bio.len() > 20000
             || p.photo.len() > 2_000_000
             || p.positions.iter().any(|(mode, point)| {
@@ -218,7 +230,7 @@ pub fn validate(f: &Family) -> Result<()> {
         for id in &p.parents {
             let parent = map.get(id.as_str()).ok_or("Elternteil fehlt.")?;
             if id == &p.id
-                || (!p.born.is_empty() && !parent.born.is_empty() && parent.born >= p.born)
+                || (!p.born.is_empty() && !parent.born.is_empty() && date_lower(&parent.born) >= date_upper(&p.born))
             {
                 return Err("Ungültige Abstammung oder Geburtsdaten.".into());
             }
@@ -296,8 +308,8 @@ pub fn validate(f: &Family) -> Result<()> {
         }
         if !u.married_on.is_empty() {
             for person in f.members.iter().filter(|p| p.id == u.a || p.id == u.b) {
-                if (!person.born.is_empty() && u.married_on < person.born)
-                    || (!person.died.is_empty() && u.married_on > person.died)
+                if definitely_before(&u.married_on, &person.born)
+                    || definitely_before(&person.died, &u.married_on)
                 {
                     return Err("Ungültige Partnerschaft.".into());
                 }
@@ -1041,6 +1053,37 @@ mod tests {
     #[test]
     fn demo_is_valid() {
         validate(&demo()).unwrap()
+    }
+    #[test]
+    fn partial_dates_validate_and_roundtrip_through_desktop_storage() {
+        for date in ["", "1987", "1987-02-26", "2000-02-29"] {
+            assert!(valid_date(date), "{date}");
+        }
+        for date in ["0000", "198", "1987-02-30", "1900-02-29", "26.02...."] {
+            assert!(!valid_date(date), "{date}");
+        }
+        assert!(!definitely_before("1987", "1987-02-26"));
+        assert!(definitely_before("1986", "1987-02-26"));
+        let mut family = demo();
+        for person in &mut family.members {
+            if !person.born.is_empty() { person.born.truncate(4); }
+            if !person.died.is_empty() { person.died.truncate(4); }
+        }
+        family.unions[0].marriage = "divorced".into();
+        family.unions[0].status = "separated".into();
+        family.unions[0].married_on = "1958".into();
+        validate(&family).unwrap();
+        let root = temp();
+        let store = Store::new(root.clone()).unwrap();
+        store.create_tree(&family, "Import mit Jahresangaben").unwrap();
+        let loaded = store.load().unwrap().unwrap();
+        assert_eq!(loaded.unions[0].married_on, "1958");
+        assert_eq!(loaded.unions[0].marriage, "divorced");
+        assert_eq!(loaded.members[0].born, family.members[0].born);
+        family.unions[0].married_on = "1900".into();
+        assert!(validate(&family).is_err());
+        drop(store);
+        fs::remove_dir_all(root).unwrap();
     }
     #[test]
     fn database_transactions_photos_revisions() {

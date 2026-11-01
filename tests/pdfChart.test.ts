@@ -268,6 +268,17 @@ describe("Tafel", () => {
 
 
 describe('combined partnership symbols', () => {
+  it.each(['oo LAG 1987', 'oo 1987', 'oo 26.02....'])('keeps marriage identity for %s and combines the separation sign', marker => {
+    const items = [item(100,1000,'Testae'),item(300,1000,'Testai'),item(100,880,'Alpha'),item(300,880,'Beta'),item(100,800,'* 1960'),item(300,800,'* 26.02....'),item(200,640,marker)];
+    for (const separated of [false, true]) {
+      const f = parseChart([...items, ...(separated ? [item(200,760,'=')] : [])], 'Example')!;
+      expect(f.unions[0].marriage).toBe(separated ? 'divorced' : 'married');
+      expect(f.unions[0].status).toBe(separated ? 'separated' : 'active');
+      expect(f.unions[0].marriedOn).toBe(marker.includes('1987') ? '1987' : undefined);
+      expect(f.members.find(p=>p.firstName==='Testae')!.born).toBe('1960');
+      expect(f.members.find(p=>p.firstName==='Testai')!.born).toBe('');
+    }
+  });
   const people = [
     item(100,1000,'Testab'),item(300,1000,'Testaj'),item(500,1000,'Testam'),
     item(100,880,'Alpha'),item(300,880,'Beta'),item(500,880,'Gamma'),

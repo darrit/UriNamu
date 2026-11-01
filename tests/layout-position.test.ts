@@ -31,6 +31,31 @@ import {
 
 const modes: Layout[] = ["classic", "horizontal", "tapestry"];
 
+describe("tidy extreme positions", () => {
+  it.each([...modes, "chart" as const])("closes huge gaps on both axes, including imported positions in %s", mode => {
+    for (const imported of [false, true]) {
+      const f = couple();
+      f.members.push({ ...newPerson(), id: "child", name: "Child", parents: ["a", "b"] }, { ...newPerson(), id: "other", name: "Other" });
+      const coords = [{x:-1000000,y:-900000}, {x:0,y:0}, {x:900000,y:1000000}, {x:1000000,y:1100000}];
+      f.members.forEach((p,i) => { p.positions = { ...(imported ? {chart:coords[i]} : {}), [mode]:coords[i] }; });
+      const tidy = tidyLayout(f,mode);
+      const points = tidy.members.map(p=>p.positions![mode]!);
+      const xs = points.map(p=>p.x), ys=points.map(p=>p.y);
+      expect(Math.max(...xs)-Math.min(...xs)).toBeLessThan(5000);
+      expect(Math.max(...ys)-Math.min(...ys)).toBeLessThan(5000);
+      expect(Math.max(...points.map(p=>Math.abs(p.x)+Math.abs(p.y)))).toBeLessThan(10000);
+      for(let i=0;i<points.length;i++)for(let j=i+1;j<points.length;j++)expect(positionsOverlap(points[i],points[j],mode)).toBe(false);
+      const twice = tidyLayout(tidy,mode);
+      if (imported || mode === "chart") expect(twice).toEqual(tidy);
+      const secondPoints = twice.members.map(p => p.positions![mode]!);
+      expect(Math.max(...secondPoints.map(p=>p.x))-Math.min(...secondPoints.map(p=>p.x))).toBeLessThanOrEqual(Math.max(...xs)-Math.min(...xs));
+      expect(Math.max(...secondPoints.map(p=>p.y))-Math.min(...secondPoints.map(p=>p.y))).toBeLessThanOrEqual(Math.max(...ys)-Math.min(...ys));
+      expect(tidy.unions).toEqual(f.unions);
+      expect(tidy.members.map(p=>p.parents)).toEqual(f.members.map(p=>p.parents));
+    }
+  });
+});
+
 describe("partnership route markers", () => {
   it("centers the marker along the curve and follows its tangent", () => {
     for (const to of [{ x: 25, y: 400 }, { x: 480, y: 130 }, { x: -360, y: 270 }]) {
@@ -1050,7 +1075,7 @@ describe("Stable positions across partnerships", () => {
     const x = (id: string) => tidy.members.find((person) => person.id === id)!.positions!.classic!.x;
     expect(x("c")).toBeGreaterThan(x("b"));
     expect(x("b")).toBeGreaterThan(x("a"));
-    expect(x("a")).toBeGreaterThan(1500);
+    expect(x("a")).toBeGreaterThanOrEqual(0);
     expect(x("c") - x("b")).toBeLessThan(400);
   });
   it("returns a child who was dragged onto the wrong side of the family", () => {

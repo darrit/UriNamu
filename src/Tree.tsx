@@ -28,7 +28,7 @@ import {
 import { dateLabel } from "./dates";
 import { getLocale, localeTag, t } from "./i18n";
 import { type PosterFrame } from "./poster";
-import { accordionFamily, partnerGroups } from "./partnerAccordion";
+import { accordionFamily, partnerGroups, expandedPartnerPositions } from "./partnerAccordion";
 
 function SeparationMark({ path, fallback, angle }: { path: string; fallback: Point; angle: number }) {
   const ref = useRef<SVGPathElement>(null);
@@ -180,7 +180,12 @@ export default function Tree({
     return open;
   }, [expandedPartners, groups, poster, preview, query, focus]);
   const visibleFamily = useMemo(() => accordionFamily(placedFamily, groups, openGroups), [placedFamily, groups, openGroups]);
-  const allPositions = useMemo(() => layoutFamily(placedFamily, layout, null, moving, { partnerSlots: false }).positions, [placedFamily, layout, moving]);
+  const allPositions = useMemo(() => {
+    const saved = layoutFamily(placedFamily, layout, null, {}, { partnerSlots: false }).positions;
+    const expanded = poster || preview ? saved : expandedPartnerPositions(placedFamily, groups, openGroups, saved, layout);
+    return { ...expanded, ...moving };
+  }, [placedFamily, layout, moving, groups, openGroups, poster, preview]);
+  const [hoveredPort, setHoveredPort] = useState<string | null>(null);
   const scene = useMemo(
     () =>
       layoutFamily(visibleFamily, layout, null, allPositions, {
@@ -340,8 +345,9 @@ export default function Tree({
     });
   useEffect(() => {
     const el = container.current;
-    if (!el || poster) return;
+    if (!el || poster || preview) return;
     const wheel = (e: WheelEvent) => {
+      if (e.target instanceof Element && e.target.closest(".guide-beat")) return;
       e.preventDefault();
       const rect = el.getBoundingClientRect();
       const delta =
@@ -353,7 +359,7 @@ export default function Tree({
     };
     el.addEventListener("wheel", wheel, { passive: false });
     return () => el.removeEventListener("wheel", wheel);
-  }, [size, poster]);
+  }, [size, poster, preview]);
   useEffect(() => {
     if (!draft) return;
     const key = (e: KeyboardEvent) => {
@@ -550,6 +556,10 @@ export default function Tree({
   dynasties.sort((a, b) => b.area - a.area);
   const draftRef = useRef(draft);
   draftRef.current = draft;
+  useEffect(() => { if (!draft) setHoveredPort(null); }, [draft]);
+  const portAt = (x: number, y: number, source: string) => document.elementsFromPoint(x, y)
+    .map(node => node.closest<HTMLElement>("[data-link-person]"))
+    .find(node => node && node.dataset.linkPerson !== source);
   const beginLink = (event: ReactPointerEvent, id: string, toward: "parent" | "child", pos: Point) => {
     if (event.button !== 0 || preview || savingMove.current) return;
     event.preventDefault();
@@ -567,6 +577,8 @@ export default function Tree({
     const current = draftRef.current;
     if (!current) return;
     event.stopPropagation();
+    const port = portAt(event.clientX, event.clientY, current.id);
+    setHoveredPort(port ? `${port.dataset.linkPerson}:${port.dataset.linkDirection}` : null);
     const next = {
       ...current,
       to: {
@@ -582,13 +594,15 @@ export default function Tree({
     draftRef.current = null;
     setDraft(null);
     if (!current) return;
+    const port = portAt(event.clientX, event.clientY, current.id);
     const target = document
       .elementsFromPoint(event.clientX, event.clientY)
       .map((node) => (node instanceof Element ? node.closest("[data-person]") : null))
       .find((node): node is HTMLElement => node instanceof HTMLElement && !!node.dataset.person && node.dataset.person !== current.id);
-    if (!target?.dataset.person) return;
-    if (current.toward === "child") onLink(target.dataset.person, current.id);
-    else onLink(current.id, target.dataset.person);
+    const targetId = port?.dataset.linkPerson ?? target?.dataset.person;
+    if (!targetId) return;
+    if (current.toward === "child") onLink(targetId, current.id);
+    else onLink(current.id, targetId);
   };
   const ink =
     layout === "tapestry"
@@ -916,7 +930,7 @@ export default function Tree({
               <span aria-hidden="true">{open ? "▾" : "▸"}</span> {t("morePartners", { count: group.additional.length })}
             </button>
             {open && <div id={`partners-${group.personId}`} className="partner-accordion-list">
-              {[group.primary, ...group.additional].map(union => {
+              {group.additional.map(union => {
                 const partner = family.members.find(p => p.id === (union.a === group.personId ? union.b : union.a));
                 if (!partner) return null;
                 const status = union.marriage === "divorced" ? t("divorced") : union.status === "separated" ? t("separated") : t("currentPartner");
@@ -1131,7 +1145,9 @@ export default function Tree({
                       key={toward}
                       role="button"
                       tabIndex={-1}
-                      className={`link-port ${toward === "parent" ? "up" : "down"}`}
+                      data-link-person={p.id}
+                      data-link-direction={toward}
+                      className={`link-port ${toward === "parent" ? "up" : "down"}${hoveredPort === `${p.id}:${toward}` ? " is-link-target" : ""}`}
                       aria-label={t(toward === "parent" ? "linkToParent" : "linkToChild")}
                       title={t(toward === "parent" ? "linkToParent" : "linkToChild")}
                       onPointerDown={(event) => beginLink(event, p.id, toward, pos)}
@@ -1160,7 +1176,9 @@ export default function Tree({
             </button>
           ))}
         {!query &&
-          scene.slots.map((s) => (
+          scene.slots.filter(s => !family.unions.some(union =>
+            union.status === "active" && (union.a === s.id || union.b === s.id),
+          )).map((s) => (
             <button
               className="partner-slot"
               key={s.id}

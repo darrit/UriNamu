@@ -750,6 +750,13 @@ footer {
 }
 .link-port.up { top: -7px; }
 .link-port.down { bottom: -7px; }
+.link-port { transition: transform 120ms ease, background-color 120ms ease, box-shadow 120ms ease; }
+.link-port.is-link-target {
+  transform: scale(1.4);
+  background: #e6ce88;
+  border-color: #fff0b8;
+  box-shadow: 0 0 0 4px #baa47466, 0 0 12px #e6ce8899;
+}
 .person:hover + .link-ports .link-port,
 .link-ports:hover .link-port,
 .link-ports:focus-within .link-port,
@@ -1841,9 +1848,13 @@ aside .nav {
 .guide-beat {
   position: absolute;
   z-index: 6;
-  left: 26px;
+  left: 16px;
   bottom: 58px;
-  width: min(340px, calc(100% - 160px));
+  width: min(420px, calc(100% - 32px));
+  max-height: calc(100% - 80px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding: 14px;
   background: #1b2720;
   color: #e7e2d4;
@@ -1854,6 +1865,7 @@ aside .nav {
   user-select: text;
 }
 .guide-beat h2 {
+  flex: 0 0 auto;
   margin: 0 0 8px;
   font: 16px Georgia, serif;
   color: #f3ead4;
@@ -1866,11 +1878,26 @@ aside .nav {
   color: #d5d0c2;
 }
 .guide-beat .actions {
+  flex: 0 0 auto;
+  flex-wrap: wrap;
   margin-top: 12px;
   display: flex;
   justify-content: flex-end;
   gap: 8px;
 }
+.guide-beat-content {
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.guide-beat-content:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+.guide-beat .guide-live { max-width: 100%; }
+.guide-beat .guide-preview { max-width: 100%; }
 .guide-tabs {
   display: flex;
   flex-wrap: wrap;

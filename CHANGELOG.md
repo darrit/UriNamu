@@ -1,5 +1,46 @@
 # Changelog
 
+## 0.9.6 — 2026-11-01
+
+- Revert the automatic imported-generation reassignment introduced in 0.9.5 after reported layout regressions. Restore the 0.9.4 tidying behavior; partner accordion and import changes remain intact.
+
+## 0.9.5 — 2026-11-01
+
+- Restore displaced imported relatives to their relationship-based generation before tidying, using the prevailing row offset of each connected family. Reposition displaced members near siblings or other relatives instead of retaining dragged coordinates as new generations; preserve unrelated printed rows.
+
+## 0.9.4 — 2026-11-01
+
+- Include childless current partners in the accordion again, while continuing to hide add-partner placeholders for active relationships.
+- Close excessive empty space on both axes when tidying, including displaced PDF rows. Preserve ordering and minimum spacing, and bring compacted trees back near the canvas origin when extreme dragging left them far away.
+
+## 0.9.3 — 2026-11-01
+
+- Keep active partners visible outside the partner accordion, whether married or unmarried. Suppress add-partner placeholders using the full relationship data in every layout, independently of accordion visibility.
+
+## 0.9.2 — 2026-11-01
+
+- Reserve generation space below expanded partner columns, shifting subsequent rows together while keeping couples and descendant order intact. Apply the equivalent spacing to the right in horizontal layout; collapsing restores saved positions.
+
+## 0.9.1 — 2026-11-01
+
+- Accept year-only birth, death and marriage dates in the desktop storage validator, using the same date-range comparisons as the frontend. Fix PDF imports rejected as invalid partnerships after reading LAG year labels.
+- Show storage and validation failures inside the PDF import dialog and scroll the error into view instead of displaying it behind the modal.
+
+## 0.9.0 — 2026-11-01
+
+- Keep expanded partners directly on the outside of the central person (left or right according to the primary couple), reserving space by shifting obstructing neighbouring couple blocks rather than sending partners to the tree's edge.
+- Offer full date, year-only and unknown date precision in profile and marriage fields. Validate partial dates by their possible ranges without inventing a day or month.
+- Import oo LAG and year-only wedding labels as marriages, combine them with separation markers, and preserve year-only birth dates. Incomplete dates without a known year remain unknown.
+
+## 0.8.2 — 2026-11-01
+
+- Fit the first-run preview card to the available window size, scroll overflowing content independently, and keep its title and navigation buttons visible. Reset scrolling between steps and prevent the tree zoom handler from consuming preview scrolling.
+
+## 0.8.1 — 2026-11-01
+
+- Keep partners with children visible and outside the partner accordion, including divorced first partners. Expand additional childless partners into temporary columns with minimum distances in every layout without moving unrelated people or changing stored positions.
+- Highlight and enlarge the destination connection port while dragging, restore it on leaving or cancelling, and accept drops directly onto another person's port.
+
 ## 0.8.0 — 2026-11-01
 
 - Add a view-only partner accordion in every layout for people with a divorce and multiple partnerships. Keep the current partner visible, preserve shared children, and reveal additional partners on expansion or search/focus without changing stored positions. Independent ancestry and other family branches remain visible; print views show all people.
