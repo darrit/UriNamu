@@ -139,6 +139,7 @@ export default function App() {
     add,
     requestRemove,
     confirmDeathChange,
+    confirmParentPartnerships,
     separate,
     undoAction,
     showHistory,
@@ -359,11 +360,11 @@ export default function App() {
                 }
                 onAncestor={addAncestor}
                 onChild={(parentId) => add("", [parentId])}
-                onLink={(childId, parentId) => {
-                  if (!family) return;
+                onLink={async (childId, parentId) => {
                   try {
                     const next = linkParent(family, childId, parentId);
-                    if (next !== family) void commit(next, "logLinked");
+                    if (next !== family && (await confirmParentPartnerships(next)))
+                      await commit(next, "logLinked");
                   } catch (e) {
                     setError(String(e));
                   }
@@ -501,6 +502,7 @@ export default function App() {
                     : "",
                 );
               }
+              if (!(await confirmParentPartnerships(next))) return;
               if (
                 await commit(
                   next,
@@ -759,6 +761,7 @@ export default function App() {
             assignMarriage(u);
             try {
               validate(next);
+              if (!(await confirmParentPartnerships(next))) return "";
               if (await commit(next, "logMarriageChanged")) {
                 setMarriageUnion(null);
                 setEditor(null);

@@ -96,6 +96,31 @@ export function assignMarriage(union: Union): void {
 export const childrenOf = (f: Family, u: Union) =>
   f.members.filter((p) => p.parents.includes(u.a) && p.parents.includes(u.b));
 
+/** Find newly overlapping active partnerships and direct parent links. */
+export function newParentPartnerships(before: Family, after: Family) {
+  const previousMembers = new Map(before.members.map((p) => [p.id, p]));
+  const previousPartners = new Set(
+    before.unions.filter((u) => u.status === "active").map((u) => u.id),
+  );
+  const members = new Map(after.members.map((p) => [p.id, p]));
+  const pairs: { parent: Person; child: Person }[] = [];
+  for (const union of after.unions) {
+    if (union.status !== "active") continue;
+    const a = members.get(union.a);
+    const b = members.get(union.b);
+    if (!a || !b) continue;
+    const [parent, child] = a.parents.includes(b.id) ? [b, a] : [a, b];
+    if (!child.parents.includes(parent.id)) continue;
+    if (
+      previousPartners.has(union.id) &&
+      previousMembers.get(child.id)?.parents.includes(parent.id)
+    )
+      continue;
+    pairs.push({ parent, child });
+  }
+  return pairs;
+}
+
 /** The founder, their descendants, people who joined, and descendants' current partners. */
 export function dynastyMembers(family: Family, founder: Person): string[] {
   const blood = new Set<string>([

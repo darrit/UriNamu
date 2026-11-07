@@ -9,6 +9,9 @@ export const ko: Catalog = {
   cancel: "취소",
   confirm: "확인",
   confirmTitle: "확인해 주세요",
+  parentPartnershipTitle: "부모와 자녀 관계 확인",
+  parentPartnershipAsk:
+    "부모인 {parent} 님과 자녀인 {child} 님이 서로 파트너로도 연결됩니다. 이 관계를 저장할까요?",
   save: "저장",
   saving: "저장 중 …",
   saved: "저장됨 · {label}",

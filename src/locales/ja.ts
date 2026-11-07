@@ -9,6 +9,9 @@ export const ja: Catalog = {
   cancel: "キャンセル",
   confirm: "確認",
   confirmTitle: "操作の確認",
+  parentPartnershipTitle: "親子関係の確認",
+  parentPartnershipAsk:
+    "親の{parent}さんと子の{child}さんは、同時にパートナーとしても登録されます。この関係を保存しますか？",
   save: "保存",
   saving: "保存中…",
   saved: "保存しました · {label}",

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.1 — 2026-11-07
+
+- Ask for confirmation before saving a direct parent-child relationship between active partners, or making a parent and child active partners.
+
 ## 0.12.0 — 2026-11-07
 
 - Dim the app during the guided preview and frame the live control or person shown in each step.

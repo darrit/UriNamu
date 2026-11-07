@@ -6,6 +6,7 @@ import {
   newPerson,
   updatePerson,
   linkParent,
+  newParentPartnerships,
   assignMarriage,
   childBranchControl,
   removePerson,
@@ -22,6 +23,12 @@ import {
 } from "../src/domain";
 import { layoutFamily } from "../src/layout";
 const family = () => normalize(structuredClone(demo));
+const parentAndChild = () => {
+  const parent = { ...newPerson(), id: "parent", name: "Alex", born: "1960" };
+  const child = { ...newPerson(), id: "child", name: "Sam", born: "1990" };
+  const tree = normalize({ version: 2, name: "Test", members: [parent, child], unions: [] });
+  return { parent, child, tree };
+};
 describe("Familienmodell", () => {
   it("prüft die vollständige Demo", () =>
     expect(() => validate(family())).not.toThrow());
@@ -98,6 +105,24 @@ describe("Familienmodell", () => {
     expect(() =>
       updatePerson(family(), { ...newPerson(), name: "Test" }, "7"),
     ).toThrow();
+  });
+  it("erkennt neue Eltern-Kind-Partnerschaften in beiden Reihenfolgen", () => {
+    const { parent, child, tree } = parentAndChild();
+    const linked = linkParent(tree, child.id, parent.id);
+    const partnered = updatePerson(tree, child, parent.id);
+    const addedPartner = updatePerson(linked, parent, child.id);
+    const addedParent = linkParent(partnered, child.id, parent.id);
+    const pair = { parent: { id: parent.id }, child: { id: child.id } };
+    expect(newParentPartnerships(linked, addedPartner)).toMatchObject([pair]);
+    expect(newParentPartnerships(partnered, addedParent)).toMatchObject([pair]);
+  });
+  it("fragt für vorhandene Doppelbeziehungen erst bei einer Reaktivierung erneut", () => {
+    const { parent, child, tree } = parentAndChild();
+    const both = linkParent(updatePerson(tree, parent, child.id), child.id, parent.id);
+    const separated = separatePartnership(both, unionKey(parent.id, child.id));
+    expect(newParentPartnerships(both, { ...both, name: "New name" })).toEqual([]);
+    expect(newParentPartnerships(both, separated)).toEqual([]);
+    expect(newParentPartnerships(separated, both)).toHaveLength(1);
   });
   it.each(["2010-06-18", "2010", undefined])(
     "speichert eine neue Ehe mit optionalem Heiratsdatum %s",

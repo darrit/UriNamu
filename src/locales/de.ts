@@ -7,6 +7,9 @@ export const de = {
   cancel: "Abbrechen",
   confirm: "Bestätigen",
   confirmTitle: "Bitte bestätigen",
+  parentPartnershipTitle: "Eltern-Kind-Verbindung bestätigen",
+  parentPartnershipAsk:
+    "Elternteil {parent} und Kind {child} wären damit zugleich als Partner verbunden. Möchtest du diese Verbindung speichern?",
   save: "Speichern",
   saving: "Speichern …",
   saved: "Gespeichert · {label}",

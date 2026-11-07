@@ -12,6 +12,7 @@ import {
   removePerson,
   descendantIds,
   displayName,
+  newParentPartnerships,
   separatePartnership,
 } from "./domain";
 import {
@@ -419,6 +420,29 @@ export function useAppController() {
       }),
     );
   };
+  async function confirmParentPartnerships(next: Family) {
+    if (!family || working.current) return false;
+    const pairs = newParentPartnerships(family, next);
+    if (!pairs.length) return true;
+    working.current = true;
+    setBusy(true);
+    try {
+      for (const { parent, child } of pairs) {
+        const confirmed = await ask(
+          t("parentPartnershipAsk", {
+            parent: displayName(parent),
+            child: displayName(child),
+          }),
+          { title: t("parentPartnershipTitle") },
+        );
+        if (!confirmed) return false;
+      }
+      return true;
+    } finally {
+      working.current = false;
+      setBusy(false);
+    }
+  }
   async function separate(u: Union) {
     const married = u.marriage === "married" || u.marriage === "divorced";
     if (!family || !(await ask(t(married ? "divorceAsk" : "separationAsk"))))
@@ -525,6 +549,7 @@ export function useAppController() {
     add,
     requestRemove,
     confirmDeathChange,
+    confirmParentPartnerships,
     separate,
     undoAction,
     showHistory,

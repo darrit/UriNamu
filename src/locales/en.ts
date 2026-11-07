@@ -9,6 +9,9 @@ export const en: Catalog = {
   cancel: "Cancel",
   confirm: "Confirm",
   confirmTitle: "Please confirm",
+  parentPartnershipTitle: "Confirm parent-child connection",
+  parentPartnershipAsk:
+    "Parent {parent} and child {child} would also be linked as partners. Do you want to save this connection?",
   save: "Save",
   saving: "Saving …",
   saved: "Saved · {label}",
