@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#142b23">
   <title data-i18n="pageTitle">UriNamu | Your family tree, on your computer</title>
   <script type="module" src="./downloads.js?v=guide-note"></script>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%2317392f'/%3E%3Cpath d='M17 24v15h31v13' fill='none' stroke='%23e8dfc7' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M32 10v22' stroke='%23c5a871' stroke-width='5'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="./logo.svg">
   <style>
     :root {
       color-scheme: light;
@@ -47,12 +47,24 @@
     .bar { min-height: 4.75rem; padding-block: .6rem; border-bottom: 1px solid #ffffff26; }
     .brand {
       display: inline-flex;
-      gap: .65rem;
       align-items: center;
-      font-size: 1.15rem;
-      font-weight: 650;
+      gap: 13px;
+      font-size: 25px;
+      font-weight: 550;
+      letter-spacing: -.8px;
+      white-space: nowrap;
     }
-    .brand svg { width: 1.85rem; height: 1.85rem; color: var(--gold); }
+    .brand-symbol {
+      width: 43px;
+      height: 43px;
+      border-radius: 8px;
+      background: #e8dfc7;
+      color: #17392f;
+      padding: 8px 9px;
+    }
+    .brand-symbol svg { width: 100%; height: 100%; overflow: visible; }
+    .wordmark-uri { color: #d4b36a; }
+    .wordmark-namu { color: #8fb59a; }
     nav { display: flex; gap: .35rem clamp(1rem, 3vw, 2.25rem); flex-wrap: wrap; }
     nav a { font-size: .9rem; }
     .header-links { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem 1.5rem; }
@@ -171,6 +183,8 @@
     .footer { padding-block: 1.35rem; color: var(--muted); font-size: .84rem; }
 
     @media (max-width: 46rem) {
+      .brand { font-size: 21px; gap: 9px; }
+      .brand-symbol { width: 35px; height: 35px; padding: 7px; }
       .hero-inner { grid-template-columns: 1fr; }
       .tree-plate { max-width: 34rem; }
       .feature-list li { grid-template-columns: 1fr; }
@@ -187,10 +201,13 @@
   <header>
     <div class="bar wrap">
       <div class="brand">
-        <svg viewBox="0 0 64 64" aria-hidden="true">
-          <path d="M10 19V43H54V61M32 5V34" fill="none" stroke="currentColor" stroke-width="7" stroke-linejoin="round"/>
-        </svg>
-        UriNamu
+        <div class="brand-symbol">
+          <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <path d="M10 19V43H54V61" stroke="currentColor" stroke-width="7" stroke-linejoin="round"/>
+            <path d="M32 5V34" stroke="#A58A56" stroke-width="7"/>
+          </svg>
+        </div>
+        <span class="wordmark"><span class="wordmark-uri">Uri</span><span class="wordmark-namu">Namu</span></span>
       </div>
       <div class="header-links">
         <nav aria-label="Project" data-i18n-label="project">
@@ -217,7 +234,7 @@
       <div class="hero-inner wrap">
         <div>
           <p class="label" data-i18n="heroLabel">An offline family tree app</p>
-          <h1 id="title">UriNamu</h1>
+          <h1 id="title"><span class="wordmark-uri">Uri</span><span class="wordmark-namu">Namu</span></h1>
           <p class="lead" data-i18n="heroLead">Your family tree, on your computer.</p>
           <p class="summary" data-i18n="heroSummary">Trace your roots, connect relatives and keep photos and memories with their stories.</p>
           <div class="actions">
