@@ -6,6 +6,7 @@
   <meta name="description" content="UriNamu is an offline desktop family tree app for Windows, macOS and Linux. Keep family stories, photos and relationships on your computer.">
   <meta name="theme-color" content="#142b23">
   <title>UriNamu | Your family tree, on your computer</title>
+  <script defer src="./downloads.js"></script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%2317392f'/%3E%3Cpath d='M17 24v15h31v13' fill='none' stroke='%23e8dfc7' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M32 10v22' stroke='%23c5a871' stroke-width='5'/%3E%3C/svg%3E">
   <style>
     :root {
@@ -136,8 +137,23 @@
     .feature-list h3 { font-size: 1.45rem; }
     .feature-list p, .download p { color: var(--muted); max-width: 60ch; }
     .download { background: #e7dfce; padding-block: clamp(3rem, 6vw, 5rem); }
-    .download .button { margin-top: 1.5rem; background: var(--forest); color: var(--parchment); }
+    .download .button {
+      width: 100%;
+      justify-content: space-between;
+      background: var(--forest);
+      color: var(--parchment);
+    }
     .download .button:hover { background: #305142; }
+    .download .button small { display: block; color: #d8e1d6; font-weight: 400; }
+    .download-packages {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+      gap: .65rem;
+      list-style: none;
+      margin: .65rem 0 0;
+      padding: 0;
+    }
+    .download-packages:not([hidden]) { display: grid; }
+    .download .release-status { margin-top: 1.25rem; font-size: .85rem; }
     .download .guide { margin-top: .95rem; }
     .footer { padding-block: 1.35rem; color: var(--muted); font-size: .84rem; }
 
@@ -181,7 +197,7 @@
           <p class="lead">Your family tree, on your computer.</p>
           <p class="summary">Trace your roots, connect relatives and keep photos and memories with their stories.</p>
           <div class="actions">
-            <a class="button" href="https://github.com/darrit/UriNamu/releases/latest">Download UriNamu <span aria-hidden="true">↓</span></a>
+            <a class="button" href="#download">Download UriNamu <span aria-hidden="true">↓</span></a>
             <a href="#layouts">Try the layouts</a>
           </div>
           <p class="platforms">Windows · macOS · Linux</p>
@@ -273,10 +289,35 @@
     <section class="download" id="download" aria-labelledby="download-title">
       <div class="wrap">
         <p class="label">Getting started</p>
-        <h2 id="download-title">Start your family tree</h2>
-        <p>Under <strong>Assets</strong> on the latest release, choose the <code>-setup.exe</code> for Windows, the <code>.dmg</code> for macOS, or the <code>.deb</code> or <code>.AppImage</code> for Linux. On first launch, pick German, English or Korean and start an empty tree or explore the fictional example.</p>
-        <a class="button" href="https://github.com/darrit/UriNamu/releases/latest">View latest release <span aria-hidden="true">↗</span></a>
-        <p class="guide"><a href="https://github.com/darrit/UriNamu/blob/master/docs/USER-GUIDE.md">Read the user guide</a></p>
+        <h2 id="download-title">Download UriNamu</h2>
+        <p>Choose an installer for your system. On first launch, pick German, English or Korean and start an empty tree or explore the fictional example.</p>
+        <p id="release-status" class="release-status" role="status"></p>
+        <ul id="download-packages" class="download-packages" aria-label="Direct downloads" hidden>
+          <li data-package="windows" hidden>
+            <a class="button" aria-label="Download for Windows (x64, EXE)">
+              <span>Windows <small>x64 · EXE</small></span><span aria-hidden="true">↓</span>
+            </a>
+          </li>
+          <li data-package="macos" hidden>
+            <a class="button" aria-label="Download for macOS (Intel and Apple Silicon, DMG)">
+              <span>macOS <small>Intel &amp; Apple Silicon · DMG</small></span><span aria-hidden="true">↓</span>
+            </a>
+          </li>
+          <li data-package="deb" hidden>
+            <a class="button" aria-label="Download for Linux (x64, DEB)">
+              <span>Linux <small>x64 · DEB</small></span><span aria-hidden="true">↓</span>
+            </a>
+          </li>
+          <li data-package="appimage" hidden>
+            <a class="button" aria-label="Download for Linux (x64, AppImage)">
+              <span>Linux <small>x64 · AppImage</small></span><span aria-hidden="true">↓</span>
+            </a>
+          </li>
+        </ul>
+        <p class="guide">
+          <a href="https://github.com/darrit/UriNamu/releases/latest">View release notes and files on GitHub</a>
+          · <a href="https://github.com/darrit/UriNamu/blob/master/docs/USER-GUIDE.md">Read the user guide</a>
+        </p>
       </div>
     </section>
   </main>
