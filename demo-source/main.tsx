@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import Tree from "../../../src/Tree";
 import { unionKey, type Family, type Person, type Union } from "../../../src/domain";
 import { setLocale } from "../../../src/i18n";
-import type { Layout } from "../../../src/layout";
+import { preserveLayout, tidyLayout, type Layout, type Point } from "../../../src/layout";
 import { layoutModes } from "../../../src/layout/types";
 import "../../../src/style.css";
 import "./preview.css";
@@ -38,7 +38,7 @@ function marriage(a: string, b: string, marriedOn: string): Union {
   };
 }
 
-const family: Family = {
+const example = preserveLayout(null, {
   version: 2,
   name: "Example family",
   members: [
@@ -50,89 +50,116 @@ const family: Family = {
     member("Leo Kim", "2010", ["jin", "nora"]),
   ],
   unions: [marriage("ada", "theo", "1971"), marriage("jin", "nora", "2002")],
-};
+});
 
-const layouts: Record<Layout, { label: string; description: string }> = {
-  classic: { label: "Classic", description: "Portrait cards arranged by generation from top to bottom." },
-  horizontal: { label: "Horizontal", description: "Generations run from left to right." },
-  tapestry: { label: "Tapestry", description: "Framed portraits with ribbons for names and dates." },
-  chart: { label: "Chart", description: "Compact text cards show names and dates in place of portraits." },
+const labels: Record<Layout, string> = {
+  classic: "Classic",
+  horizontal: "Horizontal",
+  tapestry: "Tapestry",
+  chart: "Chart",
 };
 
 const idle = () => {};
-const refuse = async () => false;
+
+function LayoutCanvas({ layout, active }: { layout: Layout; active: boolean }) {
+  const [family, setFamily] = useState<Family>(example);
+  const [focus, setFocus] = useState<string | null>(null);
+
+  async function move(points: Record<string, Point>) {
+    setFamily((current) => ({
+      ...current,
+      members: current.members.map((person) => {
+        const point = points[person.id];
+        return point
+          ? { ...person, positions: { ...person.positions, [layout]: point } }
+          : person;
+      }),
+    }));
+    return true;
+  }
+
+  return (
+    <div className="demo-tree" inert={!active}>
+      <Tree
+        family={family}
+        layout={layout}
+        query=""
+        focus={focus}
+        showPartnerSlots={false}
+        onFocus={setFocus}
+        onMove={(id, point) => move({ [id]: point })}
+        onMovePair={(_, points) => move(points)}
+        onTidy={() => setFamily((current) => tidyLayout(current, layout, false))}
+        onEdit={idle}
+        onPartner={idle}
+        onBranch={idle}
+        onAncestor={idle}
+        onChild={idle}
+        onLink={idle}
+        onSeparate={idle}
+        onDeath={idle}
+        onDynasty={idle}
+        onJoinDynasty={idle}
+        onRemove={idle}
+      />
+    </div>
+  );
+}
 
 function LayoutDemo() {
   const [layout, setLayout] = useState<Layout>("classic");
-  const [large, setLarge] = useState(false);
+  const viewport = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = viewport.current!;
+    // Ordinary wheel gestures still scroll the page. Modified gestures zoom the tree.
+    const passPageScroll = (event: WheelEvent) => {
+      if (!event.ctrlKey && !event.metaKey) event.stopPropagation();
+    };
+    element.addEventListener("wheel", passPageScroll, { capture: true, passive: true });
+    return () => element.removeEventListener("wheel", passPageScroll, true);
+  }, []);
 
   return (
     <div className="layout-demo">
       <div className="layout-tools">
-        <div className="layout-controls">
-          <div className="layout-options" role="radiogroup" aria-label="Tree layout">
-            {layoutModes.map((mode) => (
-              <label key={mode}>
-                <input
-                  type="radio"
-                  name="layout"
-                  checked={layout === mode}
-                  onChange={() => setLayout(mode)}
-                />
-                <span>{layouts[mode].label}</span>
-              </label>
-            ))}
-          </div>
-          <button
-            type="button"
-            className="large-toggle"
-            aria-pressed={large}
-            onClick={() => setLarge((value) => !value)}
-          >
-            Larger view
-          </button>
+        <div className="layout-options" role="radiogroup" aria-label="Tree layout">
+          {layoutModes.map((mode) => (
+            <label key={mode}>
+              <input
+                type="radio"
+                name="layout"
+                checked={layout === mode}
+                onChange={() => setLayout(mode)}
+              />
+              <span>{labels[mode]}</span>
+            </label>
+          ))}
         </div>
-        <p id="layout-description" role="status">
-          {layouts[layout].description}
-          {large && " Scroll to explore the enlarged tree."}
+        <p id="layout-description">
+          Drag people or the background. Zoom with +/− or Ctrl/⌘ + scroll.
         </p>
       </div>
       <div
+        ref={viewport}
         className="demo-viewport"
         role="region"
         aria-label="Fictional family tree"
         aria-describedby="layout-description family-description"
-        tabIndex={large ? 0 : undefined}
+        onContextMenuCapture={(event) => event.stopPropagation()}
+        onKeyDownCapture={(event) => {
+          if (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10"))
+            event.stopPropagation();
+        }}
       >
         <span id="family-description" className="visually-hidden">
           Ada Park and Theo Reed are Nora Reed’s parents. Nora Reed and Jin Kim
           are the parents of Mina and Leo Kim.
         </span>
-        <div className={large ? "demo-tree demo-tree-large" : "demo-tree"} inert>
-          <Tree
-            family={family}
-            layout={layout}
-            query=""
-            focus={null}
-            preview
-            showPartnerSlots={false}
-            onFocus={idle}
-            onMove={refuse}
-            onMovePair={refuse}
-            onTidy={idle}
-            onEdit={idle}
-            onPartner={idle}
-            onBranch={idle}
-            onAncestor={idle}
-            onChild={idle}
-            onLink={idle}
-            onSeparate={idle}
-            onDeath={idle}
-            onDynasty={idle}
-            onJoinDynasty={idle}
-            onRemove={idle}
-          />
-        </div>
+        {/* Each view stays measured and keeps its own camera and person positions. */}
+        {layoutModes.map((mode) => (
+          <LayoutCanvas key={mode} layout={mode} active={mode === layout} />
+        ))}
       </div>
     </div>
   );

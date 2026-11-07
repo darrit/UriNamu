@@ -16,17 +16,11 @@ body,
   background: #1b2a23;
 }
 
-.layout-controls,
 .layout-options {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: .35rem;
-}
-
-.layout-controls {
-  justify-content: space-between;
-  gap: .55rem;
 }
 
 .layout-options label {
@@ -44,8 +38,7 @@ body,
   white-space: nowrap;
 }
 
-.layout-options span,
-.large-toggle {
+.layout-options span {
   display: inline-block;
   border: 1px solid #637767;
   border-radius: 4px;
@@ -59,21 +52,15 @@ body,
   background: #304638;
 }
 
-.layout-options input:checked + span,
-.large-toggle[aria-pressed="true"] {
+.layout-options input:checked + span {
   background: #e3c58e;
   border-color: #e3c58e;
   color: #142b23;
 }
 
-.layout-options input:focus-visible + span,
-.demo-viewport:focus-visible {
+.layout-options input:focus-visible + span {
   outline: 2px solid #e3c58e;
   outline-offset: 2px;
-}
-
-.demo-viewport:focus-visible {
-  outline-offset: -2px;
 }
 
 .layout-tools p {
@@ -84,25 +71,49 @@ body,
 }
 
 .demo-viewport {
-  overflow: auto;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(#344138 1px, transparent 1px) #111915;
+  background-size: 23px 23px;
 }
 
-.demo-tree,
+.demo-tree {
+  position: absolute;
+  inset: 0;
+}
+
+.demo-tree[inert] {
+  visibility: hidden;
+}
+
 .demo-tree .canvas {
-  width: 100%;
   height: 100%;
   min-height: 0;
-  touch-action: auto;
-  cursor: default;
+  background: transparent;
 }
 
-.demo-tree-large {
-  width: max(132%, 56rem);
-  height: 140%;
+.demo-tree .person {
+  transition: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .large-toggle {
-    transition: none;
+.demo-tree .link-ports,
+.demo-tree .tapestry-title {
+  display: none;
+}
+
+.demo-tree .zoom {
+  right: 12px;
+  bottom: 12px;
+  z-index: 4;
+}
+
+.demo-tree .zoom button {
+  min-width: 40px;
+  min-height: 40px;
+}
+
+@media (max-width: 30rem) {
+  .demo-tree .legend {
+    display: none;
   }
 }

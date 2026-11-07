@@ -120,7 +120,7 @@
     .layouts iframe {
       display: block;
       width: 100%;
-      height: 32rem;
+      height: clamp(32rem, 55vw, 40rem);
       margin-top: 1.5rem;
       border: 1px solid #35483c;
       background: #111915;
@@ -262,7 +262,7 @@
       <div class="wrap">
         <p class="label">Interactive preview</p>
         <h2 id="layouts-title">Try the four tree layouts</h2>
-        <p class="intro">Switch between the same views available in UriNamu. Each view shows the same fictional family.</p>
+        <p class="intro">Move people, pan and zoom a fictional family tree. Each of the four views keeps its own arrangement while you explore.</p>
         <iframe src="./demo/" title="Interactive UriNamu layout preview" loading="lazy"></iframe>
       </div>
     </section>
@@ -281,7 +281,11 @@
         </li>
         <li>
           <h3>Keep trees on your device</h3>
-          <p>Manage separate trees with their own backup histories. Export a PDF for printing or an encrypted UriNamu file to share profiles, photos and relationships.</p>
+          <p>Manage separate trees with their own backup histories. Export a PDF when you want to print or share a picture of the tree.</p>
+        </li>
+        <li>
+          <h3>Share a tree with a password</h3>
+          <p>Export profiles, photos and relationships in a password-protected <code>.urinamu</code> file. The recipient uses the same password to import the file as a separate tree in the desktop app.</p>
         </li>
       </ul>
     </section>
