@@ -3,7 +3,15 @@ import { createRoot } from "react-dom/client";
 import Tree from "../../../src/Tree";
 import { unionKey, type Family, type Person, type Union } from "../../../src/domain";
 import { locales, setLocale, t, type Locale, type MessageKey } from "../../../src/i18n";
-import { preserveLayout, tidyLayout, type Layout, type Point } from "../../../src/layout";
+import {
+  blockersAround,
+  freePosition,
+  personFootprint,
+  preserveLayout,
+  tidyLayout,
+  type Layout,
+  type Point,
+} from "../../../src/layout";
 import { layoutModes } from "../../../src/layout/types";
 import "../../../src/style.css";
 import "./preview.css";
@@ -38,7 +46,7 @@ function marriage(a: string, b: string, marriedOn: string): Union {
   };
 }
 
-const example = preserveLayout(null, {
+const exampleFamily: Family = {
   version: 2,
   name: "Example family",
   members: [
@@ -49,8 +57,55 @@ const example = preserveLayout(null, {
     member("Mina Kim", "2006-02-12", ["jin", "nora"]),
     member("Leo Kim", "2010", ["jin", "nora"]),
   ],
-  unions: [marriage("ada", "theo", "1971"), marriage("jin", "nora", "2002")],
-});
+  unions: [marriage("ada", "theo", "1971-05-22"), marriage("jin", "nora", "2002")],
+};
+
+// The shared wedding label checks an 80 px wide box. Keep room on both
+// axes so it stays centered when a couple is dragged into a diagonal layout.
+const weddingGap = 88;
+
+const previewBlockers: typeof blockersAround = (
+  family, positions, id, layout, skip = [],
+) => {
+  const wedding = family.unions.find(
+    (union) => union.marriedOn && (union.a === id || union.b === id),
+  );
+  const partner = wedding && (wedding.a === id ? wedding.b : wedding.a);
+  const blockers = blockersAround(family, positions, id, layout, [
+    ...skip,
+    ...(partner ? [partner] : []),
+  ]);
+  if (partner && !skip.includes(partner) && positions[partner]) {
+    const at = positions[partner];
+    const { w, h } = personFootprint(at, layout);
+    blockers.push({ at, separation: { x: w + weddingGap, y: h + weddingGap } });
+  }
+  return blockers;
+};
+
+function withPositions(family: Family, layout: Layout, positions: Record<string, Point>): Family {
+  return {
+    ...family,
+    members: family.members.map((person) => {
+      const point = positions[person.id];
+      return point ? { ...person, positions: { ...person.positions, [layout]: point } } : person;
+    }),
+  };
+}
+
+function spacePreview(family: Family, layout: Layout): Family {
+  const positions: Record<string, Point> = {};
+  for (const person of family.members) {
+    positions[person.id] = freePosition(
+      person.positions![layout]!,
+      previewBlockers(family, positions, person.id, layout),
+      layout,
+    );
+  }
+  return withPositions(family, layout, positions);
+}
+
+const example = layoutModes.reduce(spacePreview, preserveLayout(null, exampleFamily));
 
 const labels: Record<Layout, MessageKey> = {
   classic: "layoutClassic",
@@ -96,17 +151,8 @@ function LayoutCanvas({ layout, active, name }: { layout: Layout; active: boolea
   const [family, setFamily] = useState<Family>(example);
   const [focus, setFocus] = useState<string | null>(null);
   const namedFamily = useMemo(() => ({ ...family, name }), [family, name]);
-
   async function move(points: Record<string, Point>) {
-    setFamily((current) => ({
-      ...current,
-      members: current.members.map((person) => {
-        const point = points[person.id];
-        return point
-          ? { ...person, positions: { ...person.positions, [layout]: point } }
-          : person;
-      }),
-    }));
+    setFamily((current) => withPositions(current, layout, points));
     return true;
   }
 
@@ -121,7 +167,8 @@ function LayoutCanvas({ layout, active, name }: { layout: Layout; active: boolea
         onFocus={setFocus}
         onMove={(id, point) => move({ [id]: point })}
         onMovePair={(_, points) => move(points)}
-        onTidy={() => setFamily((current) => tidyLayout(current, layout, false))}
+        movementBlockers={previewBlockers}
+        onTidy={() => setFamily((current) => spacePreview(tidyLayout(current, layout, false), layout))}
         onEdit={idle}
         onPartner={idle}
         onBranch={idle}
