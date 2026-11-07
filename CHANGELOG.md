@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.0 — 2026-11-07
+
+- Dim the app during the guided preview and frame the live control or person shown in each step.
+- Keep the marital status selector aligned when the wedding date field expands.
+- Dismiss the error banner automatically after five seconds.
+
 ## 0.11.0 — 2026-11-07
 
 - Choose whether a couple is married when adding a partner, with an optional wedding date or year.

@@ -9,5 +9,20 @@ export default defineConfig({
   },
   clearScreen: false,
   server: { port: 1420, strictPort: true },
-  build: { target: "es2022", license: { fileName: "THIRD-PARTY-WEB.md" } },
+  build: {
+    target: "es2022",
+    license: { fileName: "THIRD-PARTY-WEB.md" },
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: "react-runtime",
+              test: /[\\/]node_modules[\\/](?:react|react-dom|scheduler)[\\/]/,
+            },
+          ],
+        },
+      },
+    },
+  },
 });

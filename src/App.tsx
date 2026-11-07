@@ -12,6 +12,7 @@ import LanguageScreen from "./LanguageScreen";
 import MergeDialog from "./MergeDialog";
 import LibraryDialog from "./LibraryDialog";
 import { GuideBeatCard, GuideBook } from "./GuidePanel";
+import { GuideSpotlight } from "./GuideSpotlight";
 import { PdfJob } from "./PdfJob";
 import { pdfFileName, savePdfFile } from "./savePdf";
 import { nextGuideStep } from "./guide";
@@ -198,14 +199,12 @@ export default function App() {
           </button>
         </div>
       </header>
-      {(error || loadError) && (
+      {error && (
         <div className="error-banner" role="alert">
-          {shown(error || loadError || "")}
-          {error && (
-            <button onClick={() => setError("")} aria-label={t("dismissError")}>
-              <X size={16} />
-            </button>
-          )}
+          {shown(error.message)}
+          <button onClick={() => setError("")} aria-label={t("dismissError")}>
+            <X size={16} />
+          </button>
         </div>
       )}
       {!family ? (
@@ -214,7 +213,11 @@ export default function App() {
           <h1>{lines(t("welcomeTitle"))}</h1>
           <p>{lines(t("welcomeBody"))}</p>
           {loadError ? (
-            <p>{t("welcomeLoadError")}</p>
+            <p>
+              {t("welcomeLoadError")}
+              <br />
+              {shown(loadError)}
+            </p>
           ) : (
             <div className="actions">
               <button
@@ -246,6 +249,7 @@ export default function App() {
         </div>
       ) : (
         <div className="shell">
+          {beat && <GuideSpotlight key={canvasEpoch} beat={beat} />}
           <aside>
             <div className="label">{t("archiveLabel")}</div>
             <button
@@ -378,16 +382,19 @@ export default function App() {
                 }}
                 onJoinDynasty={toggleDynastyJoin}
                 guidePersonId={
-                  beat === "person" ? (family.members[0]?.id ?? null) : null
+                  beat === "person" || beat === "menu"
+                    ? (family.members[0]?.id ?? null)
+                    : null
                 }
                 guide={
                   beat && (
                     <GuideBeatCard
                       beat={beat}
                       layout={layout}
-                      onNext={() =>
-                        settleGuide(nextGuideStep(preferences.guideStep))
-                      }
+                      onNext={() => {
+                        if (beat === "empty") add();
+                        else settleGuide(nextGuideStep(preferences.guideStep));
+                      }}
                       onSkip={() => settleGuide(4)}
                     />
                   )

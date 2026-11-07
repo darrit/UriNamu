@@ -22,14 +22,13 @@ describe("Guide", () => {
   });
 
   it("shows each beat only when its trigger is present", () => {
-    expect(guideBeat(0, 0, 0)).toBe("empty");
-    expect(guideBeat(0, 2, 0)).toBeNull();
-    expect(guideBeat(1, 1, 0)).toBe("person");
-    expect(guideBeat(2, 1, 0)).toBe("menu");
-    expect(guideBeat(3, 2, 0)).toBeNull();
-    expect(guideBeat(3, 2, 1)).toBe("layouts");
-    expect(guideBeat(3, 3, 0)).toBe("layouts");
-    expect(guideBeat(4, 8, 3)).toBeNull();
+    expect(guideBeat(0, 0)).toBe("empty");
+    expect(guideBeat(0, 2)).toBe("person");
+    expect(guideBeat(1, 1)).toBe("person");
+    expect(guideBeat(2, 1)).toBe("menu");
+    expect(guideBeat(3, 1)).toBe("layouts");
+    expect(guideBeat(3, 0)).toBe("empty");
+    expect(guideBeat(4, 8)).toBeNull();
   });
 
   it("stops the sequence after the last beat", () => {

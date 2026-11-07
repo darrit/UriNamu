@@ -1146,6 +1146,10 @@ fieldset:not(:disabled) textarea:required {
   grid-template-columns: 1fr 1fr;
   gap: 13px;
 }
+.field-pair > label {
+  align-self: start;
+  row-gap: 6px;
+}
 fieldset {
   margin: 0;
   padding: 0;
@@ -1836,14 +1840,29 @@ aside .nav {
   padding-top: 11px;
   padding-bottom: 11px;
 }
-.person.guide-target .portrait,
-.canvas.tapestry > .world .person.guide-target .portrait {
+.guide-spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: 21;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.guide-shade {
+  fill: rgba(9, 9, 9, 0.68);
+}
+.guide-frame {
+  fill: none;
+  stroke: #eee0b4;
+  stroke-width: 2px;
+}
+.person-context.guide-target {
   outline: 2px solid #eee0b4;
-  outline-offset: 6px;
+  outline-offset: 3px;
 }
 .guide-beat {
   position: absolute;
-  z-index: 6;
+  z-index: 22;
   left: 16px;
   bottom: 58px;
   width: min(420px, calc(100% - 32px));
@@ -1859,6 +1878,25 @@ aside .nav {
   box-shadow: 0 12px 30px #0006;
   cursor: default;
   user-select: text;
+}
+.guide-beat[data-guide-dock="left"],
+.guide-beat[data-guide-dock="right"] {
+  width: min(420px, var(--guide-space));
+}
+.guide-beat[data-guide-dock="right"] {
+  left: auto;
+  right: 16px;
+}
+.guide-beat[data-guide-dock="top"],
+.guide-beat[data-guide-dock="bottom"] {
+  max-height: var(--guide-space);
+}
+.guide-beat[data-guide-dock="top"] {
+  top: 8px;
+  bottom: auto;
+}
+.guide-beat[data-guide-dock="bottom"] {
+  bottom: 8px;
 }
 .guide-beat h2 {
   flex: 0 0 auto;

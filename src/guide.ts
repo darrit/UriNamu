@@ -24,15 +24,14 @@ export function nextGuideStep(step: GuideStep): GuideStep {
   return (step + 1) as GuideStep;
 }
 
-/** Automatic hints. Step 4 and a missing trigger stay quiet. */
+/** Keep the guide available as soon as there is a tree to show. */
 export function guideBeat(
   step: GuideStep,
   memberCount: number,
-  unionCount: number,
 ): GuideBeat | null {
   if (step >= 4) return null;
-  if (step <= 0) return memberCount === 0 ? "empty" : null;
-  if (step === 1) return memberCount >= 1 ? "person" : null;
-  if (step === 2) return memberCount >= 1 ? "menu" : null;
-  return memberCount >= 3 || unionCount >= 1 ? "layouts" : null;
+  if (memberCount === 0) return "empty";
+  if (step <= 1) return "person";
+  if (step === 2) return "menu";
+  return "layouts";
 }

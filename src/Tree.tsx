@@ -907,7 +907,7 @@ export default function Tree({
         createPortal(
           <div
             ref={menuRef}
-            className="person-context"
+            className={`person-context${guidePersonId === menu.id ? " guide-target" : ""}`}
             role="menu"
             aria-label={t("personActions")}
             style={{
@@ -952,7 +952,7 @@ export default function Tree({
           <button aria-label={t("fitAll")} onClick={fit}>
             <Maximize size={16} />
           </button>
-          <button aria-label={t("tidy")} title={t("tidy")} onClick={onTidy}>
+          <button data-guide-tidy="" aria-label={t("tidy")} title={t("tidy")} onClick={onTidy}>
             <Shrink size={16} />
           </button>
         </div>

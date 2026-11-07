@@ -39,7 +39,7 @@ export function useAppController() {
     [loading, setLoading] = useState(true),
     [loadError, setLoadError] = useState(""),
     [busy, setBusy] = useState(false),
-    [error, setError] = useState(""),
+    [error, setErrorState] = useState<{ message: string } | null>(null),
     [notice, setNotice] = useState("");
   const working = useRef(false);
   const [toolsOpen, setToolsOpen] = useState(true);
@@ -108,6 +108,9 @@ export function useAppController() {
     updatePreferences({ ...preferences, guideStep: step });
     document.getElementById("add-member")?.focus();
   };
+  const setError = (message: string) => {
+    setErrorState(message ? { message } : null);
+  };
   const guideBlocked = Boolean(
     editor ||
     settings ||
@@ -126,11 +129,7 @@ export function useAppController() {
   );
   const beat =
     family && page === "tree" && !guideBlocked
-      ? guideBeat(
-          preferences.guideStep,
-          family.members.length,
-          family.unions.length,
-        )
+      ? guideBeat(preferences.guideStep, family.members.length)
       : null;
   useEffect(() => {
     let mounted = true;
@@ -139,7 +138,11 @@ export function useAppController() {
         if (mounted) setFamily(f);
       })
       .catch((e) => {
-        if (mounted) setLoadError(String(e));
+        if (mounted) {
+          const message = String(e);
+          setLoadError(message);
+          setErrorState({ message });
+        }
       })
       .finally(() => {
         if (mounted) setLoading(false);
@@ -148,6 +151,13 @@ export function useAppController() {
       mounted = false;
     };
   }, []);
+  useEffect(() => {
+    if (!error || loading || !preferences.language) return;
+    const timer = setTimeout(() => {
+      setErrorState((current) => current === error ? null : current);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [error, loading, preferences.language]);
   useEffect(() => {
     if (!notice) return;
     const timer = setTimeout(() => setNotice(""), 4500);
