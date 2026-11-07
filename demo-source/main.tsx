@@ -168,6 +168,7 @@ function LayoutCanvas({ layout, active, name }: { layout: Layout; active: boolea
         onMove={(id, point) => move({ [id]: point })}
         onMovePair={(_, points) => move(points)}
         movementBlockers={previewBlockers}
+        transformViewport
         onTidy={() => setFamily((current) => spacePreview(tidyLayout(current, layout, false), layout))}
         onEdit={idle}
         onPartner={idle}
