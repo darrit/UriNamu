@@ -61,6 +61,8 @@ export default function Tree({
   onFocus,
   onMove,
   onMovePair,
+  movementBlockers,
+  transformViewport = false,
   onTidy,
   onEdit,
   onPartner,
@@ -90,6 +92,10 @@ export default function Tree({
     ids: [string, string],
     points: Record<string, Point>,
   ) => Promise<boolean>;
+  /** Custom spacing to enforce while dragging as well as on drop. */
+  movementBlockers?: typeof blockersAround;
+  /** Scale the rendered canvas as a whole for browsers with CSS zoom text issues. */
+  transformViewport?: boolean;
   onTidy: () => void;
   onEdit: (p: Person) => void;
   onPartner: (id: string) => void;
@@ -149,6 +155,12 @@ export default function Tree({
           );
     return { ...expanded, ...moving };
   }, [placedFamily, layout, moving, groups, openGroups, poster, preview]);
+  const placePerson = (id: string, point: Point) =>
+    freePosition(
+      point,
+      (movementBlockers ?? blockersAround)(family, allPositions, id, layout),
+      layout,
+    );
   const [hoveredPort, setHoveredPort] = useState<string | null>(null);
   const scene = useMemo(
     () =>
@@ -414,11 +426,13 @@ export default function Tree({
                 top: poster.originY - poster.tileY,
                 zoom: 1,
               }
-            : {
-                left: view.x / view.k,
-                top: view.y / view.k,
-                zoom: view.k,
-              }
+            : transformViewport
+              ? { left: view.x, top: view.y, transform: `scale(${view.k})` }
+              : {
+                  left: view.x / view.k,
+                  top: view.y / view.k,
+                  zoom: view.k,
+                }
         }
       >
         {dynasties.map((region) => (
@@ -461,6 +475,7 @@ export default function Tree({
           setMoving={setMoving}
           allPositions={allPositions}
           onMovePair={onMovePair}
+          movementBlockers={movementBlockers}
           view={view}
           ancestorSlots={ancestorSlots}
           draft={draft}
@@ -577,10 +592,11 @@ export default function Tree({
                       dy = e.clientY - d.client.y;
                     if (!d.moved && Math.hypot(dx, dy) < 4) return;
                     d.moved = true;
-                    d.point = {
+                    const target = {
                       x: d.start.x + dx / view.k,
                       y: d.start.y + dy / view.k,
                     };
+                    d.point = movementBlockers ? placePerson(p.id, target) : target;
                     setMoving({ [p.id]: d.point });
                   }}
                   onPointerUp={async (e) => {
@@ -590,11 +606,7 @@ export default function Tree({
                     personDrag.current = null;
                     if (!d.moved) return;
                     suppressClick.current = p.id;
-                    const point = freePosition(
-                      d.point,
-                      blockersAround(family, allPositions, p.id, layout),
-                      layout,
-                    );
+                    const point = placePerson(p.id, d.point);
                     setMoving({ [p.id]: point });
                     savingMove.current = true;
                     try {

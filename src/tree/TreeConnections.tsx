@@ -24,6 +24,7 @@ export function TreeConnections({
   setMoving,
   allPositions,
   onMovePair,
+  movementBlockers,
   view,
   ancestorSlots,
   draft,
@@ -40,6 +41,7 @@ export function TreeConnections({
     ids: [string, string],
     points: Record<string, Point>,
   ) => Promise<boolean>;
+  movementBlockers?: typeof blockersAround;
   view: { k: number };
   ancestorSlots: ReturnType<typeof ancestorSlotsFor>;
   draft: { from: Point; to: Point } | null;
@@ -55,6 +57,25 @@ export function TreeConnections({
     pointB: Point;
     moved: boolean;
   } | null>(null);
+  const blockers = movementBlockers ?? blockersAround;
+  const placeCouple = ({
+    a,
+    b,
+    pointA,
+    pointB,
+  }: {
+    a: string;
+    b: string;
+    pointA: Point;
+    pointB: Point;
+  }) =>
+    freePair(
+      pointA,
+      pointB,
+      blockers(family, allPositions, a, layout, [b]),
+      layout,
+      blockers(family, allPositions, b, layout, [a]),
+    );
   const ink =
     layout === "tapestry"
       ? { partner: "#baa474", child: "#dcd0ae", separated: "#a5968a", width: 2 }
@@ -122,6 +143,11 @@ export function TreeConnections({
                   d.moved = true;
                   d.pointA = { x: d.startA.x + dx, y: d.startA.y + dy };
                   d.pointB = { x: d.startB.x + dx, y: d.startB.y + dy };
+                  if (movementBlockers) {
+                    const placed = placeCouple(d);
+                    d.pointA = placed.a;
+                    d.pointB = placed.b;
+                  }
                   setMoving({ [d.a]: d.pointA, [d.b]: d.pointB });
                 }}
                 onPointerUp={async (e) => {
@@ -131,13 +157,7 @@ export function TreeConnections({
                   e.stopPropagation();
                   coupleDrag.current = null;
                   if (!d.moved) return;
-                  const placed = freePair(
-                    d.pointA,
-                    d.pointB,
-                    blockersAround(family, allPositions, d.a, layout, [d.b]),
-                    layout,
-                    blockersAround(family, allPositions, d.b, layout, [d.a]),
-                  );
+                  const placed = placeCouple(d);
                   setMoving({ [d.a]: placed.a, [d.b]: placed.b });
                   savingMove.current = true;
                   try {

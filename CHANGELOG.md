@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.1 — 2026-11-07
+
+- Let the website tree preview keep enough space for wedding dates while visitors drag portraits or couples.
+- Scale cards and date labels together in the website preview on iPhone browsers.
+
 ## 0.10.0 — 2026-11-07
 
 - Add Japanese to the language picker and settings. Translate the interface, guide, validation messages and backup history labels.
