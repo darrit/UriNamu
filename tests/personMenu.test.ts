@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { newPerson, type Family } from "../src/domain";
-import { setLocale, t } from "../src/i18n";
+import { locales, setLocale, t } from "../src/i18n";
 import { personMenuItems } from "../src/tree/personMenuItems";
 
 afterEach(() => setLocale("de"));
@@ -64,7 +64,7 @@ describe("person context menu", () => {
     const { options, family } = fixture();
     family.unions[0].status = "separated";
     family.unions[0].marriage = "divorced";
-    for (const locale of ["de", "en", "ko"] as const) {
+    for (const locale of locales) {
       setLocale(locale);
       const items = personMenuItems(options);
       const childAt = items.findIndex((item) => item.key === "single-child");

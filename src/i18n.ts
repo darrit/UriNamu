@@ -1,25 +1,28 @@
 import { de } from "./locales/de";
 import { en } from "./locales/en";
+import { ja } from "./locales/ja";
 import { ko } from "./locales/ko";
 import type { Catalog, MessageKey } from "./locales/types";
 export type { MessageKey } from "./locales/types";
 
-export const locales = ["de", "en", "ko"] as const;
+export const locales = ["de", "en", "ja", "ko"] as const;
 export type Locale = (typeof locales)[number];
 
 export const localeTag: Record<Locale, string> = {
   de: "de-DE",
   en: "en-GB",
+  ja: "ja-JP",
   ko: "ko-KR",
 };
 
 export const languageName: Record<Locale, string> = {
   de: "Deutsch",
   en: "English",
+  ja: "日本語",
   ko: "한국어",
 };
 
-const catalogs: Record<Locale, Catalog> = { de, en, ko };
+const catalogs: Record<Locale, Catalog> = { de, en, ja, ko };
 let current: Locale = "de";
 
 export function getLocale(): Locale {
@@ -28,6 +31,10 @@ export function getLocale(): Locale {
 
 export function setLocale(locale: Locale) {
   current = locale;
+}
+
+export function languagePrompt(locale: Locale) {
+  return catalogs[locale].languagePrompt;
 }
 
 export function t(
@@ -48,7 +55,7 @@ export function text(value: string): string {
 }
 
 const known = new Map<string, MessageKey>();
-for (const catalog of [de, en, ko])
+for (const catalog of Object.values(catalogs))
   for (const key of Object.keys(de) as MessageKey[])
     if (!known.has(catalog[key])) known.set(catalog[key], key);
 

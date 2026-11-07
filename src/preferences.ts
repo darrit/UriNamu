@@ -1,4 +1,4 @@
-import { type Locale } from "./i18n";
+import { locales, type Locale } from "./i18n";
 import { guideStepFromStorage, type GuideStep } from "./guide";
 
 const key = "urinamu.preferences";
@@ -14,7 +14,7 @@ export type Preferences = {
 };
 
 const languageOf = (value: unknown): Locale | null =>
-  value === "de" || value === "en" || value === "ko" ? value : null;
+  locales.find((locale) => locale === value) ?? null;
 
 export const defaultPreferences = (): Preferences => ({
   askRemoveDescendants: true,

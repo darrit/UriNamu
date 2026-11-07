@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Modal } from "./Modal";
-import { t } from "./i18n";
-import { type Locale, locales, languageName } from "./i18n";
+import { t, type Locale, locales, languageName } from "./i18n";
 
 export default function NameDialog({
   name,
@@ -55,7 +54,7 @@ export default function NameDialog({
             onChange={(e) => onLanguage(e.target.value as Locale)}
           >
             {locales.map((locale) => (
-              <option key={locale} value={locale}>
+              <option key={locale} value={locale} lang={locale}>
                 {languageName[locale]}
               </option>
             ))}

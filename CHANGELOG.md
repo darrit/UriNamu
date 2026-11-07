@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0 — 2026-11-07
+
+- Add Japanese to the language picker and settings. Translate the interface, guide, validation messages and backup history labels.
+
 ## 0.9.8 — 2026-11-01
 
 - Split layout implementation into geometry, spacing, routes, partner slots, generation ranking, arrangement, dynasty boundaries, scene building, ancestor slots and tidying modules. Preserve the public `layout.ts` API and existing calculations.

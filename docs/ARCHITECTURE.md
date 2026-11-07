@@ -11,9 +11,9 @@
 - `src/PersonEditor.tsx`, `NameDialog.tsx`, `Transfer.tsx`, `DeathDialog.tsx`, `DynastyDialog.tsx`, `MarriageDialog.tsx`: independent profile, settings, exchange and relationship dialogs. Callbacks connect their local form state to the application controller.
 - `src/Modal.tsx`: shared native-dialog lifecycle and dismissal. Dialogs import it directly rather than importing the application entry component.
 - `src/Logo.tsx`, `LanguageScreen.tsx`, `Portrait.tsx`: shared presentation components; portraits do not depend on the interactive tree canvas.
-- `src/i18n.ts`: locale selection, substitution and translation of stored messages. `src/locales/` holds the three catalogs and their shared message types; German keys define the required catalog coverage.
+- `src/i18n.ts` handles language selection, substitutions and translation of stored messages. `src/locales/` contains the German, English, Japanese and Korean catalogs. The German catalog defines the shared message keys.
 - `src/guide.ts`, `GuidePanel.tsx`, `GuideScenes.tsx`: the guide beside the real controls.
-- `src/PdfJob.tsx`, `poster.ts`, `savePdf.ts`: an ordinary PDF of the open tree. The PDF libraries load only for that export.
+- `src/PdfJob.tsx`, `poster.ts`, `savePdf.ts`: render and save a PDF of the open tree. `src/pdfAttach.ts` embeds an unencrypted family snapshot when the export option is selected, without the original portrait or dynasty image files.
 - `src/storage.ts`: native Tauri calls, and a separate IndexedDB preview for browser checks.
 - `src-tauri/src/lib.rs`: validation again at the trust boundary, SQLite, photo files and cryptography.
 - `src-tauri/tauri.conf.json`: host, content security policy, packaging and window.
@@ -30,11 +30,11 @@ The frontend uses only bundled local resources. Photos are shown as checked data
 
 `firstName`, `lastName` and `birthName` are stored as compatible name fields. Rust uses empty defaults when reading older data. The frontend splits the previous `name` when needed. `name` stays the full current name without the birth name. `displayName` places a nonempty birth name in parentheses between the given name and the surname. JSON SQLite snapshots and encrypted exports keep every field without a new database schema version.
 
-The deceased mark comes only from `died`. `Portrait` shows the picture in grayscale and half covered, without a cross. `setDeathDate` validates the new date and leaves relationships and the original photo unchanged. Removing the date removes that automatic appearance. No extra status field or database migration is required. Childless marks get a geometric anchor halfway between `joint` and `branch`. The label is centered with `translate(-50%, -50%)` regardless of its text width.
+`died` holds a known death date or year. The optional `deceased` flag records a death with an unknown date. `Portrait` applies the same visual styling in both cases. `setDeathDate` validates the new values and leaves relationships and the original photo unchanged. Clearing the death entry clears both fields.
 
 `src/PhotoCrop.tsx` provides the interactive crop. `src/photo.ts` calculates its source rectangle. After confirmation, `resizePhoto` stores a crop of at most 1024 pixels on the long edge. Choosing a person is no longer tied to `layoutFamily`: a focus change only moves the view. SVG connections end at card and portrait edges. A former partner who sits farther away is routed outside that row. Scaling uses CSS zoom instead of a scaled transform layer.
 
-`Union` contains an ID built from the two person IDs in sorted order (`a|b`), both people, status `active` or `separated`, the optional marital status `marriage` (`unspecified`, `married`, `divorced`), the optional wedding date `marriedOn` (`YYYY-MM-DD`), and `ended` for a closed childless line. The date must fall within both people's lives. Shared children come from the child's two parent IDs. A new partnership does not rewrite existing parent links.
+`Union` contains an ID built from the two person IDs in sorted order (`a|b`), both people, status `active` or `separated`, the optional marital status `marriage` (`unspecified`, `married`, `divorced`), the optional wedding date `marriedOn`, and `ended` for a closed childless line. Birth, death and wedding dates accept `YYYY-MM-DD` or `YYYY`. Validation compares the possible date ranges when only a year is known. Shared children come from the child's two parent IDs. A new partnership does not rewrite existing parent links.
 
 Both application layers check self-references, missing references, duplicate IDs and parents, cycles, date order, more than one active partnership, and contradictory childless marks. Rust deserialization and the backend check also apply to imported files. The interface alone is not the security boundary.
 
@@ -74,7 +74,7 @@ UTF-8 JSON envelope. Only the technical format parameters are plaintext. The fam
 
 Argon2id version 0x13, 19 MiB of memory, two passes, one lane, and a 32-byte key. Salt and nonce come from the operating-system random generator for each export. AES-GCM also authenticates the fixed label `urinamu:2` as additional data. The decrypted payload is the full `Family` model with photos as data URLs. Format parameters are checked against the exact supported values before the key is derived. A modified file cannot demand an arbitrarily expensive key derivation.
 
-Import checks the file size (32 MiB), the envelope, Base64 lengths, authentication, and finally the full domain model. Only then does the interface offer to replace the family. Export writes a randomly named temporary file in the destination directory, calls `sync_all`, and then renames it. On Windows, this version does not replace an existing destination file.
+Import checks the file size (32 MiB), the envelope, Base64 lengths, authentication, and finally the full domain model. The interface then offers to save the family as a new tree. Export writes a randomly named temporary file in the destination directory, calls `sync_all`, and then renames it. On Windows, choose an unused export filename.
 
 Passwords, derived keys and plaintext byte buffers are handled with `Zeroizing` in the Rust cryptography path. That does not guarantee that every copy in the web view or operating-system memory is wiped. Passwords are not logged, and there is no recovery back door.
 

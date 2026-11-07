@@ -1,26 +1,53 @@
 # UriNamu
 
-A local family tree application built with Tauri 2, React, TypeScript and SQLite. Its visual identity uses the approved UriNamu symbol, forest green, parchment and antique gold.
+UriNamu is a desktop app for building family trees. Record relatives and their relationships, add photos and memories, and keep separate trees for different families. The app works offline and stores your family data on your computer.
 
-**License:** [PolyForm Noncommercial 1.0.0](LICENSE.md). Personal and other noncommercial use is allowed. Commercial use needs a written license from Darrit first. See [Commercial license](COMMERCIAL.md).
+[Install the app](#install-the-app) · [User guide](docs/USER-GUIDE.md) · [Run from source](#run-from-source) · [Changelog](CHANGELOG.md)
 
-**Set up development:** [Developer guide](docs/DEVELOPMENT.md) · [Setup reference](docs/SETUP.md)
+## Install the app
 
-**Create an installer:** [Build commands and output folders](#build-installers)
+Choose the package for your operating system under **Assets** on the [GitHub Releases page](https://github.com/darrit/UriNamu/releases).
 
-**App version and build details:** the badge beside the logo shows the actual version and opens build details, including the timestamp. Release notes: [CHANGELOG.md](CHANGELOG.md).
+| System | Package |
+| --- | --- |
+| Windows (x64) | Run the `-setup.exe` installer. If WebView2 is missing, the installer downloads it. |
+| macOS (Intel or Apple Silicon) | Open the `.dmg` and move UriNamu to Applications. The GitHub build is unsigned and unnotarized, so macOS may block it. |
+| Linux (x64) | On Debian or Ubuntu, install the `.deb` with `sudo apt install ./<filename>.deb`, replacing `<filename>.deb` with the downloaded filename. For the `.AppImage`, make it executable and open it. |
 
-## Status and roadmap
+If your platform has no installer available, see [Build installers](#build-installers). The version badge beside the logo opens the app version and build time.
 
-- [x] Initial refactoring and cleanup: modularize application dialogs, state and commands, tree controls, layout calculations and translation catalogs; verify existing behavior with tests and builds.
+## Create your first tree
 
-- Import a descendant chart from a PDF as a new family tree. Children follow the lines on the sheet.
+1. Choose **Deutsch**, **English**, **日本語**, or **한국어** when UriNamu first asks for a language. You can change it later in **Settings**.
+2. Select **Start your own family** to begin with an empty tree, or **Explore the example** to try the app with fictional people.
+3. Select **Add member** to create your first profile. Right-click a person to add ancestors, children, or a partner. Double-click a person to open their profile, then select the pencil to edit it.
+4. Open **Guide** in the sidebar for a walkthrough or **My family trees** to create and switch between trees.
 
-## Automatic setup
+### What you can do
 
-Run these commands from the project folder. The full setup installs the required tools and locked project dependencies.
+- Add names, cropped portraits and memories to profiles. Record birth, death and wedding dates as a full date or a year. Leave the date unknown when needed.
+- Record married and unmarried partnerships, separations and divorces. Children stay linked to their parents when a partnership ends.
+- Add ancestors and descendants across as many generations as your tree needs, up to 5,000 people per tree.
+- Switch between **Classic**, **Horizontal**, **Tapestry** and **Chart**. Drag people to arrange the tree, or select **Tidy** to arrange the current view by generation.
+- Use a dynasty to mark a line of descendants with a name and an optional image or coat of arms.
+- Merge two trees that share a couple recorded as married or divorced in both. Review matching people and resolve conflicts before saving the result as a new tree. Both original trees stay in your library.
 
-Windows, in PowerShell:
+See the [user guide](docs/USER-GUIDE.md) for step-by-step instructions.
+
+## Save and share your data
+
+Each tree has its own **Backup history**, with up to 100 saved states on the same device. Undo and redo cover up to 30 changes during a session. The desktop app keeps its working data in SQLite and stores photos in separate files. The local data and backups have no extra app-level encryption.
+
+| Export option | When to use it |
+| --- | --- |
+| **As PDF** | Print or share a picture of the open tree. The option to embed unencrypted family data, including names, dates and notes, is on by default. Clear it to share only the rendered tree. PDF export also works in the browser preview. |
+| **As a UriNamu file** | Keep or share an encrypted copy with profiles, photos and relationships. Use a password of at least ten characters. In the desktop app, importing a `.urinamu` file or an older `.wurzeln` file adds a separate tree. |
+
+## Run from source
+
+UriNamu uses React and TypeScript for the interface, Tauri and Rust for the desktop host, and SQLite for desktop storage. Start in the folder containing `package.json` after cloning the repository or extracting a source archive.
+
+### Windows (PowerShell)
 
 ```powershell
 .\Setup-Windows.cmd
@@ -29,9 +56,9 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 npm.cmd run desktop
 ```
 
-The execution-policy setting applies only to this terminal. Existing matching Build Tools and WebView2 are reused without UAC. Windows requests administrator permission only when a system installation or replacement is required.
+The execution policy change applies only to this terminal. Setup requests administrator access for system changes that require it.
 
-Linux and macOS:
+### Linux and macOS
 
 ```sh
 sh setup.sh
@@ -39,93 +66,41 @@ sh setup.sh
 npm run desktop
 ```
 
-Native setup supports Windows x64, Debian/Ubuntu on x64/ARM64, and macOS on Intel/Apple Silicon. Other Linux distributions and Windows ARM64 support frontend-only setup. See the [setup reference](docs/SETUP.md) for prerequisites, platform limits and plan mode.
+Full setup prepares the native tools and installs locked project dependencies on Windows x64, Debian/Ubuntu x64 and ARM64, and Intel and Apple Silicon Macs. In each new terminal, load the matching `.setup` activation script before running development or build commands. See the [setup reference](docs/SETUP.md) for prerequisites, frontend-only setup and platform limits.
 
-The setup only installs or updates Node/npm when they are missing or older than the selected eligible release. Existing equal or newer stable versions are retained, even if they are less than seven days old. This exception applies only to existing Node/npm. All new downloads, Rust, system tools and project dependencies must satisfy the release-age policy: strictly older than seven days at the time setup runs.
+For frontend work, `npm run dev` starts a browser preview at `http://127.0.0.1:1420`. The preview uses its own IndexedDB store. Native file dialogs and encrypted exchange require the desktop app. In PowerShell, use `npm.cmd` in place of `npm` if needed.
 
-The verified baseline is **Node 24.22.0 · npm 12.2.1 · Rust 1.99.1**. Historical release evidence: [Version report](docs/VERSIONS.md).
-
-## Develop after setup
-
-Activate the local environment in each new terminal: `. .\.setup\env.ps1` on Windows, or `. ./.setup/env.sh` on Linux/macOS. Then run `npm.cmd run desktop` or `npm run desktop`.
-
-For a browser preview, run `npm run dev`. It uses a separate IndexedDB database and does not access the desktop application's SQLite data. Native file dialogs and encrypted exchange are disabled in the preview.
-
-## Build installers
-
-Complete the full setup first. Build each package on its target operating system. Frontend-only setup is insufficient for a desktop build.
-
-### Windows: EXE installer
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-. .\.setup\env.ps1
-npm.cmd run desktop:build -- --bundles nsis -- --locked
-```
-
-Output: `*-setup.exe` in `src-tauri/target/release/bundle/nsis/`.
-
-Alternatively, run `.\Build-Windows.cmd` from the activated terminal to include npm installation and frontend/Rust tests before building. The generated installer embeds Microsoft's WebView2 bootstrapper and installs that runtime when it is missing. The download during setup needs an internet connection. An existing runtime is left in place.
-
-### Linux: DEB and AppImage
+### Check and test changes
 
 ```sh
-. ./.setup/env.sh
-npm run desktop:build -- --bundles deb,appimage -- --locked
+npm run version:check
+npm run check
+npm test
+cargo test --manifest-path src-tauri/Cargo.toml --locked --no-default-features --lib
 ```
 
-Output: `.deb` in `src-tauri/target/release/bundle/deb/` and `.AppImage` in `src-tauri/target/release/bundle/appimage/`.
+Start with [`src/App.tsx`](src/App.tsx) for the interface, [`src/useAppController.ts`](src/useAppController.ts) for state and save actions, and [`src-tauri/src/lib.rs`](src-tauri/src/lib.rs) for desktop storage and encryption. The [architecture guide](docs/ARCHITECTURE.md) maps the rest of the code. The [developer guide](docs/DEVELOPMENT.md) covers the full validation workflow and troubleshooting.
 
-### macOS: app and DMG
+### Build installers
 
-```sh
-. ./.setup/env.sh
-npm run desktop:build -- --bundles app,dmg -- --locked
-```
+Run full setup, activate the environment, and build on the target operating system. In the commands below, the second `--` passes `--locked` to Cargo.
 
-Output: `UriNamu.app` in `src-tauri/target/release/bundle/macos/` and `.dmg` in `src-tauri/target/release/bundle/dmg/`. This builds for the current Mac's architecture. See [Build installers](docs/DEVELOPMENT.md#7-build-installers) for universal builds, signing and notarization.
+| System | Command | Output under `src-tauri/target/release/bundle/` |
+| --- | --- | --- |
+| Windows | `npm.cmd run desktop:build -- --bundles nsis -- --locked` | `nsis/` (`-setup.exe`) |
+| Linux | `npm run desktop:build -- --bundles deb,appimage -- --locked` | `deb/` and `appimage/` |
+| macOS | `npm run desktop:build -- --bundles app,dmg -- --locked` | `macos/` and `dmg/`, for the current Mac's architecture |
 
-A successful setup verifies the developer environment. Native app builds, installer installation and graphical acceptance still require separate checks. See the [verification report](docs/VERIFICATION.md).
+The [build guide](docs/DEVELOPMENT.md#7-build-installers) covers universal macOS builds, signing and the Windows build script. The [desktop workflow](.github/workflows/desktop.yml) publishes packages after all platform builds succeed for a `v` tag matching `package.json`. A manual workflow run uploads build artifacts only.
 
-Pushing a tag named `v` plus the committed application version, for example `v0.4.47`, runs the same build and publishes the installers on that GitHub release. The tag has to match `package.json`. Starting `.github/workflows/desktop.yml` manually still uploads build artifacts only. The macOS image from this workflow is not signed or notarized. The Windows installer from that release installs WebView2 when it is missing.
+### Versioning and dependencies
 
-## Features
+For an application change, run `npm run version:bump -- patch` for a fix, `npm run version:bump -- minor` for a compatible feature, or `npm run version:bump -- major` for an incompatible change. Add the matching changelog entry and run `npm run version:check`. Starting or building the app applies a pending patch bump when application source changed and the version was not already raised. Documentation edits need no bump. See [application versioning](docs/DEVELOPMENT.md#application-versioning).
 
-- Multiple independent family trees with separate backup histories.
-- Merge trees by selecting a married/divorced couple in both trees. The result is a new tree; both originals remain available. Match additional duplicate people and resolve conflicts explicitly.
-- People, photos, gender and memories.
-- Classic, horizontal and tapestry tree layouts.
-- A sidebar guide walks through the controls and shows the real windows. The first hints can be skipped.
-- A partnership can store a wedding date. It is entered with the marital status and drawn beside the couple.
-- Export asks for an ordinary PDF of the open tree or an encrypted UriNamu file. The PDF also works in the browser preview.
-- Click to center the selected person; double-click to open the profile; use the pen to edit.
-- Open partner slots, shared child origins, and closing/reopening childless branches.
-- Birth names appear between given name and surname, for example `Testae (Testfamilieh) Testfamiliec`. Photos have an interactive crop dialog before saving.
-- Right-click to record or correct a death date. Deceased portraits are grayscale under a dark veil, and the full death date is shown with a dagger. The stored photo and relationships remain unchanged.
-- Childless branch badges are centered on their line in all three layouts.
-- Divorced partnerships remain visible with a double-slashed connection, including couples without children. Right-click a former partner to add a new partner.
-- Clicking a person pans the viewport without rearranging cards, paths or zoom. Connections attach to card/portrait boundaries.
-- Ancestor entry starts with one slot; add the second parent through the first ancestor's partner slot. No duplicate second-parent placeholder is shown.
-- Right-click to remove a person. Removal and death-date changes require a confirmation naming the action and person; cancellation leaves stored data unchanged.
-- Local SQLite storage, separate photo files, 100 backups and 30 undo/redo steps per session.
-- Encrypted `.urinamu` exchange using AES-256-GCM and Argon2id; import of older `.wurzeln` prototype exports.
+Setup checks that releases selected for installation are stable and strictly older than seven days. Existing stable Node/npm versions that meet the minimum are retained even if they were released within the last seven days. The lockfiles fix the project dependency versions. Follow the [dependency update procedure](docs/DEVELOPMENT.md#11-update-project-dependencies-deliberately) before updating them.
 
-[User guide](docs/USER-GUIDE.md) · [Data format and architecture](docs/ARCHITECTURE.md). The user guide uses English names for the controls. The installed application still shows those controls in German.
+## License and contributions
 
-## License
+UriNamu is licensed under [PolyForm Noncommercial 1.0.0](LICENSE.md). Private family use and other noncommercial use are allowed. Include the license and [NOTICE](NOTICE) when redistributing copies. Commercial use requires a separate written license from Darrit. See the [commercial licensing terms](COMMERCIAL.md).
 
-The source is published under the [PolyForm Noncommercial License 1.0.0](LICENSE.md). You may use, study, and modify UriNamu for a noncommercial purpose, including private family use. Copy these license terms and the notice in [NOTICE](NOTICE) along with any copy you pass on.
-
-Commercial use is not covered. Selling the application, charging for a modified version, or bundling it into a paid product requires a separate written license from Darrit before that use begins. The terms, including approval and a share of the revenue, are agreed in that contract. See [Commercial license](COMMERCIAL.md).
-
-Do not include real family trees, photos, or other personal data in issues or pull requests. A contribution can be accepted only together with a written assignment of the contributed rights to Darrit, so a later commercial license can still cover the whole project.
-
-## Dependency policy and CI
-
-The application version advances automatically when you start the app or build an installer after application source changed and the version was not already raised. Use `npm run version:bump -- patch` for an explicit fix bump, `-- minor` for new compatible features, or `-- major` for incompatible changes. The command synchronizes npm, Tauri and Rust versions without updating dependencies. Tests/builds reject mismatched versions. A rebuild of unchanged source does not bump again; builds of the same version are distinguished by their timestamp. See [Application versioning](docs/DEVELOPMENT.md#application-versioning).
-
-The locked dependency baseline was audited against **2026-10-18 04:52:05 UTC**. Direct npm/Rust versions are pinned, and transitive versions are frozen in `package-lock.json` and `src-tauri/Cargo.lock`. `.npmrc` limits additional npm resolution to the recorded cutoff. Setup separately computes its current UTC cutoff on every run. Audit evidence is stored in `docs/*release-audit.json`.
-
-Do not use `npm update`, `cargo update`, `rustup update` or automatic fix commands without repeating release-age checks and validation. Pushing a version tag publishes installers through `.github/workflows/desktop.yml`. A manual run does not.
-
-Encrypted exports protect the exchanged file. The local working database and backups are not additionally encrypted.
+Use fictional data in issues and pull requests. Contributions require a written assignment of the contributed rights to Darrit.
