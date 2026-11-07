@@ -8,4 +8,4 @@ To rebuild the demo, check out this branch at `.setup/github-pages` inside a Uri
 node node_modules/vite/bin/vite.js build --config .setup/github-pages/demo-source/vite.config.ts
 ```
 
-Commit the demo source and the generated `demo/` together.
+When the build changes, update the iframe's `v` query in `index.html` so browsers load the new preview. Commit the landing page, demo source and generated `demo/` together.
