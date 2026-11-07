@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="UriNamu is an offline desktop family tree app for Windows, macOS and Linux. Keep family stories, photos and relationships on your computer.">
+  <meta name="theme-color" content="#142b23">
+  <title>UriNamu | Your family tree, on your computer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%2317392f'/%3E%3Cpath d='M17 24v15h31v13' fill='none' stroke='%23e8dfc7' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M32 10v22' stroke='%23c5a871' stroke-width='5'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: light;
+      --forest: #142b23;
+      --parchment: #f6f0e4;
+      --ink: #1c3329;
+      --muted: #4f5d51;
+      --gold: #e3c58e;
+      --line: #c9bdab;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--parchment); color: var(--ink); }
+    a { color: inherit; text-underline-offset: .23em; }
+    a:focus-visible { outline: 3px solid currentColor; outline-offset: 5px; }
+    h1, h2, h3, p, figure { margin: 0; }
+    h1, h2, h3 { font-family: Georgia, serif; font-weight: 400; line-height: 1.1; }
+    .wrap { width: min(72rem, 100% - clamp(2rem, 8vw, 7rem)); margin-inline: auto; }
+    .label {
+      font-size: .73rem;
+      font-weight: 650;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    header, .hero { background: var(--forest); color: var(--parchment); }
+    .bar, .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: .8rem 2rem;
+      flex-wrap: wrap;
+    }
+    .bar { min-height: 4.75rem; padding-block: .6rem; border-bottom: 1px solid #ffffff26; }
+    .brand {
+      display: inline-flex;
+      gap: .65rem;
+      align-items: center;
+      font-size: 1.15rem;
+      font-weight: 650;
+    }
+    .brand svg { width: 1.85rem; height: 1.85rem; color: var(--gold); }
+    nav { display: flex; gap: .35rem clamp(1rem, 3vw, 2.25rem); flex-wrap: wrap; }
+    nav a { font-size: .9rem; }
+    .hero {
+      background: radial-gradient(ellipse at 84% 28%, #2e4938, transparent 61%), var(--forest);
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      align-items: center;
+      gap: clamp(2rem, 6vw, 6rem);
+      padding-block: clamp(3rem, 8vw, 7rem);
+    }
+    .hero .label { color: var(--gold); }
+    h1 { font-size: clamp(4.2rem, 10.2vw, 8rem); letter-spacing: -.072em; }
+    .hero h1 { margin: .65rem 0 1rem; }
+    .hero .lead { font: clamp(1.55rem, 3vw, 2.35rem)/1.2 Georgia, serif; max-width: 17ch; }
+    .hero .summary { color: #d8e1d6; max-width: 37ch; margin-block: 1rem 1.65rem; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: .9rem;
+      border: 1px solid transparent;
+      padding: .72rem 1.05rem;
+      font-weight: 650;
+      text-decoration: none;
+      transition: background-color .18s ease, transform .18s ease;
+    }
+    .button:hover { transform: translateY(-2px); }
+    .button:focus-visible { outline-color: var(--forest); }
+    .hero .button { background: var(--gold); color: var(--forest); }
+    .hero .button:hover { background: #f0d6a5; }
+    .hero .button:focus-visible { outline-color: var(--gold); }
+    .platforms { color: #d8e1d6; margin-top: .9rem; font-size: .83rem; }
+
+    .tree-plate {
+      background: #eee4cf;
+      color: var(--ink);
+      padding: clamp(.7rem, 2.4vw, 1.65rem);
+      box-shadow: 0 1.5rem 3.8rem #07171050;
+      border: 1px solid #d0bc96;
+      animation: arrive .65s ease-out both;
+    }
+    @keyframes arrive {
+      from { opacity: 0; transform: translateY(.65rem); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tree-plate svg { display: block; width: 100%; height: auto; }
+    .tree-plate figcaption {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: .15rem 1rem;
+      padding-top: .55rem;
+      border-top: 1px solid #bcb093;
+      font-size: .72rem;
+      color: #4b5849;
+    }
+
+    .features { padding-block: clamp(3.2rem, 7vw, 6.5rem); }
+    h2 { font-size: clamp(2.1rem, 5vw, 3.7rem); letter-spacing: -.04em; }
+    .features h2, .download h2 { margin: .5rem 0 1.65rem; }
+    .feature-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+    .feature-list li {
+      display: grid;
+      grid-template-columns: minmax(12rem, .8fr) 1.2fr;
+      gap: .55rem 1.75rem;
+      padding-block: 1.25rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .feature-list h3 { font-size: 1.45rem; }
+    .feature-list p, .download p { color: var(--muted); max-width: 60ch; }
+    .download { background: #e7dfce; padding-block: clamp(3rem, 6vw, 5rem); }
+    .download .button { margin-top: 1.5rem; background: var(--forest); color: var(--parchment); }
+    .download .button:hover { background: #305142; }
+    .download .guide { margin-top: .95rem; }
+    .footer { padding-block: 1.35rem; color: var(--muted); font-size: .84rem; }
+
+    @media (max-width: 46rem) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .tree-plate { max-width: 34rem; }
+      .feature-list li { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .tree-plate { animation: none; }
+      .button { transition: none; }
+      .button:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar wrap">
+      <div class="brand">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M10 19V43H54V61M32 5V34" fill="none" stroke="currentColor" stroke-width="7" stroke-linejoin="round"/>
+        </svg>
+        UriNamu
+      </div>
+      <nav aria-label="Project">
+        <a href="#features">Features</a>
+        <a href="#download">Download</a>
+        <a href="https://github.com/darrit/UriNamu">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="title">
+      <div class="hero-inner wrap">
+        <div>
+          <p class="label">An offline family tree app</p>
+          <h1 id="title">UriNamu</h1>
+          <p class="lead">Your family tree, on your computer.</p>
+          <p class="summary">Trace your roots, connect relatives and keep photos and memories with their stories.</p>
+          <a class="button" href="https://github.com/darrit/UriNamu/releases/latest">Download UriNamu <span aria-hidden="true">↓</span></a>
+          <p class="platforms">Windows · macOS · Linux</p>
+        </div>
+
+        <figure class="tree-plate">
+          <svg viewBox="0 0 440 372" role="img" aria-labelledby="tree-title tree-desc">
+            <title id="tree-title">Three generations of a fictional family</title>
+            <desc id="tree-desc">Ada and Theo have a child, Nora. Nora and Jin have two children, Mina and Leo.</desc>
+            <defs>
+              <pattern id="grid" width="18" height="18" patternUnits="userSpaceOnUse">
+                <path d="M18 0H0V18" fill="none" stroke="#d9cfb7" stroke-width=".55"/>
+              </pattern>
+            </defs>
+            <rect width="440" height="356" fill="url(#grid)"/>
+            <g fill="#55614d" font-family="system-ui, sans-serif" font-size="11" letter-spacing="1.2">
+              <text x="9" y="28">I</text>
+              <text x="9" y="148">II</text>
+              <text x="9" y="270">III</text>
+            </g>
+            <g fill="none" stroke="#68795f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M172 55H268M220 55V103Q220 112 229 112H249Q258 112 258 121V137"/>
+              <path d="M211 180H229M220 180V246M111 286V266Q111 246 131 246H309Q329 246 329 266V286"/>
+            </g>
+            <g fill="#faf4e6" stroke="#a28b63">
+              <rect x="52" y="24" width="120" height="62" rx="3"/>
+              <rect x="268" y="24" width="120" height="62" rx="3"/>
+              <rect x="91" y="149" width="120" height="62" rx="3"/>
+              <rect x="229" y="149" width="120" height="62" rx="3"/>
+              <rect x="51" y="286" width="120" height="62" rx="3"/>
+              <rect x="269" y="286" width="120" height="62" rx="3"/>
+            </g>
+            <path d="M258 137V149" stroke="#68795f" stroke-width="2" stroke-linecap="round"/>
+            <g fill="#243d2e" font-family="Georgia, serif" font-size="20" text-anchor="middle">
+              <text x="112" y="53">Ada</text>
+              <text x="328" y="53">Theo</text>
+              <text x="151" y="178">Jin</text>
+              <text x="289" y="178">Nora</text>
+              <text x="111" y="315">Mina</text>
+              <text x="329" y="315">Leo</text>
+            </g>
+            <g fill="#55614d" font-family="system-ui, sans-serif" font-size="12" text-anchor="middle">
+              <text x="112" y="72">1948</text>
+              <text x="328" y="72">1946</text>
+              <text x="151" y="197">1975</text>
+              <text x="289" y="197">1977</text>
+              <text x="111" y="334">2006</text>
+              <text x="329" y="334">2010</text>
+            </g>
+            <g fill="#9b7543">
+              <circle cx="220" cy="55" r="4"/>
+              <circle cx="220" cy="180" r="4"/>
+              <circle cx="220" cy="246" r="4"/>
+            </g>
+          </svg>
+          <figcaption><span>Three generations</span><span>Illustration with fictional people</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="features wrap" id="features" aria-labelledby="features-title">
+      <p class="label">Features</p>
+      <h2 id="features-title">Build, organize and share</h2>
+      <ul class="feature-list">
+        <li>
+          <h3>Give each person a profile</h3>
+          <p>Add names, a portrait and memories. Record a full date or just a year when that is all you know.</p>
+        </li>
+        <li>
+          <h3>See the whole family</h3>
+          <p>Record parents, children and partnerships, including separations and divorces. Switch between Classic, Horizontal, Tapestry and Chart.</p>
+        </li>
+        <li>
+          <h3>Keep trees on your device</h3>
+          <p>Manage separate trees with their own backup histories. Export a PDF for printing or an encrypted UriNamu file to share profiles, photos and relationships.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="download" id="download" aria-labelledby="download-title">
+      <div class="wrap">
+        <p class="label">Getting started</p>
+        <h2 id="download-title">Start your family tree</h2>
+        <p>Under <strong>Assets</strong> on the latest release, choose the <code>-setup.exe</code> for Windows, the <code>.dmg</code> for macOS, or the <code>.deb</code> or <code>.AppImage</code> for Linux. On first launch, pick German, English or Korean and start an empty tree or explore the fictional example.</p>
+        <a class="button" href="https://github.com/darrit/UriNamu/releases/latest">View latest release <span aria-hidden="true">↗</span></a>
+        <p class="guide"><a href="https://github.com/darrit/UriNamu/blob/master/docs/USER-GUIDE.md">Read the user guide</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer wrap">
+    <span>UriNamu</span>
+    <nav aria-label="More about UriNamu">
+      <a href="https://github.com/darrit/UriNamu/blob/master/LICENSE.md">License</a>
+      <a href="https://github.com/darrit/UriNamu/blob/master/CHANGELOG.md">Changelog</a>
+      <a href="https://github.com/darrit/UriNamu">Source code</a>
+    </nav>
+  </footer>
+</body>
+</html>
