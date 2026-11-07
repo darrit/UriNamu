@@ -84,6 +84,7 @@
     .hero .button { background: var(--gold); color: var(--forest); }
     .hero .button:hover { background: #f0d6a5; }
     .hero .button:focus-visible { outline-color: var(--gold); }
+    .hero .actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; }
     .platforms { color: #d8e1d6; margin-top: .9rem; font-size: .83rem; }
 
     .tree-plate {
@@ -110,8 +111,19 @@
       color: #4b5849;
     }
 
-    .features { padding-block: clamp(3.2rem, 7vw, 6.5rem); }
+    .layouts, .features { padding-block: clamp(3.2rem, 7vw, 6.5rem); }
     h2 { font-size: clamp(2.1rem, 5vw, 3.7rem); letter-spacing: -.04em; }
+    .layouts { border-bottom: 1px solid var(--line); }
+    .layouts h2 { margin: .5rem 0 .75rem; }
+    .layouts .intro { max-width: 58ch; color: var(--muted); }
+    .layouts iframe {
+      display: block;
+      width: 100%;
+      height: 32rem;
+      margin-top: 1.5rem;
+      border: 1px solid #35483c;
+      background: #111915;
+    }
     .features h2, .download h2 { margin: .5rem 0 1.65rem; }
     .feature-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
     .feature-list li {
@@ -152,6 +164,7 @@
         UriNamu
       </div>
       <nav aria-label="Project">
+        <a href="#layouts">Try the layouts</a>
         <a href="#features">Features</a>
         <a href="#download">Download</a>
         <a href="https://github.com/darrit/UriNamu">GitHub</a>
@@ -167,7 +180,10 @@
           <h1 id="title">UriNamu</h1>
           <p class="lead">Your family tree, on your computer.</p>
           <p class="summary">Trace your roots, connect relatives and keep photos and memories with their stories.</p>
-          <a class="button" href="https://github.com/darrit/UriNamu/releases/latest">Download UriNamu <span aria-hidden="true">↓</span></a>
+          <div class="actions">
+            <a class="button" href="https://github.com/darrit/UriNamu/releases/latest">Download UriNamu <span aria-hidden="true">↓</span></a>
+            <a href="#layouts">Try the layouts</a>
+          </div>
           <p class="platforms">Windows · macOS · Linux</p>
         </div>
 
@@ -226,6 +242,15 @@
       </div>
     </section>
 
+    <section class="layouts" id="layouts" aria-labelledby="layouts-title">
+      <div class="wrap">
+        <p class="label">Interactive preview</p>
+        <h2 id="layouts-title">Try the four tree layouts</h2>
+        <p class="intro">Switch between the same views available in UriNamu. Each view shows the same fictional family.</p>
+        <iframe src="./demo/" title="Interactive UriNamu layout preview" loading="lazy"></iframe>
+      </div>
+    </section>
+
     <section class="features wrap" id="features" aria-labelledby="features-title">
       <p class="label">Features</p>
       <h2 id="features-title">Build, organize and share</h2>
@@ -260,6 +285,7 @@
     <span>UriNamu</span>
     <nav aria-label="More about UriNamu">
       <a href="https://github.com/darrit/UriNamu/blob/master/LICENSE.md">License</a>
+      <a href="./demo/licenses.md">Preview dependency licenses</a>
       <a href="https://github.com/darrit/UriNamu/blob/master/CHANGELOG.md">Changelog</a>
       <a href="https://github.com/darrit/UriNamu">Source code</a>
     </nav>
