@@ -563,6 +563,8 @@ footer {
   stroke-width: 2.5;
 }
 .person {
+  -webkit-appearance: none;
+  appearance: none;
   touch-action: none;
   user-select: none;
   cursor: grab;
@@ -577,18 +579,15 @@ footer {
   display: flex;
   text-align: left;
   gap: 12px;
-  box-shadow: 0 8px 25px #0003;
 }
 .person:active {
   cursor: grabbing;
 }
 .person:hover {
   border-color: #c4ad7b;
-  box-shadow: 0 9px 30px #0005;
 }
 .person.selected {
   border-color: #d7c297;
-  box-shadow: 0 0 0 4px #c4ad7b15;
 }
 .person.search-miss,
 .member-row.search-miss {
@@ -929,7 +928,6 @@ footer {
   align-items: center;
   background: transparent;
   border: 0;
-  box-shadow: none;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -944,7 +942,6 @@ footer {
   border: 2px solid #ad9563;
   outline: 1px solid #bba678;
   outline-offset: 3px;
-  box-shadow: 0 3px 15px #0005;
   background: radial-gradient(ellipse at top, #c0ac80, #726849);
   color: #342e21;
   font: 24px Georgia;
@@ -980,7 +977,6 @@ footer {
   overflow: visible;
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 3px 3px #0005);
 }
 .ribbon text {
   fill: #4b3324;

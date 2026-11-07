@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.3 — 2026-11-07
+
+- Remove shadows from people in the family tree across platforms, including the native button appearance in macOS WebKit.
+
 ## 0.10.2 — 2026-11-07
 
 - Include UriNamu's license, copyright notice and third-party license information in desktop installers.
