@@ -469,9 +469,8 @@ export default function App() {
             if (person) setDynastyPerson(person);
           }}
           onJoinDynasty={toggleDynastyJoin}
-          onSave={async (p, partner) => {
+          onSave={async (p, next) => {
             try {
-              let next = updatePerson(family, p, partner);
               const original = family.members.find(
                 (person) => person.id === p.id,
               ) || { ...p, died: "" };

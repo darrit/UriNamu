@@ -7,8 +7,8 @@ import {
   type Person,
   type Family,
   type Union,
+  type NewPartnership,
   nameInputs,
-  validate,
   updatePerson,
   displayName,
   years,
@@ -54,7 +54,7 @@ export default function PersonEditor({
     },
   ) => Promise<boolean>;
   onClose: () => void;
-  onSave: (p: Person, partner: string) => Promise<void>;
+  onSave: (p: Person, next: Family) => Promise<void>;
   onRemove: () => void;
   onSeparate: (u: Union) => void;
   onMarriage: (u: Union) => void;
@@ -64,6 +64,8 @@ export default function PersonEditor({
   const [p, setP] = useState(initial.person),
     [editing, setEditing] = useState(initial.editing),
     [partner, setPartner] = useState(initial.partner),
+    [marriage, setMarriage] = useState<NewPartnership["marriage"]>("unspecified"),
+    [marriedOn, setMarriedOn] = useState(""),
     [cropFile, setCropFile] = useState<File | null>(null),
     [error, setError] = useState(""),
     [dirty, setDirty] = useState(false);
@@ -92,6 +94,8 @@ export default function PersonEditor({
     }
   };
   const relations = family.unions.filter((u) => u.a === p.id || u.b === p.id);
+  const showPartnership =
+    !!partner && !relations.some((u) => u.a === partner || u.b === partner);
   const livePerson = family.members.find((x) => x.id === p.id) ?? p;
   const names = nameInputs(p);
   const changeName = (key: "firstName" | "lastName", value: string) => {
@@ -117,8 +121,13 @@ export default function PersonEditor({
           e.preventDefault();
           setError("");
           try {
-            validate(updatePerson(family, p, partner));
-            await onSave(p, partner);
+            const next = updatePerson(
+              family,
+              p,
+              partner,
+              showPartnership ? { marriage, marriedOn } : undefined,
+            );
+            await onSave(p, next);
           } catch (e) {
             setError(String(e));
           }
@@ -305,6 +314,8 @@ export default function PersonEditor({
                 value={partner}
                 onChange={(e) => {
                   setPartner(e.target.value);
+                  setMarriage("unspecified");
+                  setMarriedOn("");
                   setDirty(true);
                 }}
               >
@@ -318,6 +329,34 @@ export default function PersonEditor({
                   ))}
               </select>
             </label>
+            {showPartnership && (
+              <div className="field-pair">
+                <label>
+                  {t("maritalLabel")}
+                  <select
+                    value={marriage}
+                    onChange={(e) => {
+                      setMarriage(e.target.value as NewPartnership["marriage"]);
+                      setDirty(true);
+                    }}
+                  >
+                    <option value="unspecified">{t("unspecified")}</option>
+                    <option value="married">{t("married")}</option>
+                  </select>
+                </label>
+                {marriage === "married" && (
+                  <DateField
+                    label={t("weddingDateOptional")}
+                    value={marriedOn}
+                    example="18.06.1984"
+                    onChange={(value) => {
+                      setMarriedOn(value);
+                      setDirty(true);
+                    }}
+                  />
+                )}
+              </div>
+            )}
             <label>
               {t("story")}
               <textarea

@@ -99,6 +99,37 @@ describe("Familienmodell", () => {
       updatePerson(family(), { ...newPerson(), name: "Test" }, "7"),
     ).toThrow();
   });
+  it.each(["2010-06-18", "2010", undefined])(
+    "speichert eine neue Ehe mit optionalem Heiratsdatum %s",
+    (marriedOn) => {
+      const p = { ...newPerson(), name: "Test", born: "1985" };
+      const next = updatePerson(family(), p, "9", {
+        marriage: "married",
+        marriedOn,
+      });
+      const union = next.unions.find((u) => u.id === unionKey(p.id, "9"));
+      expect(union).toMatchObject({ status: "active", marriage: "married" });
+      expect(union?.marriedOn).toBe(marriedOn);
+    },
+  );
+  it("speichert eine neue unverheiratete Partnerschaft ohne Heiratsdatum", () => {
+    const p = { ...newPerson(), name: "Test", born: "1985" };
+    const next = updatePerson(family(), p, "9", {
+      marriage: "unspecified",
+      marriedOn: "2010",
+    });
+    const union = next.unions.find((u) => u.id === unionKey(p.id, "9"));
+    expect(union).toMatchObject({ status: "active", marriage: "unspecified" });
+    expect(union).not.toHaveProperty("marriedOn");
+  });
+  it("lehnt beim Anlegen ein Heiratsdatum vor der Geburt ab", () => {
+    const f = family();
+    const p = { ...newPerson(), name: "Test", born: "1985" };
+    expect(() =>
+      updatePerson(f, p, "9", { marriage: "married", marriedOn: "1984" }),
+    ).toThrow();
+    expect(f.members.some((person) => person.id === p.id)).toBe(false);
+  });
   it("entfernt nur die gewünschte Person und ihre direkten Verknüpfungen", () => {
     const f = removePerson(family(), "7");
     expect(f.members).toHaveLength(10);

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.0 — 2026-11-07
+
+- Choose whether a couple is married when adding a partner, with an optional wedding date or year.
+
 ## 0.10.3 — 2026-11-07
 
 - Remove shadows from people in the family tree across platforms, including the native button appearance in macOS WebKit.

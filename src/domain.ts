@@ -30,6 +30,10 @@ export interface Person {
   dynastyWith?: string[];
 }
 export type Marriage = "unspecified" | "married" | "divorced";
+export interface NewPartnership {
+  marriage: Exclude<Marriage, "divorced">;
+  marriedOn?: string;
+}
 export interface Union {
   id: string;
   a: string;
@@ -37,7 +41,7 @@ export interface Union {
   status: "active" | "separated";
   ended: boolean;
   marriage?: Marriage;
-  /** Wedding day, as YYYY-MM-DD. Absent when unknown. */
+  /** Wedding date, as YYYY-MM-DD or YYYY. Absent when unknown. */
   marriedOn?: string;
   /** False hides the child plus without recording that there are no children. */
   childPrompt?: boolean;
@@ -390,7 +394,12 @@ export function normalize(raw: unknown): Family {
   validate(f);
   return f;
 }
-export function updatePerson(f: Family, p: Person, partner: string): Family {
+export function updatePerson(
+  f: Family,
+  p: Person,
+  partner: string,
+  partnership?: NewPartnership,
+): Family {
   const person = storedPersonName(p);
   const next = structuredClone(f);
   const i = next.members.findIndex((x) => x.id === person.id);
@@ -418,7 +427,10 @@ export function updatePerson(f: Family, p: Person, partner: string): Family {
         b: partner,
         status: "active",
         ended: false,
-        marriage: "married",
+        marriage: partnership?.marriage ?? "married",
+        ...(partnership?.marriage === "married" && partnership.marriedOn
+          ? { marriedOn: partnership.marriedOn }
+          : {}),
       });
   }
   for (const member of next.members)
