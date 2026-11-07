@@ -1,3 +1,5 @@
+import { setReleaseStatus } from "./site-language.js";
+
 const releaseApi = "https://api.github.com/repos/darrit/UriNamu/releases/latest";
 const assetPrefix = "https://github.com/darrit/UriNamu/releases/download/";
 
@@ -10,8 +12,6 @@ const packages = {
 
 async function loadDownloads() {
   const list = document.getElementById("download-packages");
-  const status = document.getElementById("release-status");
-  status.textContent = "Loading the latest release…";
 
   try {
     const response = await fetch(releaseApi, { signal: AbortSignal.timeout(5000) });
@@ -31,11 +31,9 @@ async function loadDownloads() {
     }
 
     list.hidden = !list.querySelector("li:not([hidden])");
-    status.textContent = list.hidden
-      ? "Open the latest release on GitHub to see available files."
-      : `Latest release · ${release.tag_name}`;
+    setReleaseStatus(list.hidden ? "noAssets" : "latest", release.tag_name);
   } catch {
-    status.textContent = "Direct downloads are unavailable. Open the latest release on GitHub.";
+    setReleaseStatus("unavailable");
   }
 }
 
