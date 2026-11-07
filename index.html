@@ -6,7 +6,7 @@
   <meta name="description" data-i18n-content="description" content="UriNamu is an offline desktop family tree app for Windows, macOS and Linux. Keep family stories, photos and relationships on your computer.">
   <meta name="theme-color" content="#142b23">
   <title data-i18n="pageTitle">UriNamu | Your family tree, on your computer</title>
-  <script type="module" src="./downloads.js"></script>
+  <script type="module" src="./downloads.js?v=guide-note"></script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%2317392f'/%3E%3Cpath d='M17 24v15h31v13' fill='none' stroke='%23e8dfc7' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M32 10v22' stroke='%23c5a871' stroke-width='5'/%3E%3C/svg%3E">
   <style>
     :root {
@@ -167,6 +167,7 @@
     .download-packages:not([hidden]) { display: grid; }
     .download .release-status { margin-top: 1.25rem; font-size: .85rem; }
     .download .guide { margin-top: .95rem; }
+    .download .guide-note { margin-top: .35rem; font-size: .9rem; }
     .footer { padding-block: 1.35rem; color: var(--muted); font-size: .84rem; }
 
     @media (max-width: 46rem) {
@@ -348,8 +349,9 @@
         </ul>
         <p class="guide">
           <a href="https://github.com/darrit/UriNamu/releases/latest" data-i18n="releaseLink">View release notes and files on GitHub</a>
-          · <a href="https://github.com/darrit/UriNamu/blob/master/docs/USER-GUIDE.md" data-i18n="userGuide">Read the user guide</a>
+          · <a href="https://github.com/darrit/UriNamu/blob/master/docs/USER-GUIDE.md" hreflang="en" data-i18n="userGuide">Read the user guide (English only)</a>
         </p>
+        <p class="guide-note" data-i18n="inAppGuide">In the desktop app, open “Guide” in the sidebar for illustrated previews of the main features in your selected language.</p>
       </div>
     </section>
   </main>
