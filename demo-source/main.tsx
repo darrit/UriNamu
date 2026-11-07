@@ -50,14 +50,14 @@ const exampleFamily: Family = {
   version: 2,
   name: "Example family",
   members: [
-    member("Ada Park", "1948-04-19"),
-    member("Theo Reed", "1946"),
-    member("Jin Kim", "1975-09-08"),
-    member("Nora Reed", "1977", ["ada", "theo"]),
-    member("Mina Kim", "2006-02-12", ["jin", "nora"]),
-    member("Leo Kim", "2010", ["jin", "nora"]),
+    member("Clara Weber", "1948-04-19"),
+    member("Daniel Reed", "1946"),
+    member("Ren Sato", "1975-09-08"),
+    member("Sofia Reed", "1977", ["clara", "daniel"]),
+    member("Mia Reed", "2006-02-12", ["ren", "sofia"]),
+    member("Leo Sato", "2010", ["ren", "sofia"]),
   ],
-  unions: [marriage("ada", "theo", "1971-05-22"), marriage("jin", "nora", "2002")],
+  unions: [marriage("clara", "daniel", "1971-05-22"), marriage("ren", "sofia", "2002")],
 };
 
 // The shared wedding label checks an 80 px wide box. Keep room on both
@@ -120,28 +120,28 @@ const copy = {
     hint: "Ziehe Personen oder den Hintergrund. Zoome mit +/− oder Strg/⌘ und Mausrad.",
     region: "Fiktiver Stammbaum",
     family: "Beispielfamilie",
-    relations: "Ada Park und Theo Reed sind die Eltern von Nora Reed. Nora Reed und Jin Kim sind die Eltern von Mina und Leo Kim.",
+    relations: "Clara Weber und Daniel Reed sind die Eltern von Sofia Reed. Sofia Reed und Ren Sato sind die Eltern von Mia Reed und Leo Sato.",
   },
   en: {
     layout: "Tree layout",
     hint: "Drag people or the background. Zoom with +/− or Ctrl/⌘ + scroll.",
     region: "Fictional family tree",
     family: "Example family",
-    relations: "Ada Park and Theo Reed are Nora Reed’s parents. Nora Reed and Jin Kim are the parents of Mina and Leo Kim.",
+    relations: "Clara Weber and Daniel Reed are Sofia Reed’s parents. Sofia Reed and Ren Sato are the parents of Mia Reed and Leo Sato.",
   },
   ja: {
     layout: "家系図の表示形式",
     hint: "人物や背景をドラッグして移動します。拡大・縮小は＋／−、またはCtrl／⌘を押しながらスクロールします。",
     region: "架空の家系図",
     family: "サンプルの家系図",
-    relations: "Ada ParkとTheo ReedはNora Reedの両親です。Nora ReedとJin KimはMina KimとLeo Kimの両親です。",
+    relations: "Clara WeberとDaniel ReedはSofia Reedの両親です。Sofia ReedとRen SatoはMia ReedとLeo Satoの両親です。",
   },
   ko: {
     layout: "가계도 보기 방식",
     hint: "인물이나 배경을 끌어 이동하세요. +/− 버튼이나 Ctrl/⌘를 누른 채 스크롤해 확대하거나 축소할 수 있습니다.",
     region: "가상의 가계도",
     family: "예시 가족",
-    relations: "Ada Park와 Theo Reed는 Nora Reed의 부모입니다. Nora Reed와 Jin Kim은 Mina Kim과 Leo Kim의 부모입니다.",
+    relations: "Clara Weber와 Daniel Reed는 Sofia Reed의 부모입니다. Sofia Reed와 Ren Sato는 Mia Reed와 Leo Sato의 부모입니다.",
   },
 };
 
