@@ -92,6 +92,11 @@ body,
   background: transparent;
 }
 
+.demo-tree .world {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 .demo-tree .person {
   transition: none;
 }
@@ -115,5 +120,58 @@ body,
 @media (max-width: 30rem) {
   .demo-tree .legend {
     display: none;
+  }
+
+  .demo-tree :is(.classic, .horizontal) .person {
+    flex-direction: column;
+    gap: 4px;
+    padding: 7px;
+    text-align: center;
+  }
+
+  .demo-tree :is(.classic, .horizontal) .person .portrait {
+    width: 28px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .demo-tree :is(.classic, .horizontal) .person-text {
+    width: 100%;
+  }
+
+  .demo-tree .person-text strong {
+    font-size: 20px;
+    line-height: 1.1;
+    overflow-wrap: normal;
+  }
+
+  .demo-tree .person-text small {
+    font-size: 22px;
+    line-height: 1.15;
+    color: #ede3ca;
+    white-space: nowrap;
+  }
+
+  .demo-tree .chart-card strong,
+  .demo-tree .chart-card span {
+    font-size: 21px;
+    line-height: 1.15;
+  }
+
+  .demo-tree .ribbon text:first-of-type {
+    font-size: 14px;
+    transform: translateY(-6px);
+  }
+
+  .demo-tree .ribbon text:last-child {
+    font-size: 19px;
+    font-style: normal;
+    font-weight: 600;
+    transform: translateY(3px);
+  }
+
+  .demo-tree .wedding-date {
+    padding-inline: 4px;
+    font-size: 12px;
   }
 }
