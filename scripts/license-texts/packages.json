@@ -1,0 +1,20 @@
+{
+  "alloc-stdlib@0.3.0": ["alloc-stdlib.txt"],
+  "block2@0.6.2": ["objc2-MIT.txt", "objc2-workspace.md"],
+  "dispatch2@0.3.1": ["objc2-MIT.txt", "objc2-workspace.md"],
+  "dlopen2@0.8.2": ["dlopen2.txt"],
+  "libappindicator-sys@0.9.0": ["libappindicator-MIT.txt"],
+  "objc2@0.6.5": ["objc2-MIT.txt", "objc2-workspace.md"],
+  "objc2-app-kit@0.3.2": ["objc2-MIT.txt", "objc2-workspace.md"],
+  "objc2-core-foundation@0.3.2": ["objc2-MIT.txt", "objc2-workspace.md"],
+  "objc2-core-graphics@0.3.2": ["objc2-MIT.txt", "objc2-workspace.md"],
+  "objc2-encode@4.1.0": ["objc2-MIT.txt", "objc2-workspace.md"],
+  "objc2-exception-helper@0.1.1": ["objc2-MIT.txt", "objc2-workspace.md"],
+  "objc2-foundation@0.3.2": ["objc2-MIT.txt", "objc2-workspace.md"],
+  "objc2-io-surface@0.3.2": ["objc2-MIT.txt", "objc2-workspace.md"],
+  "objc2-quartz-core@0.3.2": ["objc2-MIT.txt", "objc2-workspace.md"],
+  "objc2-web-kit@0.3.2": ["objc2-MIT.txt", "objc2-workspace.md"],
+  "selectors@0.38.0": ["MPL-2.0.txt"],
+  "webview2-com@0.39.1": ["webview2-rs.txt"],
+  "webview2-com-sys@0.39.1": ["webview2-rs.txt"]
+}

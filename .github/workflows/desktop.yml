@@ -39,6 +39,13 @@ jobs:
       - run: npm test
       - run: cargo test --manifest-path src-tauri/Cargo.toml --locked --no-default-features --lib
       - run: npm run desktop:build -- ${{ matrix.args }} -- --locked
+      - name: Verify macOS bundle license files
+        if: runner.os == 'macOS'
+        run: |
+          licenses=src-tauri/target/universal-apple-darwin/release/bundle/macos/UriNamu.app/Contents/Resources/licenses
+          for name in LICENSE.md NOTICE THIRD-PARTY-WEB.md THIRD-PARTY-RUST.md; do
+            test -s "$licenses/$name" || { echo "Missing $licenses/$name"; exit 1; }
+          done
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: UriNamu-${{ matrix.name }}
@@ -60,7 +67,6 @@ jobs:
         shell: bash
     env:
       DEBIAN_FRONTEND: noninteractive
-      APPIMAGE_EXTRACT_AND_RUN: "1"
     steps:
       # Bootstrap before checkout: the minimal image has neither git nor CA certificates.
       # Only the host's CA bundle is reused to authenticate the initial HTTPS download.
@@ -101,7 +107,14 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: cargo test --manifest-path src-tauri/Cargo.toml --locked --no-default-features --lib
-      - run: npm run desktop:build -- --bundles deb,appimage -- --locked
+      - run: npm run desktop:build -- --bundles deb -- --locked
+      - name: Verify Debian package license files
+        shell: bash
+        run: |
+          contents=$(dpkg-deb --contents src-tauri/target/release/bundle/deb/*.deb)
+          for name in LICENSE.md NOTICE THIRD-PARTY-WEB.md THIRD-PARTY-RUST.md; do
+            grep -F "/licenses/$name" <<< "$contents" || { echo "Missing license file $name"; exit 1; }
+          done
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: UriNamu-linux-x64

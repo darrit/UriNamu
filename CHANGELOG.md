@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.2 — 2026-11-07
+
+- Include UriNamu's license, copyright notice and third-party license information in desktop installers.
+- Publish Linux releases as Debian packages while the AppImage's bundled libraries are reviewed.
+
 ## 0.10.1 — 2026-11-07
 
 - Let the website tree preview keep enough space for wedding dates while visitors drag portraits or couples.

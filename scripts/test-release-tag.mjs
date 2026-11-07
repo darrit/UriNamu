@@ -48,7 +48,6 @@ test("release files keep installers and require every platform", () => {
     assert.deepEqual(copied, [
       "UriNamu_0.4.46_universal.dmg",
       "UriNamu_0.4.46_x64-setup.exe",
-      "urinamu_0.4.46_amd64.AppImage",
       "urinamu_0.4.46_amd64.deb",
     ]);
     rmSync(path.join(source, "bundle", "dmg"), { recursive: true, force: true });

@@ -6,4 +6,6 @@ Darrit grants that license case by case. It requires Darrit's approval and an ag
 
 Contact Darrit through <https://github.com/darrit/UriNamu> before any commercial use.
 
-Contributions are accepted only together with a written assignment of the contributed rights to Darrit.
+## Contributions
+
+Before accepting a contribution, the project maintainer and the contributor agree in writing on the usage rights needed for it. The agreement must allow the maintainer to reproduce, modify and distribute the contribution as part of UriNamu and to sublicense it under both the project's public license and separate commercial terms. Contributors identify any third-party material and its license before acceptance. Opening a pull request is a request for review. The maintainer and contributor record the grant separately.

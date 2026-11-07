@@ -12,7 +12,7 @@ Choose the package for your operating system under **Assets** on the [GitHub Rel
 | --- | --- |
 | Windows (x64) | Run the `-setup.exe` installer. If WebView2 is missing, the installer downloads it. |
 | macOS (Intel or Apple Silicon) | Open the `.dmg` and move UriNamu to Applications. The GitHub build is unsigned and unnotarized, so macOS may block it. |
-| Linux (x64) | On Debian or Ubuntu, install the `.deb` with `sudo apt install ./<filename>.deb`, replacing `<filename>.deb` with the downloaded filename. For the `.AppImage`, make it executable and open it. |
+| Linux (x64) | On Debian or Ubuntu, install the `.deb` with `sudo apt install ./<filename>.deb`, replacing `<filename>.deb` with the downloaded filename. |
 
 If your platform has no installer available, see [Build installers](#build-installers). The version badge beside the logo opens the app version and build time.
 
@@ -101,6 +101,6 @@ Setup checks that releases selected for installation are stable and strictly old
 
 ## License and contributions
 
-UriNamu is licensed under [PolyForm Noncommercial 1.0.0](LICENSE.md). Private family use and other noncommercial use are allowed. Include the license and [NOTICE](NOTICE) when redistributing copies. Commercial use requires a separate written license from Darrit. See the [commercial licensing terms](COMMERCIAL.md).
+UriNamu is free for private family use. Its source code is available under [PolyForm Noncommercial 1.0.0](LICENSE.md). When redistributing copies, provide the license text or its official URL and preserve the required copyright line in [NOTICE](NOTICE). Third-party components retain their own licenses. See the [commercial licensing terms](COMMERCIAL.md) for uses that require separate permission.
 
-Use fictional data in issues and pull requests. Contributions require a written assignment of the contributed rights to Darrit.
+Use fictional data in issues and pull requests. Before a contribution is accepted, its author must agree in writing to the grant of usage rights described in [COMMERCIAL.md](COMMERCIAL.md#contributions).

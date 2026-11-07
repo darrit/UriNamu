@@ -5,7 +5,6 @@ import { pathToFileURL } from "node:url";
 const rules = [
   { kind: "Windows installer", test: (name) => name.endsWith("-setup.exe") },
   { kind: "Debian package", test: (name) => name.endsWith(".deb") },
-  { kind: "AppImage", test: (name) => name.endsWith(".AppImage") },
   { kind: "macOS disk image", test: (name) => name.endsWith(".dmg") },
 ];
 
@@ -32,6 +31,7 @@ export function changelogEntry(markdown, version) {
 export function releaseNotes(markdown, version) {
   return (
     changelogEntry(markdown, version) +
+    "\nUriNamu's license, copyright notice and third-party notices are included in each installer.\n" +
     "\nThe macOS disk image from this workflow is not signed or notarized. The Windows installer installs the WebView2 runtime when it is missing; that download needs an internet connection.\n"
   );
 }
