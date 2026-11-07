@@ -1,4 +1,4 @@
-import { setReleaseStatus } from "./site-language.js?v=sample-family";
+import { setReleaseStatus } from "./site-language.js?v=privacy";
 
 const releaseApi = "https://api.github.com/repos/darrit/UriNamu/releases/latest";
 const assetPrefix = "https://github.com/darrit/UriNamu/releases/download/";
@@ -7,14 +7,17 @@ const packages = {
   windows: /_x64-setup\.exe$/i,
   macos: /_universal\.dmg$/i,
   deb: /_amd64\.deb$/i,
-  appimage: /_amd64\.appimage$/i,
 };
 
 async function loadDownloads() {
   const list = document.getElementById("download-packages");
 
   try {
-    const response = await fetch(releaseApi, { signal: AbortSignal.timeout(5000) });
+    const response = await fetch(releaseApi, {
+      credentials: "omit",
+      referrerPolicy: "no-referrer",
+      signal: AbortSignal.timeout(5000),
+    });
     if (!response.ok) throw new Error(`GitHub returned HTTP ${response.status}`);
 
     const release = await response.json();

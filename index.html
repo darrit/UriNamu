@@ -6,7 +6,7 @@
   <meta name="description" data-i18n-content="description" content="UriNamu is an offline desktop family tree app for Windows, macOS and Linux. Keep family stories, photos and relationships on your computer.">
   <meta name="theme-color" content="#142b23">
   <title data-i18n="pageTitle">UriNamu | Your family tree, on your computer</title>
-  <script type="module" src="./downloads.js?v=sample-family"></script>
+  <script type="module" src="./downloads.js?v=privacy"></script>
   <link rel="icon" type="image/svg+xml" href="./logo.svg">
   <style>
     :root {
@@ -187,6 +187,11 @@
     .download .release-status { margin-top: 1.25rem; font-size: .85rem; }
     .download .guide { margin-top: .95rem; }
     .download .guide-note { margin-top: .35rem; font-size: .9rem; }
+    .privacy { padding-block: clamp(2.5rem, 5vw, 4rem); border-bottom: 1px solid var(--line); }
+    .privacy h2 { margin-bottom: 1.35rem; }
+    .privacy h3 { margin: 1.25rem 0 .4rem; font-size: 1.25rem; }
+    .privacy p { max-width: 68ch; color: var(--muted); }
+    .privacy p + p { margin-top: .55rem; }
     .footer { padding-block: 1.35rem; color: var(--muted); font-size: .84rem; }
 
     @media (max-width: 46rem) {
@@ -336,6 +341,7 @@
         <li>
           <h3 data-i18n="storageTitle">Keep trees on your device</h3>
           <p data-i18n="storageBody">Manage separate trees with their own backup histories. Export a PDF when you want to print or share a picture of the tree.</p>
+          <p data-i18n="pdfData">PDFs embed unencrypted names, dates and notes by default. Clear the option before export to share only the rendered tree.</p>
         </li>
         <li>
           <h3 data-i18n="shareTitle">Share a tree with a password</h3>
@@ -353,6 +359,7 @@
         <p class="label" data-i18n="gettingStarted">Getting started</p>
         <h2 id="download-title" data-i18n="downloadApp">Download UriNamu</h2>
         <p data-i18n="downloadBody">Choose an installer for your system. On first launch, choose your language and start an empty tree or explore the fictional example.</p>
+        <p data-i18n="licenseSummary">Free for personal use. Source code available under PolyForm Noncommercial 1.0.0.</p>
         <p id="release-status" class="release-status" role="status"></p>
         <ul id="download-packages" class="download-packages" aria-label="Direct downloads" data-i18n-label="directDownloads" hidden>
           <li data-package="windows" hidden>
@@ -370,11 +377,6 @@
               <span>Linux <small>x64 · DEB</small></span><span aria-hidden="true">↓</span>
             </a>
           </li>
-          <li data-package="appimage" hidden>
-            <a class="button" aria-label="Download for Linux (x64, AppImage)" data-i18n-label="appImageDownload">
-              <span>Linux <small>x64 · AppImage</small></span><span aria-hidden="true">↓</span>
-            </a>
-          </li>
         </ul>
         <p class="guide">
           <a href="https://github.com/darrit/UriNamu/releases/latest" data-i18n="releaseLink">View release notes and files on GitHub</a>
@@ -383,11 +385,21 @@
         <p class="guide-note" data-i18n="inAppGuide">In the desktop app, open “Guide” in the sidebar for illustrated previews of the main features in your selected language.</p>
       </div>
     </section>
+    <section class="privacy wrap" id="privacy" aria-labelledby="privacy-title">
+      <h2 id="privacy-title" data-i18n="privacyTitle">Privacy notice</h2>
+      <h3 data-i18n="privacyHostingTitle">Website and downloads</h3>
+      <p data-i18n="privacyHostingBody">You can browse this site and download UriNamu without an account or a form. GitHub Pages hosts the site. GitHub says it logs visitors’ IP addresses for security.</p>
+      <p data-i18n="privacyDownloadBody">Your browser requests the latest release information from the GitHub API to show the download buttons. GitHub serves the installer when you select a download.</p>
+      <p><a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" data-i18n="privacyGitHub">GitHub privacy statement and contact details</a></p>
+      <h3 data-i18n="privacyAppTitle">Preview and desktop app</h3>
+      <p data-i18n="privacyAppBody">The preview uses a fictional family tree. Changes to its layout are held in your browser while the page is open. The installed desktop app stores your family trees, photos and backups on your computer.</p>
+    </section>
   </main>
 
   <footer class="footer wrap">
-    <span>UriNamu</span>
+    <a href="https://github.com/darrit/UriNamu/blob/master/NOTICE">© 2026 Darrit</a>
     <nav aria-label="More about UriNamu" data-i18n-label="more">
+      <a href="#privacy" data-i18n="privacyLink">Privacy</a>
       <a href="https://github.com/darrit/UriNamu/blob/master/LICENSE.md" data-i18n="license">License</a>
       <a href="./demo/licenses.md" data-i18n="previewLicenses">Preview dependency licenses</a>
       <a href="https://github.com/darrit/UriNamu/blob/master/CHANGELOG.md" data-i18n="changelog">Changelog</a>
