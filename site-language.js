@@ -219,8 +219,7 @@ window.addEventListener("message", (event) => {
       event.data?.type === "urinamu-preview-ready") syncPreview();
 });
 const requested = new URL(location.href).searchParams.get("lang");
-const preferred = navigator.languages.map((tag) => tag.split("-")[0]).find((tag) => Object.hasOwn(messages, tag));
-applyLanguage(Object.hasOwn(messages, requested) ? requested : preferred ?? "en");
+applyLanguage(Object.hasOwn(messages, requested) ? requested : "en");
 picker.closest("label").hidden = false;
 picker.addEventListener("change", () => {
   const url = new URL(location.href);

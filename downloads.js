@@ -1,4 +1,4 @@
-import { setReleaseStatus } from "./site-language.js?v=guide-note";
+import { setReleaseStatus } from "./site-language.js?v=language-picker";
 
 const releaseApi = "https://api.github.com/repos/darrit/UriNamu/releases/latest";
 const assetPrefix = "https://github.com/darrit/UriNamu/releases/download/";

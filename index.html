@@ -6,7 +6,7 @@
   <meta name="description" data-i18n-content="description" content="UriNamu is an offline desktop family tree app for Windows, macOS and Linux. Keep family stories, photos and relationships on your computer.">
   <meta name="theme-color" content="#142b23">
   <title data-i18n="pageTitle">UriNamu | Your family tree, on your computer</title>
-  <script type="module" src="./downloads.js?v=guide-note"></script>
+  <script type="module" src="./downloads.js?v=language-picker"></script>
   <link rel="icon" type="image/svg+xml" href="./logo.svg">
   <style>
     :root {
@@ -70,12 +70,18 @@
     .header-links { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem 1.5rem; }
     .language-picker:not([hidden]) { display: flex; align-items: center; gap: .5rem; font-size: .85rem; }
     .language-picker select {
-      border: 1px solid #7b9183;
+      color-scheme: dark;
+      border: 1px solid #94ab9b;
       border-radius: 4px;
-      background: var(--forest);
-      color: var(--parchment);
-      padding: .35rem .55rem;
+      background: #213b30;
+      color: #fff9ed;
+      padding: .4rem .65rem;
       font: inherit;
+      font-weight: 650;
+    }
+    .language-picker option {
+      background: #213b30;
+      color: #fff9ed;
     }
     .language-picker select:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
     .hero {
