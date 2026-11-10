@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { cropRegion, cropSample, portraitRatio } from "../src/photo";
-import { dateLabel, dateValue } from "../src/dates";
+import { dateLabel, datePattern, dateValue } from "../src/dates";
+import { setLocale } from "../src/i18n";
+import { afterEach } from "vitest";
 import { connectionPort, branchMarkerPosition } from "../src/layout";
 
 describe("Portrait crop", () => {
@@ -51,6 +53,25 @@ describe("Date examples", () => {
     expect(dateValue("14.03.1985")).toBe("1985-03-14");
     expect(dateLabel("1985-03-14")).toBe("14.03.1985");
     expect(dateValue("14.03.")).toBe("14.03.");
+  });
+});
+describe("Datumsformat je Sprache", () => {
+  afterEach(() => setLocale("de"));
+  it("zeigt und liest Daten in der Schreibweise der gewählten Sprache", () => {
+    const shown = { de: "14.03.1985", en: "14/03/1985", ja: "1985/03/14", ko: "1985.03.14" } as const;
+    for (const [locale, text] of Object.entries(shown) as [keyof typeof shown, string][]) {
+      setLocale(locale);
+      expect(dateLabel("1985-03-14")).toBe(text);
+      expect(dateValue(text)).toBe("1985-03-14");
+      expect(new RegExp(`^${datePattern()}$`).test(text)).toBe(true);
+    }
+  });
+  it("akzeptiert auch andere Reihenfolgen und Trennzeichen und behält Teileingaben", () => {
+    expect(dateValue("1985-03-14")).toBe("1985-03-14");
+    expect(dateValue("1985. 03. 14.")).toBe("1985-03-14");
+    expect(dateValue("14/03/1985")).toBe("1985-03-14");
+    expect(dateValue("1985/03/1")).toBe("1985/03/1");
+    expect(dateLabel("1987")).toBe("1987");
   });
 });
 describe("Card ports", () => {

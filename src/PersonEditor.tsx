@@ -17,6 +17,7 @@ import {
 import { Portrait } from "./Portrait";
 import PhotoCrop from "./PhotoCrop";
 import DateField from "./DateField";
+import FilePick from "./FilePick";
 import { dateLabel } from "./dates";
 import { imageByteLimit } from "./storage";
 
@@ -158,16 +159,11 @@ export default function PersonEditor({
         </div>
         {editing && (
           <div className="photo-actions">
-            <label className="file-button">
-              <ImagePlus size={15} /> {t("choosePhoto")}
-              <input
-                type="file"
+            <FilePick
+                className="file-button"
                 accept="image/jpeg,image/png,image/webp,image/avif"
                 disabled={photoBusy || busy}
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  e.target.value = "";
-                  if (!file) return;
+                onFile={(file) => {
                   setError("");
                   if (
                     ![
@@ -183,8 +179,9 @@ export default function PersonEditor({
                   }
                   setCropFile(file);
                 }}
-              />
-            </label>
+              >
+                <ImagePlus size={15} /> {t("choosePhoto")}
+              </FilePick>
             {p.photo && (
               <button
                 type="button"
@@ -268,13 +265,13 @@ export default function PersonEditor({
               <DateField
                 label={t("birthDate")}
                 value={p.born}
-                example="14.03.1985"
+                example="1985-03-14"
                 onChange={(value) => change("born", value)}
               />
               <DateField
                 label={t("deathDateOptional")}
                 value={p.died}
-                example="21.09.2020"
+                example="2020-09-21"
                 onChange={(value) => change("died", value)}
               />
             </div>
@@ -348,7 +345,7 @@ export default function PersonEditor({
                   <DateField
                     label={t("weddingDateOptional")}
                     value={marriedOn}
-                    example="18.06.1984"
+                    example="1984-06-18"
                     onChange={(value) => {
                       setMarriedOn(value);
                       setDirty(true);

@@ -29,6 +29,7 @@ import {
 import demoFile from "./demo.json";
 import crest from "./assets/guide-crest.png";
 import DateField from "./DateField";
+import FilePick from "./FilePick";
 import Tree, { Portrait } from "./Tree";
 import {
   displayName,
@@ -617,14 +618,14 @@ function GuidePersonForm({
             <DateField
               label={t("birthDate")}
               value={person.born}
-              example="14.03.1985"
+              example="1985-03-14"
               disabled={!editing}
               onChange={idle}
             />
             <DateField
               label={t("deathDateOptional")}
               value={person.died}
-              example="21.09.2020"
+              example="2020-09-21"
               disabled={!editing}
               onChange={idle}
             />
@@ -817,7 +818,7 @@ export function GuideDynastyForm() {
           </div>
           <label>
             {t("dynastyLogo")}
-            <input type="file" tabIndex={-1} />
+            <span><FilePick accept="image/*" tabIndex={-1} onFile={() => {}}>{t("dynastyLogoChoose")}</FilePick></span>
             <small className="field-hint">{t("photoHint")}</small>
           </label>
         </div>
@@ -914,7 +915,7 @@ export function GuideHistoryList() {
           <History size={16} />
           <span>
             <strong>{t("logMoved")}</strong>
-            <small>27.10.2026, 09:00</small>
+            <small>{new Date(2026, 9, 27, 9, 0).toLocaleString(localeTag[getLocale()])}</small>
           </span>
           <span>{t("open")}</span>
         </button>

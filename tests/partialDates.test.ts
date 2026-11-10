@@ -28,7 +28,7 @@ it("round-trips partial dates and permits overlapping birth and wedding years", 
 });
 
 it("offers full date, year and unknown in the profile field", () => {
-  const markup = renderToStaticMarkup(createElement(DateField, { label: "Birth", value: "1987", example: "26.02.1987", onChange: () => {} }));
+  const markup = renderToStaticMarkup(createElement(DateField, { label: "Birth", value: "1987", example: "1987-02-26", onChange: () => {} }));
   expect(markup).toContain('value="year" selected=""');
   expect(markup).toContain('value="unknown"');
   expect(markup).toContain('value="1987"');

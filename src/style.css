@@ -1307,10 +1307,6 @@ fieldset:disabled textarea {
   font-size: 12px;
   cursor: pointer;
 }
-.file-button input {
-  width: 115px;
-  font-size: 9px;
-}
 .photo-actions small {
   font-size: 9px;
 }

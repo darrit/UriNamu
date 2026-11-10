@@ -1,6 +1,6 @@
 import { useId, useRef, useState } from "react";
 import { CalendarDays } from "lucide-react";
-import { dateLabel, dateValue } from "./dates";
+import { dateLabel, datePattern, dateValue } from "./dates";
 import { t } from "./i18n";
 
 export default function DateField({
@@ -14,6 +14,7 @@ export default function DateField({
 }: {
   label: string;
   value: string;
+  /** Example date as ISO (YYYY-MM-DD); shown in the active language's format. */
   example: string;
   onChange: (value: string) => void;
   required?: boolean;
@@ -45,8 +46,8 @@ export default function DateField({
           id={id}
           type="text"
           inputMode="numeric"
-          placeholder={t("forExample", { example: precision === "year" ? "1987" : example })}
-          pattern={precision === "year" ? "[0-9]{4}" : "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}"}
+          placeholder={t("forExample", { example: precision === "year" ? "1987" : dateLabel(example) })}
+          pattern={precision === "year" ? "[0-9]{4}" : datePattern()}
           value={dateLabel(value)}
           required={required}
           autoFocus={autoFocus}

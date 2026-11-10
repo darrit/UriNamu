@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal } from "./Modal";
+import FilePick from "./FilePick";
 import { t, shown } from "./i18n";
 import { type Person, type Dynasty } from "./domain";
 import { fitLogo } from "./storage";
@@ -70,14 +71,11 @@ export default function DynastyDialog({
           </div>
           <label>
             {t("dynastyLogo")}
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp,image/avif"
-              disabled={busy || reading}
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                e.target.value = "";
-                if (!file) return;
+            <span>
+              <FilePick
+                accept="image/png,image/jpeg,image/webp,image/avif"
+                disabled={busy || reading}
+                onFile={async (file) => {
                 setReading(true);
                 setError("");
                 try {
@@ -87,8 +85,11 @@ export default function DynastyDialog({
                 } finally {
                   setReading(false);
                 }
-              }}
-            />
+                }}
+              >
+                {t("dynastyLogoChoose")}
+              </FilePick>
+            </span>
             <small className="field-hint">{t("photoHint")}</small>
           </label>
           {logo && <img className="dynasty-logo-preview" src={logo} alt="" />}

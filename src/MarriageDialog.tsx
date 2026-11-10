@@ -52,7 +52,7 @@ export default function MarriageDialog({
             <DateField
               label={t("weddingDateOptional")}
               value={marriedOn}
-              example="18.06.1984"
+              example="1984-06-18"
               disabled={busy}
               onChange={setMarriedOn}
             />

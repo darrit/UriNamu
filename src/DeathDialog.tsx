@@ -49,7 +49,7 @@ export default function DeathDialog({
           <DateField
             label={t("deathDate")}
             value={value}
-            example="15.07.2020"
+            example="2020-07-15"
             required
             autoFocus
             disabled={busy}
