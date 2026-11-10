@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getLocale, languagePrompt, setLocale, shown, t, text } from "../src/i18n";
+import { getLocale, languagePrompt, localeTag, setLocale, shown, t, text, timeOptions } from "../src/i18n";
 import { years, type Person } from "../src/domain";
 import { en } from "../src/locales/en";
 import { ja } from "../src/locales/ja";
@@ -76,5 +76,14 @@ describe("Sprachen", () => {
     };
     savePreferences(preferences);
     expect(loadPreferences()).toEqual(preferences);
+  });
+});
+
+describe("Uhrzeit je Sprache", () => {
+  it("zeigt Englisch mit am/pm und Deutsch sowie Japanisch im 24-Stunden-Format", () => {
+    const at = new Date(2026, 9, 27, 17, 15);
+    expect(at.toLocaleString(localeTag.en, timeOptions("en"))).toMatch(/5:15.*pm/i);
+    expect(at.toLocaleString(localeTag.de, timeOptions("de"))).toContain("17:15");
+    expect(at.toLocaleString(localeTag.ja, timeOptions("ja"))).toContain("17:15");
   });
 });

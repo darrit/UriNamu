@@ -15,6 +15,11 @@ export const localeTag: Record<Locale, string> = {
   ko: "ko-KR",
 };
 
+/** English shows times with am/pm; the other languages use their locale's own convention. */
+export function timeOptions(locale: Locale): Intl.DateTimeFormatOptions {
+  return locale === "en" ? { hour12: true } : {};
+}
+
 export const languageName: Record<Locale, string> = {
   de: "Deutsch",
   en: "English",

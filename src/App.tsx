@@ -55,7 +55,7 @@ import Tree from "./Tree";
 import { Portrait } from "./Portrait";
 import { tidyLayout } from "./layout";
 import demo from "./demo.json";
-import { localeTag, shown, t, text } from "./i18n";
+import { localeTag, shown, t, text, timeOptions } from "./i18n";
 import { useAppController } from "./useAppController";
 
 const PdfImport = lazy(() =>
@@ -453,6 +453,7 @@ export default function App() {
                     minute: "2-digit",
                     second: "2-digit",
                     timeZoneName: "short",
+                    ...timeOptions(preferences.language || "de"),
                   },
                 ).format(new Date(__BUILD_TIME__))}
               </time>
@@ -843,6 +844,7 @@ export default function App() {
                   <small>
                     {new Date(r.created).toLocaleString(
                       localeTag[preferences.language || "de"],
+                      timeOptions(preferences.language || "de"),
                     )}
                   </small>
                 </span>

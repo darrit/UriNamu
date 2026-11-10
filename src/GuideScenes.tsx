@@ -42,7 +42,7 @@ import {
   type Person,
 } from "./domain";
 import { tidyLayout, type Layout } from "./layout";
-import { getLocale, localeTag, t } from "./i18n";
+import { getLocale, localeTag, t, timeOptions } from "./i18n";
 
 const idle = () => {};
 const refuse = async () => false;
@@ -915,7 +915,7 @@ export function GuideHistoryList() {
           <History size={16} />
           <span>
             <strong>{t("logMoved")}</strong>
-            <small>{new Date(2026, 9, 27, 9, 0).toLocaleString(localeTag[getLocale()])}</small>
+            <small>{new Date(2026, 9, 27, 9, 0).toLocaleString(localeTag[getLocale()], timeOptions(getLocale()))}</small>
           </span>
           <span>{t("open")}</span>
         </button>

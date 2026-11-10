@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.3 — 2026-11-10
+
+- Show times in English with am/pm (12-hour clock) in the history list, build information and guide screenshots.
+
 ## 0.13.2 — 2026-11-10
 
 - Show and read dates in each language's own order and separators (German 14.03.1985, English 14/03/1985, Japanese 1985/03/14, Korean 1985.03.14), including field examples and the guide screenshots.
