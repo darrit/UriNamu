@@ -178,6 +178,20 @@ Alternatively, run `.\Build-Windows.cmd` from the activated terminal. It additio
 
 The app installer uses `webviewInstallMode: embedBootstrapper` with a silent install. It embeds Microsoft's bootstrapper and installs the WebView2 runtime when the end user's computer does not already have one. That download needs an internet connection. An existing runtime is left in place. Developer setup still installs a dated runtime for building; that is separate from the generated app installer.
 
+### Windows: Microsoft Store MSIX
+
+The default package identity, publisher and display name in the script match UriNamu's reserved Partner Center identity. On an activated Windows x64 build machine with the Windows SDK installed, run:
+
+```powershell
+.\scripts\Build-MSIX.ps1
+```
+
+The script builds the Tauri release binary, includes the application and third-party notices, and creates an unsigned package in `src-tauri/target/release/bundle/msix/`. Its identity arguments can be overridden if Partner Center changes. This package is for submission to Partner Center, not direct distribution. Microsoft signs it after successful Store certification. There is also a separately triggered **Microsoft Store MSIX** GitHub Actions workflow with the same identity inputs; download its artifact and submit it through Partner Center. This does not alter or sign the existing GitHub release installer.
+
+MSIX versions require a nonzero first component and a final zero. UriNamu maps application version `a.b.c` to MSIX version `(a+1).b.c.0`, so `0.13.0` becomes `1.13.0.0`. Keep this mapping for future updates and increase the application version before each new Store submission. Verify the package identity in Partner Center and test installation, launch, data storage, export and updates using a suitable test signing setup before release. MSIX does not run the NSIS WebView2 bootstrapper; test on a clean supported machine and arrange the WebView2 Runtime separately if missing. Existing NSIS app data migration into the packaged app has not been verified.
+
+See [Microsoft's package requirements](https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/package-version-numbering) and [WebView2 distribution guidance](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution).
+
 ### Linux: DEB and AppImage
 
 ```sh

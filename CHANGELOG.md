@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.13.1 — 2026-11-10
+
+- Keep the PDF export preview hidden while the save dialog is open.
+
+## 0.13.0 — 2026-11-10
+
+- Add a Windows MSIX packaging workflow for Microsoft Store submissions.
+
 ## 0.12.1 — 2026-11-07
 
 - Ask for confirmation before saving a direct parent-child relationship between active partners, or making a parent and child active partners.
