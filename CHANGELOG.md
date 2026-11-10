@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.4 — 2026-11-10
+
+- Use the standard English date order (MM/DD/YYYY, 12-hour clock with am/pm) for English; typed English dates are read as month first.
+
 ## 0.13.3 — 2026-11-10
 
 - Show times in English with am/pm (12-hour clock) in the history list, build information and guide screenshots.

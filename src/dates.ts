@@ -1,9 +1,9 @@
 import { getLocale, type Locale } from "./i18n";
 
 /** How a calendar date is written and typed in each language. Dates are always stored as ISO (YYYY-MM-DD). */
-const layouts: Record<Locale, { order: "dmy" | "ymd"; separator: string }> = {
+const layouts: Record<Locale, { order: "dmy" | "mdy" | "ymd"; separator: string }> = {
   de: { order: "dmy", separator: "." },
-  en: { order: "dmy", separator: "/" },
+  en: { order: "mdy", separator: "/" },
   ja: { order: "ymd", separator: "/" },
   ko: { order: "ymd", separator: "." },
 };
@@ -11,26 +11,29 @@ const layouts: Record<Locale, { order: "dmy" | "ymd"; separator: string }> = {
 export function dateLabel(value: string, locale: Locale = getLocale()): string {
   const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!match) return value;
+  const [, year, month, day] = match;
   const { order, separator } = layouts[locale];
-  return (order === "dmy" ? [match[3], match[2], match[1]] : [match[1], match[2], match[3]]).join(separator);
+  return (order === "dmy" ? [day, month, year] : order === "mdy" ? [month, day, year] : [year, month, day]).join(separator);
 }
 
-/** Convert typed text to ISO. Accepts day-first and year-first input with . / - separators in every language. */
-export function dateValue(value: string): string {
+/** Convert typed text to ISO. Year-first input works in every language; otherwise the active language decides day/month order. */
+export function dateValue(value: string, locale: Locale = getLocale()): string {
   const text = value.trim();
   const sep = "\\s*[./-]\\s*";
-  const dayFirst = text.match(new RegExp(`^(\\d{2})${sep}(\\d{2})${sep}(\\d{4})\\.?$`));
-  if (dayFirst) return `${dayFirst[3]}-${dayFirst[2]}-${dayFirst[1]}`;
   const yearFirst = text.match(new RegExp(`^(\\d{4})${sep}(\\d{2})${sep}(\\d{2})\\.?$`));
-  return yearFirst ? `${yearFirst[1]}-${yearFirst[2]}-${yearFirst[3]}` : text;
+  if (yearFirst) return `${yearFirst[1]}-${yearFirst[2]}-${yearFirst[3]}`;
+  const yearLast = text.match(new RegExp(`^(\\d{2})${sep}(\\d{2})${sep}(\\d{4})\\.?$`));
+  if (!yearLast) return text;
+  const [, first, second, year] = yearLast;
+  return layouts[locale].order === "mdy" ? `${year}-${first}-${second}` : `${year}-${second}-${first}`;
 }
 
 /** HTML pattern for a typed full date in the active language. */
 export function datePattern(locale: Locale = getLocale()): string {
   const sep = "(?:\\.|/|-)";
-  return layouts[locale].order === "dmy"
-    ? `[0-9]{2}${sep}[0-9]{2}${sep}[0-9]{4}`
-    : `[0-9]{4}${sep}[0-9]{2}${sep}[0-9]{2}`;
+  return layouts[locale].order === "ymd"
+    ? `[0-9]{4}${sep}[0-9]{2}${sep}[0-9]{2}`
+    : `[0-9]{2}${sep}[0-9]{2}${sep}[0-9]{4}`;
 }
 
 export function validDate(value: string): boolean {

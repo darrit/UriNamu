@@ -58,7 +58,7 @@ describe("Date examples", () => {
 describe("Datumsformat je Sprache", () => {
   afterEach(() => setLocale("de"));
   it("zeigt und liest Daten in der Schreibweise der gewählten Sprache", () => {
-    const shown = { de: "14.03.1985", en: "14/03/1985", ja: "1985/03/14", ko: "1985.03.14" } as const;
+    const shown = { de: "14.03.1985", en: "03/14/1985", ja: "1985/03/14", ko: "1985.03.14" } as const;
     for (const [locale, text] of Object.entries(shown) as [keyof typeof shown, string][]) {
       setLocale(locale);
       expect(dateLabel("1985-03-14")).toBe(text);
@@ -70,6 +70,8 @@ describe("Datumsformat je Sprache", () => {
     expect(dateValue("1985-03-14")).toBe("1985-03-14");
     expect(dateValue("1985. 03. 14.")).toBe("1985-03-14");
     expect(dateValue("14/03/1985")).toBe("1985-03-14");
+    setLocale("en");
+    expect(dateValue("03/14/1985")).toBe("1985-03-14");
     expect(dateValue("1985/03/1")).toBe("1985/03/1");
     expect(dateLabel("1987")).toBe("1987");
   });

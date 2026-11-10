@@ -10,7 +10,7 @@ export type Locale = (typeof locales)[number];
 
 export const localeTag: Record<Locale, string> = {
   de: "de-DE",
-  en: "en-GB",
+  en: "en-US",
   ja: "ja-JP",
   ko: "ko-KR",
 };
