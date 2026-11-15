@@ -12,7 +12,7 @@ Choose the package for your operating system under **Assets** on the [GitHub Rel
 | --- | --- |
 | Windows (x64) | Run the `-setup.exe` installer. If WebView2 is missing, the installer downloads it. |
 | macOS (Intel or Apple Silicon) | Open the `.dmg` and move UriNamu to Applications. The GitHub build is unsigned and unnotarized, so macOS may block it. |
-| Linux (x64) | On Debian or Ubuntu, install the `.deb` with `sudo apt install ./<filename>.deb`, replacing `<filename>.deb` with the downloaded filename. |
+| Linux (x64) | On Debian or Ubuntu, install the `.deb` with `sudo apt install ./<filename>.deb`, replacing `<filename>.deb` with the downloaded filename. Remove the installed package with `sudo apt remove uri-namu`, or remove it and its system configuration with `sudo apt purge uri-namu`. Use the package name with `remove` or `purge`, not the `.deb` path. To check the package name in a downloaded file, run `dpkg-deb -f <filename>.deb Package`. |
 
 If your platform has no installer available, see [Build installers](#build-installers). The version badge beside the logo opens the app version and build time.
 
